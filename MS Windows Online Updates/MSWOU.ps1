@@ -67,13 +67,12 @@ Function MSWindowsOnlineUpdater{
     Try{
       Log-Write -LogPath $sLogFile -LineValue "Process (code) Section"
       Start-Transcript -Path "C:\Windows\Logs\MSWOU\MSWindowsOnlineUpdater-Updates$date.log"
-      #If Nuget or PSWindowsUpdate aren't already installed, install them
-      #If (-not(Get-PackageProvider NuGet)){Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force -scope CurrentUser}
+      #If Nuget or PSWindowsUpdate isn't already installed, install them
       Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
       
       If(-not(Get-InstalledModule PSWindowsUpdate -ErrorAction silentlycontinue))
       {
-      Set-PSRepository PSGallery -InstallationPolicy Trusted -Confirm:$False -Verbose
+      Set-PSRepository PSGallery -InstallationPolicy Trusted -Verbose
       Install-Module PSWindowsUpdate -Confirm:$False -Force -Verbose
       }
 
