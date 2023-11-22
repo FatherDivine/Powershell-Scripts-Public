@@ -29,12 +29,12 @@
 #--------------------------------------------------------------[Privilege Escalation]---------------------------------------------------------------
 
 #Request Admin rights for the Nuget install
-if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))  
+<#if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))  
 {  
   $arguments = "& '" +$myinvocation.mycommand.definition + "'"
   Start-Process powershell -Verb runAs -ArgumentList $arguments
   Break
-}
+}#>
 #----------------------------------------------------------[Initialization & Declarations]----------------------------------------------------------
 
 #Set Error Action to Silently Continue
