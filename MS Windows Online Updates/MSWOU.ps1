@@ -66,18 +66,18 @@ Function MSWindowsOnlineUpdater{
   Process{
     Try{
       Log-Write -LogPath $sLogFile -LineValue "Process (code) Section"
-      
+      Start-Transcript -Path "C:\Windows\Logs\MSWOU\MSWindowsOnlineUpdater-Updates$date.log"
       #If Nuget or PSWindowsUpdate aren't already installed, install them
       #If (-not(Get-PackageProvider NuGet)){Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force -scope CurrentUser}
       
       If(-not(Get-InstalledModule PSWindowsUpdate -ErrorAction silentlycontinue))
       {
-      Set-PSRepository PSGallery -InstallationPolicy Trusted
-      Install-Module PSWindowsUpdate -Confirm:$False -Force
+      Set-PSRepository PSGallery -InstallationPolicy Trusted -Verbose
+      Install-Module PSWindowsUpdate -Confirm:$False -Force -Verbose
       }
 
       # Install kogged MS updates so we can keep track of what was installed if need.
-      Start-Transcript -Path "C:\Windows\Logs\MSWOU\MSWindowsOnlineUpdater-Updates$date.log"
+      
       Install-WindowsUpdate -MicrosoftUpdate -AcceptAll -IgnoreReboot -Verbose 
       Stop-Transcript 
     }
