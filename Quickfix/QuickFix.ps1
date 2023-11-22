@@ -41,13 +41,13 @@ $ErrorActionPreference = "SilentlyContinue"
 $sScriptVersion = "2.0"
 
 #Log File Info
-$sLogPath = "C:\Windows\Temp"
+$sLogPath = "C:\Windows\Logs\QuickFix\"
 $sLogName = "QuickFix.log"
 $sLogFile = Join-Path -Path $sLogPath -ChildPath $sLogName
 
 # Variables 
 $date = Get-Date -Format "-MM-dd-yyyy-HH-mm"
-$LogFile= "C:\Windows\Temp\QuickFix$date.txt"
+$LogFile= "C:\Windows\Logs\QuickFix\QuickFix$date.txt"
 
 #-----------------------------------------------------------[Functions]------------------------------------------------------------
 

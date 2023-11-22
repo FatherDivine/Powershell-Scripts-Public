@@ -26,7 +26,7 @@
   <Example goes here. Repeat this attribute for more than one example>
 #>
 
-#---------------------------------------------------------[Initialisations]--------------------------------------------------------
+#----------------------------------------------------------[Initialization & Declarations]----------------------------------------------------------
 
 #Set Error Action to Silently Continue
 $ErrorActionPreference = "SilentlyContinue"
@@ -34,16 +34,15 @@ $ErrorActionPreference = "SilentlyContinue"
 #Dot Source required Function Libraries
 . "${PSScriptRoot}\Logging_Functions.ps1"
 
-#----------------------------------------------------------[Declarations]----------------------------------------------------------
-
 #Script Version
 $sScriptVersion = "1.5"
 
 # Variables 
 $date = Get-Date -Format "-MM-dd-yyyy-HH-mm"
+$hostname = hostname
 
 #Log File Info
-$sLogPath = "C:\Windows\Temp"
+$sLogPath = "C:\Windows\Logs\MSWOU\"
 $sLogName = "MSWindowsOnlineUpdater$date.log"
 $sLogFile = Join-Path -Path $sLogPath -ChildPath $sLogName
 
@@ -54,21 +53,25 @@ Function MSWindowsOnlineUpdater{
   Param()
   
   Begin{
-    Log-Write -LogPath $sLogFile -LineValue "<description of what is going on>..."
+    Log-Write -LogPath $sLogFile -LineValue "Begin Section"
   }
   
   Process{
     Try{
       Log-Write -LogPath $sLogFile -LineValue "Process (code) Section"
       
-      Install-PackageProvider NuGet -Force
-
+      # If Nuget or PSWindowsUpdate aren't already installed, install them
+      If (-not(Get-PackageProvider NuGet)){Install-PackageProvider NuGet -Force}
+      
       If(-not(Get-InstalledModule PSWindowsUpdate -ErrorAction silentlycontinue))
       {
       Set-PSRepository PSGallery -InstallationPolicy Trusted
       Install-Module PSWindowsUpdate -Confirm:$False -Force
       }
-      Install-WindowsUpdate -MicrosoftUpdate -AcceptAll -IgnoreReboot -Verbose
+      # Install kogged MS updates so we can keep track of what was installed if need.
+      Start-Transcript -Path "C:\Windows\Logs\MSWOU\MSWindowsOnlineUpdater-Updates$date.log"
+      Install-WindowsUpdate -MicrosoftUpdate -AcceptAll -IgnoreReboot -Verbose 
+      Stop-Transcript 
     }
     
     Catch{
@@ -93,3 +96,4 @@ Log-Start -LogPath $sLogPath -LogName $sLogName -ScriptVersion $sScriptVersion
 MSWindowsOnlineUpdater
 
 Log-Finish -LogPath $sLogFile
+Log-Email -LogPath $sLogPath -EmailFrom "$hostname.MSWOU@ucdenver.pwsh" -EmailTo "aaron.staten@ucdenver.pvt" -EmailSubject "MS Windows Online Updates Log - [" + (Get-Date).ToShortDateString() + "]"

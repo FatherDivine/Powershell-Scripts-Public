@@ -287,7 +287,7 @@ Function Log-Email{
       $sBody = (Get-Content $LogPath | out-string)
       
       #Create SMTP object and send email
-      $sSmtpServer = "smtp.ucdenver.edu"
+      $sSmtpServer = "mail.ucdenver.pvt"
       $oSmtp = new-object Net.Mail.SmtpClient($sSmtpServer)
       $oSmtp.Send($EmailFrom, $EmailTo, $EmailSubject, $sBody)
       Exit 0
