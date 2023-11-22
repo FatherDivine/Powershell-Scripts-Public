@@ -27,7 +27,7 @@
 #>
 
 #----------------------------------------------------------[Initialization & Declarations]----------------------------------------------------------
-
+Start-Transcript -Path "C:\Windows\Logs\MSWOU\1MSWindowsOnlineUpdater-Update.log"
 #Set Error Action to Silently Continue
 $ErrorActionPreference = "SilentlyContinue"
 
@@ -45,7 +45,7 @@ $hostname = hostname
 $sLogPath = "C:\Windows\Logs\MSWOU\"
 $sLogName = "MSWindowsOnlineUpdater$date.log"
 $sLogFile = Join-Path -Path $sLogPath -ChildPath $sLogName
-Start-Transcript -Path "C:\Windows\Logs\MSWOU\MSWindowsOnlineUpdater-Updates$date.log"
+
 
 
 #-----------------------------------------------------------[Functions]------------------------------------------------------------
