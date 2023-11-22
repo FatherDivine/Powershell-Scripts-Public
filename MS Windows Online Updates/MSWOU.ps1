@@ -26,10 +26,9 @@
   <Example goes here. Repeat this attribute for more than one example>
 #>
 
-
 #--------------------------------------------------------------[Privilege Escalation]---------------------------------------------------------------
 
-# Request Admin rights for the Nuget install
+#Request Admin rights for the Nuget install
 if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))  
 {  
   $arguments = "& '" +$myinvocation.mycommand.definition + "'"
@@ -49,13 +48,11 @@ $sScriptVersion = "1.5"
 
 # Variables 
 $date = Get-Date -Format "-MM-dd-yyyy-HH-mm"
-$hostname = hostname
 
 #Log File Info
 $sLogPath = "C:\Windows\Logs\MSWOU\"
 $sLogName = "MSWindowsOnlineUpdater$date.log"
 $sLogFile = Join-Path -Path $sLogPath -ChildPath $sLogName
-
 
 #-----------------------------------------------------------[Functions]------------------------------------------------------------
 
@@ -70,8 +67,7 @@ Function MSWindowsOnlineUpdater{
     Try{
       Log-Write -LogPath $sLogFile -LineValue "Process (code) Section"
       
-      # If Nuget or PSWindowsUpdate aren't already installed, install them
-
+      #If Nuget or PSWindowsUpdate aren't already installed, install them
       If (-not(Get-PackageProvider NuGet)){Install-PackageProvider NuGet -MinimumVersion 2.8.5.201 -Force -verbose}
       
       If(-not(Get-InstalledModule PSWindowsUpdate -ErrorAction silentlycontinue))
@@ -79,6 +75,7 @@ Function MSWindowsOnlineUpdater{
       Set-PSRepository PSGallery -InstallationPolicy Trusted
       Install-Module PSWindowsUpdate -Confirm:$False -Force
       }
+
       # Install kogged MS updates so we can keep track of what was installed if need.
       Start-Transcript -Path "C:\Windows\Logs\MSWOU\MSWindowsOnlineUpdater-Updates$date.log"
       Install-WindowsUpdate -MicrosoftUpdate -AcceptAll -IgnoreReboot -Verbose 
@@ -107,3 +104,6 @@ Log-Start -LogPath $sLogPath -LogName $sLogName -ScriptVersion $sScriptVersion
 MSWindowsOnlineUpdater
 
 Log-Finish -LogPath $sLogFile
+
+#Housekeeping
+exit
