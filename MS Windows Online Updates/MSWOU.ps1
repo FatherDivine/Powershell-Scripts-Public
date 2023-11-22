@@ -45,6 +45,7 @@ $hostname = hostname
 $sLogPath = "C:\Windows\Logs\MSWOU\"
 $sLogName = "MSWindowsOnlineUpdater$date.log"
 $sLogFile = Join-Path -Path $sLogPath -ChildPath $sLogName
+Start-Transcript -Path "C:\Windows\Logs\MSWOU\MSWindowsOnlineUpdater-Updates$date.log"
 
 
 #-----------------------------------------------------------[Functions]------------------------------------------------------------
@@ -61,7 +62,7 @@ Function MSWindowsOnlineUpdater{
       Log-Write -LogPath $sLogFile -LineValue "Process (code) Section"
       
       # If Nuget or PSWindowsUpdate aren't already installed, install them
-      #If (-not(Get-PackageProvider NuGet)){Install-PackageProvider NuGet -Forcebootstrap -Confirm:$False -ErrorAction silentlycontinue }
+      If (-not(Get-PackageProvider NuGet)){Install-PackageProvider NuGet -Forcebootstrap -Confirm:$False -ErrorAction silentlycontinue }
       
       If(-not(Get-InstalledModule PSWindowsUpdate -ErrorAction silentlycontinue))
       {
@@ -69,7 +70,7 @@ Function MSWindowsOnlineUpdater{
       Install-Module PSWindowsUpdate -Confirm:$False -Force
       }
       # Install kogged MS updates so we can keep track of what was installed if need.
-      Start-Transcript -Path "C:\Windows\Logs\MSWOU\MSWindowsOnlineUpdater-Updates$date.log"
+      
       Install-WindowsUpdate -MicrosoftUpdate -AcceptAll -IgnoreReboot -Verbose 
       Stop-Transcript 
     }
