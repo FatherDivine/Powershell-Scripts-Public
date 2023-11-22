@@ -68,7 +68,7 @@ Function MSWindowsOnlineUpdater{
       Log-Write -LogPath $sLogFile -LineValue "Process (code) Section"
       
       #If Nuget or PSWindowsUpdate aren't already installed, install them
-      If (-not(Get-PackageProvider NuGet)){Install-PackageProvider NuGet -MinimumVersion 2.8.5.201 -Force -verbose}
+      If (-not(Get-PackageProvider NuGet)){Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force -scope CurrentUser}
       
       If(-not(Get-InstalledModule PSWindowsUpdate -ErrorAction silentlycontinue))
       {
