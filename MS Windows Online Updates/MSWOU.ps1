@@ -1,7 +1,7 @@
 #requires -version 2
 <#
 .SYNOPSIS
-  Runs MS Windows Updates
+  Runs MS Windows Updates.
 
 .DESCRIPTION
   Installs  packages and modules necessary to run online-based
@@ -61,7 +61,7 @@ Function MSWindowsOnlineUpdater{
       Log-Write -LogPath $sLogFile -LineValue "Process (code) Section"
       
       # If Nuget or PSWindowsUpdate aren't already installed, install them
-      If (-not(Get-PackageProvider NuGet)){Install-PackageProvider NuGet -Force}
+      If (-not(Get-PackageProvider NuGet)){Install-PackageProvider NuGet -Confirm:$False -Force}
       
       If(-not(Get-InstalledModule PSWindowsUpdate -ErrorAction silentlycontinue))
       {
