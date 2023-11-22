@@ -1,0 +1,13 @@
+problems solutions
+
+full write up of project:
+Leave snapins in case someone needs, but write comments in all things to elaborate.
+Snap-ins will be for *nix machines that never joined before but want to now (AD Join) or to rename computers (host rename). keep separate and possibly as one script.
+
+- leave comments on post download scripts, and a write up on drive somewhere for people who will image linux in the future.
+Keep 3 post downloads (ad join, host rename, and both together). Keep file in postdownloadscript folder to be copied to ubuntu to be ran once upon reboot to join (since realm command doesn't work as postdownloadscript). Make a snap-in of this.  Note snap-ins require fog client which currently is not supported by dual boot... you can install on both but only one can read at a time.. so going between OS you have to delete the encryption data (in FOG gui under the specific host). 
+
+- Make version of the run once for use for pre-capture , and one embedded into post download script (copies to the correct drive.. working on this one first).
+
+
+Background from warty to UC Denver in CSCI labs: use crontab and @reboot to make script that copies /usr/share/backgrounds/warty-final-ubuntu.png to .bak and UCDenver1.png to warty-final-ubuntu.png

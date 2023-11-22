@@ -1,0 +1,1 @@
+Purpose is to install Dell Command | Update remotely and run updates, both silently. Dell SupportAssist won't allow you to run it's driver updates via GUI if you are signed in thru RDP, so this is the workaround.

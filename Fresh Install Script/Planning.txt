@@ -1,0 +1,18 @@
+"DevOps strategies are able to provide more value to their customers by removing or automating repetitive or low-value tasks." - Sitescore.com Devops Solve b2b business problems
+
+powershell script that does "the fixings" automatically. This includes things like software installs (MS Word, Adobe, Chrome, etc), changing wallpaper, and a possible rename host/domain join.
+
+This script will primarily target windows boxes, but a version for *nix and OSX will be made available. 
+
+- Pick packages to install  using checkmarks (if possible like dungeons dragon PS game)
+
+- Installs them. For Office, pulls from \edsel\install directory using domain credentials to same folder as script, runs silently as possible with wait flag, then starts next installer (eg Adobe Reader, Chrome, etc)
+
+runs anything else (Domain join script, rename etc using DJT and other scripts)
+
+
+DevOps:
+
+DevOps teams then have more time to spend focusing on innovating and enhancing technology quality.Without having to focus on menial tasks, iterative DevOps processes encourage innovation, agility, and flexibility that take the technology to the next level. DevOps teams are able to get high-quality solutions to your customers faster.
+
+Teams are centered around rapid releases, updates, and deployment so any problems that arise can be fixed faster. DevOps creates a collaborative culture among development and operations teams.

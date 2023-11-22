@@ -1,0 +1,1 @@
+still good for local use cases where it will only run on the same PC. problem is it doesn't set the padding, cipher block, or anything else. This means PCs use the default settings which can vary, and some will give padding errors and not work.

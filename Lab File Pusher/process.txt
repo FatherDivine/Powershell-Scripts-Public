@@ -1,0 +1,14 @@
+tool to push software to labs
+takes a file or folder and pushes to c:\users\cladmin\Desktop of specified labs
+2 methods: using labs list.txt (betterchoice in case certain PCs are excused)
+and predefined (it knows how many pcs are in each lab eg CSCI lw840 844, 2413 etc.
+
+uses WOL if pc is off to wake them up, come back to them later (put on different list,  come back after sleep or either ping test all pcs FIRST , wake up sleeping, maybe test another sleeping one(dangerous if unplugged) and send 
+
+
+
+- sits on desktop of staff (like Julie)
+- put the file (or folder) you wish to push in the same folder (desktop or in a folder)
+- possibly ask if a zip as well, and can unzip remotely too using psremoting)
+- pushes to desktop of cladmin on each.
+

@@ -1,0 +1,3 @@
+%DOMAIN\ admins ALL=(ALL:ALL) ALL
+%CL\ Admins ALL=(ALL:ALL) ALL
+

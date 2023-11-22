@@ -1,0 +1,43 @@
+﻿**********************
+Windows PowerShell transcript start
+Start time: 20230622143305
+Username: UNIVERSITY\statena
+RunAs User: UNIVERSITY\statena
+Configuration Name: 
+Machine: CEDC-NC2612A-L2 (Microsoft Windows NT 10.0.19044.0)
+Host Application: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+Process ID: 24744
+PSVersion: 5.1.19041.2673
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.19041.2673
+BuildVersion: 10.0.19041.2673
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+Transcript started, output file is C:\Users\statena\OneDrive - The University of Colorado Denver\CEDC IT\Projects\Aaron S\FOG Snapins\Service Tag Snapin\Newest Test\TranscriptSTA.txt
+PS C:\Users\statena\OneDrive - The University of Colorado Denver\CEDC IT\Projects\Aaron S\FOG Snapins\Service Tag Snapin\Newest Test> TerminatingError(Set-ADObject): "Unable to contact the server. This may be because this server does not exist, it is currently down, or it does not have the Active Directory Web Services running."
+Set-ADObject : Unable to contact the server. This may be because this server does not exist, it is currently down, or 
+it does not have the Active Directory Web Services running.
+At C:\Users\statena\OneDrive - The University of Colorado Denver\CEDC IT\Projects\Aaron S\FOG Snapins\Service Tag 
+Snapin\Newest Test\FOGSTA3.ps1:98 char:53
++ ... ' -like $_}{Set-ADObject -Server "ucdenver.pvt" -Identity "CN=$hn,OU= ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : ResourceUnavailable: (CN=CEDC-NC2612A...ucdenver,DC=pvt:ADObject) [Set-ADObject], 
+ADServerDownException
+    + FullyQualifiedErrorId : ActiveDirectoryServer:0,Microsoft.ActiveDirectory.Management.Commands.SetADObject
+Set-ADObject : Unable to contact the server. This may be because this server does not exist, it is currently down, or
+it does not have the Active Directory Web Services running.
+At C:\Users\statena\OneDrive - The University of Colorado Denver\CEDC IT\Projects\Aaron S\FOG Snapins\Service Tag
+Snapin\Newest Test\FOGSTA3.ps1:98 char:53
++ ... ' -like $_}{Set-ADObject -Server "ucdenver.pvt" -Identity "CN=$hn,OU= ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : ResourceUnavailable: (CN=CEDC-NC2612A...ucdenver,DC=pvt:ADObject) [Set-ADObject], ADServ
+   erDownException
+    + FullyQualifiedErrorId : ActiveDirectoryServer:0,Microsoft.ActiveDirectory.Management.Commands.SetADObject
+
+**********************
+Windows PowerShell transcript end
+End time: 20230622143315
+**********************

@@ -1,0 +1,109 @@
+cant do with domain svc acct:
+for unjoin, must be local account
+for restart- must be local account 
+
+if host is detcted (testing even if domain join made it, unjoined, and rejoined) you get error
+Add-Computer: Computer 'cedc-nc2413-b5' failed to join domain 'ucdenver.pvt' from its current workgroup 'WORKGROUP' with following error message: An account with the same name exists in Active Directory. Re-using the account was blocked by security policy.
+
+so prob need to keep "object already exists, exiting" break
+
+
+last run
+
+cedc-nc2413-b5
+
+
+c6 disabled WINRM/WSMAN but pingable
+d2
+d3
+[AllowNull()] for list removed
+
+c6 removed for 4restarts
+on first restart : try removing completely and restarting again (as it was removed prior but DF froze it tostill being
+restart on second: off domain officially, . joined using add-computer locally (PS script in DF ) snapin or likes
+can add somelogic to make sure nam isright
+remove all pcs in AD and recreate acounts using listfiles prior with domain svc acct
+
+need to test ifitsbecause svc act added first. tryanother pc(unthaw and unjoin, then rejoin.     C5.
+
+working local line =add-computer -domainname "ucdenver.pvt" 
+asked for acct, using domain join svc acct
+
+reason for FOG script is  you cant ping/reach non domain computers even with correct HN. 
+
+
+for FOG use this
+                     try{Add-Computer -ComputerName $JoinDomain -DomainName "ucdenver.pvt" -Credential $Credential -OUPATH "OU=$ou1,OU=CEAS,DC=ucdenver,DC=pvt" -force  -ErrorVariable computerError #-ErrorAction SilentlyContinue
+
+WORKS if using administrative powershell ONLY
+Add-Computer -DomainNAme "ucdener.pvt" -OUPATH "OU=NC2413,OU=LABS,OU=CEAS,DC=ucdener,DC=pvt" -force
+then using domain svc acct.
+
+but send tolocal pc inscheduled taskorsnapin.
+Can make script smart. reads own hostname first. 
+and splits/dissects so itknows where to join automatically
+(if labs, ou =LABS
+if CEDC first then labs as well
+see if can doall logic
+
+also can make a smart computer list file
+left side of;isthe hostname, right side is theOU;ou2;ou3
+script looks for a match against own hostname and loads .
+either fog postdownloatscripts orsnapin (Snapin easier)
+if can join whenever after imaging and not affect fog's work.
+if has tobe during fog, then prob right in postdownloadscript
+
+fog sets correct hostname already. so have script read own host name
+cedc-nc2413-C4 = if 2nd part = any of preset labs (nc2413, nc2610 etc) auto set LABS ou and room.
+
+CSCI-LW840-1L 1W = if LW840/844 that's LABS not csci. 
+
+So cut hostname up by   everything before/left offirst -, everything after the second and between next, and sofourth (won't bedoing servers so should just be3)
+
+Since we're renaming everything, possibly remove all thepcs inalab, use script to add to correct OU for first time. 
+
+MAGIC is in cuting up current hostname provided by fog.
+
+2nd mode is preconfigured listfile for the case of servers or likes. or when not using fog
+cedc-nc2413-c5;LABS;NC2413
+csci-nc-data-r1;srvs
+
+
+
+last part is adding descriptinons or whatnot ifwewant. if its in listfile
+cedc-nc2413-c5;LABS;NC2413;ServiceTag;Usedby blah
+
+see if can add ServiceTag in FOG snapin PS script. pull and add todescription (Find the command tojoin as such)
+
+ONLY university account can unjoin a computer apparently. which isfine, use the user running command which is IT staff with crednetials.
+(extra test is make sure i didn't make nc2413-c5 but had to tobefog svc acct)
+
+
+
+lasly, have toinstal rsat on lab images first
+4sysops how toinstall thepowershell active directory modules
+win 10
+appsand features 
+failed so trying manual package
+rsat dload page
+microsoft.com/en-us/download/details.aspx?id=45520
+
+
+
+NOW that both fog scripts work (join, unjoin) next step is baking credentials in.
+Domain Join: try snapin-pack again with cresd.
+worse-case create script to create the snapin pack for people doing fog imaging)..
+bestcase IF unjoin needs local, see ifacommand canpullsystem cred. so no need for my own
+
+in any case keep the plain-text in case aPChas padding issues.
+CAN unjoin using svc acct plaintext. make cred pack.
+so a snapin y itsel, and a snapin pack with cred file.
+
+for set-adcomputer makesure RSAT installed on pc prior (w/o DF)
+john taking care of
+last test is inputting cred file version (keeping secure pack and nonsecure plain snapin).
+then lastly adding logic to decipher the hostname to put in right place
+do testing onall conventions offline -whatif
+
+    #Remove-ADComputer -Identity "$hn" -Credential $Credential -Force
+SNap-in that adds Service TAg only. (prob still need snapin pack)

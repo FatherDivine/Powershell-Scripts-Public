@@ -1,0 +1,16 @@
+join domain
+and joindomainFindHostname
+
+Find hostname works with 
+
+script finds hostname but can move to a function
+Find hostname function: checks if hostname already exists. IF so, finds the next cantenation (++, +1) to the #. 
+
+with hostname finder, can use as such:
+get hostname, send to finder to see if exists, if so, finds the next available and gives back. (if cedc-test-1W exists, it will make it cedc-test-2W)
+
+hostname exists, would you like to try and join with this host or find another hostname ? like $hostname+1 ?
+
+can add hostname finder function after a failed attempt at joining. prob for best. 
+July lunch & learn 2nd week
+how to use and how to develop

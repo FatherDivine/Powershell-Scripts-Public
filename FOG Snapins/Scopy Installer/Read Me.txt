@@ -1,0 +1,2 @@
+Unistalls the old version of Scopy and installs the newer one.
+Nothing fancy.

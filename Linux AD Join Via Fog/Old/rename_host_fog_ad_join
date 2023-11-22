@@ -1,0 +1,172 @@
+#!/bin/bash
+#########################################################
+# Rename services with FoG, need mysql-client installed
+#########################################################
+# ch3i - 09/11/2015
+#########################################################
+
+### BEGIN INIT INFO
+# Provides:          rename_host_fog
+# Required-Start:    $all
+# Required-Stop:     
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Rename host at boot-shutdown
+# Description:       Rename host using FoG
+### END INIT INFO
+
+#########################################################
+# Functions
+#########################################################
+FUNC_DOTS() {
+    max=65
+    if [ -n "$1" ]; then
+		n=`expr $max - ${#1}`
+		echo -n " * ${1:0:max}"
+		if [ "$n" -gt 0 ]; then
+			for i in $(seq $n); do
+				printf %s .
+			done
+		fi
+	fi
+}
+
+#########################################################
+# Configuration
+#########################################################
+FOG_SERVER="fog-01"
+FOG_WEBROOT="fog"
+
+#########################################################
+# Check FOG Server Status
+#########################################################
+FUNC_DOTS "Check FOG web service Status"
+wget "http://$FOG_SERVER/$FOG_WEBROOT/index.php" -t 1 2>/dev/null
+if [ $? -eq 0 ]
+then
+	echo "Done"
+	
+	#########################################################
+	# Get interfaces
+	#########################################################
+	NETWORK_CARDS=($(ls /sys/class/net))
+
+	#########################################################
+	# Get host name and domain from FoG database
+	#########################################################
+	FUNC_DOTS "Checking hostname/domain configurations"
+	for ETH in ${NETWORK_CARDS[*]}
+	do
+			# read mac address
+			MAC=$(cat /sys/class/net/$ETH/address)
+			# get mac address information from fog web server
+			wget http://$FOG_SERVER/$FOG_WEBROOT/service/hostname.php?mac=$MAC -O /tmp/hostname_check 2>/dev/null
+			#Below line leaves a space in /etc/hostname between hostname and L. does not affect actual hostname as of writing
+			HOST_NAME="$(grep 'ok=' /tmp/hostname_check | cut -d "=" -f2)L"
+			HOST_DOMAIN_NAME="$(grep 'ADDom' /tmp/hostname_check | cut -d "=" -f2)"
+			if [ "$HOST_NAME" != "" ]
+			then
+				echo "Done ($HOST_NAME.$HOST_DOMAIN_NAME)"
+				sleep 3
+				# A hostname is found - quit the loop
+				break
+			else
+				echo "Error"
+				FUNC_DOTS "Host not found in FOG database"
+				echo "exiting"
+				sleep 3
+				exit
+			fi
+	done
+
+	#########################################################
+	# Check host configuration
+	#########################################################
+	ACTUAL_FQDN=$(hostname -f)
+	if [ "$HOST_NAME.$HOST_DOMAIN_NAME" != "$ACTUAL_FQDN" -a "$HOST_NAME" != "" -a "$HOST_DOMAIN_NAME" != "" ]
+	then
+	
+		#########################################################
+		# Update hostname file
+		#########################################################
+		FUNC_DOTS "Updating /etc/hostname"
+		echo $HOST_NAME >/etc/hostname
+		echo "Done"
+
+		#########################################################
+		# Update hosts file
+		#########################################################
+		FUNC_DOTS "Updating /etc/hosts"
+		echo "127.0.0.1       localhost" > /etc/hosts
+		echo "127.0.1.1       $HOST_NAME.$HOST_DOMAIN_NAME $HOST_NAME " >> /etc/hosts
+		echo "# The following lines are desirable for IPv6 capable hosts
+::1     ip6-localhost ip6-loopback
+fe00::0 ip6-localnet
+ff00::0 ip6-mcastprefix
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
+ff02::3 ip6-allhosts" >> /etc/hosts
+		echo "Done"
+		
+		#########################################################
+		# Update interfaces file
+		#########################################################
+		FUNC_DOTS "Updating /etc/network/interfaces"
+		echo "# This file describes the network interfaces available on your system
+# and how to activate them. For more information, see interfaces(5).
+
+# The loopback network interface
+auto lo
+iface lo inet loopback" > /etc/network/interfaces
+
+		for ETH in ${NETWORK_CARDS[*]}
+		do
+			if [ "$ETH" != "lo" ]
+			then
+			echo "# $ETH Interface
+allow-hotplug $ETH
+iface $ETH inet dhcp" >> /etc/network/interfaces
+			fi
+		done
+		echo "Done"
+
+		#########################################################
+		# Clear persistent network cards
+		#########################################################
+		FUNC_DOTS "Clearing persistent networks cards"
+		if [ -f /etc/udev/rules.d/70-persistent-net.rules ]
+		then
+			rm /etc/udev/rules.d/70-persistent-net.rules
+		fi
+		echo "Done"
+
+		#########################################################
+		# Logs and Reboot machine
+		#########################################################
+		FUNC_DOTS "Building rename logs"
+		echo "$(date) ::: Update successful with Hostname : $HOST_NAME and Domain : $HOST_DOMAIN_NAME" >> /var/log/rename_host_fog.log
+		echo "Done"
+		echo 'lUjZwCQlCGk5J!1xUEwT8qqs' | realm join -vvv -U svc-ceas-fog UCDENVER.PVT
+		cp "/etc/sssd/sssd.conf.bak" "/etc/sssd/sssd.conf"
+		sudo service sssd restart > /dev/null
+		sudo dhclient
+		grub-reboot 0
+		/sbin/init 6
+		exit		
+	fi
+	if [ "$HOST_NAME" == "" -a "$HOST_DOMAIN_NAME" == "" ]
+	then
+		echo "$(date) ::: Update failed : Failed to connect to Mysql Server" >> /var/log/rename_host_fog.log
+	fi
+	if [ "$HOST_NAME" != "" -a "$HOST_DOMAIN_NAME" == "" ]
+	then
+		echo "$(date) ::: Update failed : Domain name is missing" >> /var/log/rename_host_fog.log
+	fi
+else
+	echo "Error"
+	FUNC_DOTS "Failed to connect to server"
+	echo "Exiting"
+	sleep 3
+	exit
+fi
+exit

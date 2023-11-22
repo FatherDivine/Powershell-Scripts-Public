@@ -1,0 +1,21 @@
+unjoin and rejoin
+
+CEAS>LABS>CART
+groups: domain computers, intune-WS-default, SccmClientInclusion
+
+
+New-ADComputer -Name "CEDC-NC2413-A2" -SamAccountName "CEDC-NC2413-A2" -Path "OU=NC2413,OU=LABS,OU=CEAS,DC=ucdenver,DC=pvt" -Credential svc-cedc-domainjoin
+
+VRU9WeoKqJOWE2O
+
+
+Checked out laptops according to assettiger (skip for now):
+L2
+L4
+L9
+L28
+
+have fog postdownloadscript push PS script package to:
+C:\Users\cladmin\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup
+
+and upon first run it should delete itself

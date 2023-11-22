@@ -1,0 +1,7 @@
+#!/bin/bash
+#########################################################
+# Join Ubuntu to AD
+#########################################################
+echo 'lUjZwCQlCGk5J!1xUEwT8qqs' | realm join -vvv -U svc-ceas-fog UCDENVER.PVT
+cp "/etc/sssd/sssd.conf.bak" "/etc/sssd/sssd.conf"
+sudo service sssd restart > /dev/null

@@ -1,0 +1,39 @@
+Useful for restarting FOG tray client when sending a snapin doesn't work because the fog client isn't responding/stuck (like CSCI LW840 LAB). Run this in elevated Poewrshell:
+
+ Get-Service -Name FOGService -ComputerName csci-lw840-b2| Restart-Service -Force
+
+restart fog for a list of pcs to not wait 10 mins:
+$Contents = (Get-Content .\computers.txt)
+Foreach ($pc in $Contents){Get-Service -ComputerName $pc -Name FOGService | Restart-Service -Force}
+
+
+to remove all and rejoin with svc account:
+
+1.) Remove-ADComputer -Credential svc-cedc-domainjoin -Identity CEDC-NC2413-A2
+
+VRU9WeoKqJOWE2O
+
+
+
+2.) New-ADComputer -Name "CEDC-NC2413-A2" -SamAccountName "CEDC-NC2413-A2" -Path "OU=NC2413,OU=LABS,OU=CEAS,DC=ucdenver,DC=pvt" -Credential svc-cedc-domainjoin
+
+
+or snapin
+
+
+
+
+New-ADComputer -Name "pneumotachtest" -SamAccountName "pneumotachtest" -Path "OU=BIOE,OU=CEAS,DC=ucdenver,DC=pvt" -Credential svc-cedc-domainjoin
+
+
+members of
+domain computers
+intune-CM-managed-only
+intune-ws-default
+PsnRemediate
+SccmClientInclusions
+
+
+
+clientdriverpath="/ntfs/Drivers"
+remotedriverpath="/images/drivers/$machine/$osn/$arch"

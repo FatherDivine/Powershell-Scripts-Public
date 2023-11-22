@@ -1,0 +1,2 @@
+This was needed for LW844, and possibly LW840 (though this lab uses the NVIDIA cards)
+Unreal Engine would not run without updating this graphics driver.

@@ -1,0 +1,51 @@
+LCHWC 1.5.5
+----------------------------------------------
+- Changed "Results.txt" to "Date-Serial#.txt" for record keeping of the date of the last comparison as well as to easily identify in a folder (eg: on \\data)
+- Updated LCHWCMailer.ps1 to reflect looking for "Date-Serial#.txt" instead of "Results.txt". Involved passing 2 variables (date & serial#) to PowerShell.
+- Added Feature: Copies the "Date-Serial#.txt" file to \\data\dept\CEAS\ITS\Labs\Laptop Cart Resources\Laptop_Check\Records
+- Added Feature: Housekeeping Service. Deletes the LCHWC folder and its contents from cladmin desktop. As a copy is put on \\data and also emailed, there is no need for the other files unless a user wishes to compare the files manually. Thus a Y|N input was added to take input from the user. Y means cleanup, N keeps the LCHWC folder intact.
+
+
+LCHWC 1.5
+----------------------------------------------
+- Fixed Technician notes not writing to file
+- Fixed comparison not comparing files correctly (replaced findstr with FC)
+- Removed Service Tag from PostHardware check for 2 reasons: To allow for the Service Tag to exist in the (emailed) Results.txt, as well as have a copy of the original Service Tag (a check that tells if the entire computer/mobo was replaced).
+
+
+LCHWC 1.0
+----------------------------------------------
+- Added Laptop Monitor PNP Device ID to detect if LCD was exchanged (possibly broke/repaired)
+- Added comparison check between 2 Hardware text files (to verify any changes other than the time)
+- Adding ability to tell the difference in time between both files(which would give a good estimate of how long the laptop was checked out for)
+- Possibly at the end of the script, making PostHardware.txt, PreHardware.txt, & Results.txt file themselves in a (timestamped) folder inside of LCHWC in the event the script needs to run again. If not timestamped, with a +1
+- Added "rem :: " comments in code to narrate what the code does.
+- Added serialnumber to memorychip wmic's 
+
+
+LCHWC 0.5
+----------------------------------------------
+- Creation of script (pulling info using wmic commands)
+- Added UAC escalation
+- Added auto closing of command prompt after pause
+- Added logic to check of LCHWC folder exists first, if not create
+- Added logic to check if PreHardware.txt is empty, if not create & log to PostHardare.txt instead
+- Added date & timestamp (was broke, fixed)
+- Added Dell service tag (wmic)
+- Made PreHardare.txt read-only
+
+
+-------------------------------------------------------------------------------------------
+Possible updates:
+store files in a secure location.
+create a database that's queryable.
+
+How-to guides – Problem-oriented, take the user through a series of steps to reach a real-world goal
+
+Conversely, changelogs are comprehensive lists of the new features, enhancements, bugs, and other changes in reverse chronological order. Changelogs usually link to specific issues or feature requests within a change management system and also may include links to the developer who supplied the change.
+
+README – A high-level overview of the software, usually alongside the source code
+
+Add section for tech notes and how to use (one line, press enter to finish notes). notes on physical condition etc.
+
+use current date-timestamp to save a copy on \\data. intresting in the field testing

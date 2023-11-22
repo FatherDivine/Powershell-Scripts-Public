@@ -1,0 +1,136 @@
+& '.\1 EpicInstaller-15.7.0.msi' /quiet
+installs quietly
+
+
+
+so far
+CSCI-LW844-D5 has install
+
+Unreal engine:
+C:\Program Files\Epic Games\UE_5.2
+size: 59.2GB, 235,015 files
+
+currently compressing to lw844-d5\$c\temp
+maybe leave there, or put in c:\program\Epic Games\ as well.
+
+
+
+process:
+robocopy first:
+robocopy \\CSCI-LW844-D5\c$\Temp\UnrealPackage "C:\Program Files\Epic Games" /E /Z /ZB /R:5 /W:5 /TBD /NP /V /MT:16 UE_5.2.7z
+
+unzip in that directory (-y = assumes yes to all prompts/user interaction):
+& "C:\Program Files\7-Zip\7z.exe" x "C:\Program Files\Epic Games\UE_5.2.7z" -r -o"C:\Program Files\Epic Games\" -y | Out-Null
+
+delete the old 7z 
+Remove-Item -Path "C:\Program Files\Epic Games\UE_5.7.7z" -Force
+
+Run Epic Games Launcher (Install Prerequisites and Downloads Updates) 
+MsiExec.exe /i EpicInstaller-15.7.0.msi SHOULD_RUN_LAUNCHER=1 /qn
+
+above works if in the SAME folder,which the snap-in should be.
+IF need, location is: C:\Program Files (x86)\FOG\tmp\UnrealPackage\EpicInstaller-15.7.0
+
+
+Epic Games Folder (PFx86EpicGames.7z). Will copy DirectXRedist and Launcher folder to Epic Games folder. overwrite but make sure disabled first  
+
+
+close epic games task first:
+Stop-Process -ProcessName EpicGamesLauncher
+
+then:
+& "C:\Program Files\7-Zip\7z.exe" x .\PFx86EpicGames.7z -o"C:\Program Files (x86)\Epic Games\" -r -y
+
+
+Copy the manifests files (check if makes directory properly)
+& "C:\Program Files\7-Zip\7z.exe" x .\Manifests.7z -o"C:\ProgramData\Epic\EpicGamesLauncher\Data\Manifests" -r -y
+
+
+Move BuildPatchServicesLocal
+Move-Item -Path .\BuildPatchServicesLocal.ini -Destination "C:\ProgramData\Epic\EpicGamesLauncher\"
+
+
+Run Registry (UnrealProjectFile)
+reg import .\UnrealProjectFile.reg
+
+
+other files needed:
+
+C:\ProgramData\Epic\EpicGamesLauncher\Data\Manifests"
+
+C:\ProgramData\Microsoft\Windows\Start Menu\Programs"
+C:\Program Files (x86)\Epic Games\Launcher\Engine
+
+
+
+11. Use 7-Zip with Fastest setting to save the entire contents of the Epic Games\Launcher folder.
+
+"C:\Program Files (x86)\Epic Games\Launcher" (354MB)
+
+In addition to the Launcher folder package DirectXRedist folder
+
+"C:\Program Files (x86)\Epic Games\DirectXRedist"
+
+12. Use 7-zip with Fastest setting to save the entire contents of the Unreal Engine folder (C:\Program Files\Epic Games\UE_4.22)
+
+13. Use 7-zip with Fastest setting to save the entire contents of the Fortnite folder (C:\Program Files\Epic Games\Fortnite)
+
+14. Go to the Epic Games Launcher Manifest folder (C:\ProgramData\Epic\EpicGamesLauncher\Data\Manifests) and copy the .manifest file/s.
+
+(MANIFESTS folder won't exists inside of data on a new pc.. robocopy should take care of.. or mkdir first)
+
+
+8D15BA6D4F8AFBD105F39892F57AA4D5.manifest <-- UnrealEngine 4.22
+
+5375E9A749E92FF0764AC4B4957B7291.manifest <-- Fortnite 8.20
+
+I recommend renaming the .manifest file to .unrealengine.<version>.manifest
+
+Note, Epic Games Launcher recognises the renamed file but strips the additional information from the filename.
+
+19. Go to the "C:\ProgramData\Epic\EpicGamesLauncher" folder and copy the "BuildPatchServicesLocal.ini" file.
+
+The BuildPatchServices.ini file tells Epic Games Launcher whether or not prerequisites have been installed.
+
+
+20. Export the file associations for Unreal Projects from the registry. Export the following key/s to a .REG file:
+
+[HKEY_CLASSES_ROOT\Unreal.ProjectFile]
+
+If the file associations for Unreal Project files are missing the launcher will attempt to create them on first run triggering a UAC prompt.
+
+18. Make a note of the Windows Firewall Exceptions required for Epic Games Launcher and the Unreal Engine Editor eg:
+
+"Epic Games Launcher x86","C:\program files (x86)\epic games\launcher\portal\binaries\win32\epicgameslauncher.exe"
+
+"Epic Games Launcher x64","C:\program files (x86)\epic games\launcher\portal\binaries\win64\epicgameslauncher.exe"
+
+"Unreal Engine 4.21 Editor x86","C:\Program Files\Epic Games\UE_4.21\Engine\Binaries\Win32\UE4Editor.exe"
+
+"Unreal Engine 4.21 Editor x64","C:\Program Files\Epic Games\UE_4.21\Engine\Binaries\Win64\UE4Editor.exe"
+
+"Fortnite x64","C:\program files\epic games\fortnite\fortnitegame\binaries\win64\fortniteclient-win64-shipping.exe"
+
+"Fortnite x86","C:\program files\epic games\fortnite\fortnitegame\binaries\win32\fortniteclient-win32-shipping.exe"
+
+You should now have all the source files required for installing the Epic Games Launcher and Unreal Engine:
+
+EpicInstaller-9.7.0.msi <-- Epic Installer downloaded from the Epic Games website
+
+DirectXRedist.7z <-- 7-zip file containing DirectXRedist folder
+
+Launcher_971.7z <-- 7-zip file containing Epic Games Launcher folder
+
+Unreal.ProjectFile.Association.reg <-- File containing registry entries for Unreal project file
+
+BuildPatchServicesLocal.ini <-- File registering prerequisites installation.
+
+UE_4.22.7z <-- 7-zip file containing Unreal Engine 4.22
+
+Fortnite_820.7z <-- 7-zip file containing Fortnite 8.20
+
+8D15BA6D4F8AFBD105F39892F57AA4D5.UnrealEngine.4.22.manifest <-- UnrealEngine 4.22
+
+5375E9A749E92FF0764AC4B4957B7291.Fortnite.8.20.manifest <-- Fortnite 8.20
+
+I recommend creating separate packages for the Epic Games Launcher and Unreal Engine/Fortnite.

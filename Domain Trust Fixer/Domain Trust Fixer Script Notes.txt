@@ -1,0 +1,14 @@
+#Domain Fixer Script
+# Fixes the domain trust relationship locally. 
+#Use test after DJT (and possibly merge) to check health of connection.
+#Test-ComputerSecureChannel returns $True if the channel is working correctly and $False if it is not. 
+#This result lets you use the cmdlet in conditional statements in functions and scripts. 
+#To get more detailed test results, use the Verbose parameter.
+#To use -Repair parameter, the current user must be a member of the Administrators group on the local computer.
+#The Credential parameter is designed for use in commands that use the Repair parameter to repair the channel between the computer and the domain.
+
+$Credential = get key or ask for credentials 
+
+Test-ComputerSecureChannel -verbose
+Test-ComputerSecureChannel -Repair -Credential $Credential -verbose
+

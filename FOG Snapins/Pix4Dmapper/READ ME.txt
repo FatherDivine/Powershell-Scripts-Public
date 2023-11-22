@@ -1,0 +1,8 @@
+This software does NOT have an actual license server, but rather checks in to Pix4D's servers to license. As such, the a FOG Snapin was created that installs for LAB pcs. It's found here: \\data\dept\CEAS\ITS\Software\Scripts\FOG Snapins\Pix4Dmapper. That snap-in (or running LabInstall.bat in general with the files in this folder) will:
+
+1.) Silently install Pix4Dmapper
+2.) Add a scheduled task to license the softare that runs when a user logs in. Basically it adds the email and pass used to login to the WebUI of Pix4D to gain access to the key.
+3.) Copies a shortcut to c:\users\Public\Desktop, as the silent installer did not place a desktop shortcut.
+
+Once the password doesn't change for the account used (currently Julie's), relicensing should just mean relicensing on their website which is located here: https://cloud.pix4d.com/login?oauth=1&next=%2Foauth2%2Fauthorize%2F%3Fclient_id%3DfInUk8DbkMnixs8usr4XQ6iKdGcSDi9eCZ2lMmQ6%26redirect_uri%3Dhttps:%2F%2Fwww.pix4d.com%2Foauth-callback%26response_type%3Dtoken%26state%3D3bin4e0n428g-https:%2F%2Fwww.pix4d.com%2Fwelcome-to-pix4d
+

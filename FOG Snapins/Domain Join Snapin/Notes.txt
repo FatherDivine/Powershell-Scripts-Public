@@ -1,0 +1,16 @@
+https://answers.microsoft.com/en-us/windows/forum/all/disable-uac-using-powershell/6f37a6f6-fedc-475d-ad4b-cf724d6d91bf
+
+The fog-client runs as SYSTEM user (as a service) and you cannot compare this to manually running scripts.
+
+so maybe no need to elevate
+
+could paste cred and key.xml files somewhere on each pc and pull them. that's is FOG can only do 1 file.
+
+https://wiki.fogproject.org/wiki/index.php?title=SnapinPacks
+
+
+https://forums.fogproject.org/topic/13639/post-download-scripts-and-powershell/9
+
+https://wiki.fogproject.org/wiki/index.php?title=SnapinPacks#PowerShell_Script
+
+Secure version is a Snapin Pack, unsecure is a single script (for PCS with padding issues)

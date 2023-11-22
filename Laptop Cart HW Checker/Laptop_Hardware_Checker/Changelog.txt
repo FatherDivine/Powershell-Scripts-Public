@@ -1,0 +1,91 @@
+LCHWC 1.5.5 (5-10-2022)
+----------------------------------------------
+- LCHWCMailer.ps1: replaced '-replace '[]',"' with 'TrimStart()'. Function used to strip "CEDC-CART-" and leave just the laptop number. The -replace had issues and never worked. (5-16-22)
+
+- LCHWCMailer.ps1: Swapped #$serial for $env:COMPUTERNAME under $msg.subject, allowing to easily identify which laptop is which. (5-16-2022)
+
+- Added "capacity" to "wmic memorychip" allowing to see the capacity of each stick of ram individually. Though the serial has to change if the part is swapped, this will allow to easily identify how much capacity each stick holds individually, and possibly if there is a loss in the capacity amounts over time. This is because it prints out in bytes, which must be divided by 1,073,741,824 to give the GB capacity. If this ends up being flagged constantly in the future (say memory changes by couple of bytes), will have to update the description about what to look for in the results file.
+ 
+- Fixed results not showing in command prompt so user doesn't have to go to \\DATA or zendesk to read results.
+
+- Made robocopy batch output silent (too much on-screen text). Moved output to C:\Users\cladmin\Desktop\LCHWC\RobocopyResults.txt for time being. No need to really look at it, but nice to have. Deleted with Housekeeping.
+
+- Optimized code: LCHWC-1.5.5.bat. Made explanations more understandable, made sure spacing is uniform.
+
+- Updated ReadMe.txt 
+
+- Optimized code: LCHWCMailer.ps1. Removed redundant commented-out lines that were replaced with new code. Made code uiform by removing excess spacing. Changed body and subject line to add serial & timestamp. Preparing to send to cedchelp@ucdenver.edu instead of my own university e-mail. LCHWC-1.5.5.bat: Wrote clearer explanations, made empty space more uniform. 
+
+- Changes: "LCHWC - Changes Notes.txt" to "Changelog.txt"
+
+- Changes: "Results.txt" to "Date-Serial#.txt" for record keeping of the date of the last comparison as well as to easily identify a computer in the Records folder (\\data\dept\CEAS\ITS\Labs\Laptop Cart Resources\Laptop_Check\Records)
+
+- Updated LCHWCMailer.ps1 to reflect looking for "Date-Serial#.txt" instead of "Results.txt". Involved exporting 2 batch-script variables (date & serial#) to PowerShell.
+
+- Added Feature: Script copies the "Date-Serial#.txt" file to \\data\dept\CEAS\ITS\Labs\Laptop Cart Resources\Laptop_Check\Records
+
+- Added Feature: Housekeeping Service. Asks user (Y|N) if they wish to delete the LCHWC folder and its contents from cladmin desktop. As a copy is put on \\data and also emailed(LCHWCMailer.ps1), there is no need for the other files (C:\cladmin\Desktop\LCHWC) unless a user wishes to compare the files manually (PostHardware.txt & PreHardware.txt). If Yes, '@RD /S /Q "C:\Users\cladmin\Desktop\LCHWC"' is ran. If no, the folder stays intact.
+
+
+LCHWC 1.5 (5-9-2022)
+----------------------------------------------
+- Fixed Technician notes not writing to file. went from 'echo Technician Notes:, set /p PostNotes="", echo %PostNotes>> C:\....PostHardware.txt' to 'set /p postnotes="Technician Notes:",cls,>>"C:\....PostHardware.txt" echo "Technician Notes (Post): !postnotes!"'
+
+- Fixed comparison not comparing files correctly (replaced findstr with FC)
+
+- Removed Service Tag from PostHardware check for 2 reasons: To allow for the Service Tag to exist in the (emailed) Results.txt, as well as have a copy of the original Service Tag (a check that tells if the entire computer/mobo was replaced).
+
+
+LCHWC 1.0 (4-11-2022)
+----------------------------------------------
+- Added Laptop Monitor PNP Device ID to detect if LCD was exchanged (possibly broke/repaired)
+
+- Added comparison check between 2 Hardware text files (to verify any changes other than the time: uses findstr)
+
+- Adding ability to tell the difference in time between both files(which would give a good estimate of how long the laptop was checked out for)
+
+- Possibly at the end of the script, making PostHardware.txt, PreHardware.txt, & Results.txt file themselves in a (timestamped) folder inside of LCHWC in the event the script needs to run again. If not timestamped, with a +1
+
+- Added "rem :: " comments in code to narrate what the code does.
+
+- Added serialnumber to memorychip wmic's 
+
+
+LCHWC 0.5 (2-17-2022)
+----------------------------------------------
+- Creation of script (pulling info using wmic commands)
+
+- Added Feature: UAC escalation
+
+- Added Feature: auto closing of command prompt after pause
+
+- Added logic to check of LCHWC folder exists first, if not create
+
+- Added logic to check if PreHardware.txt is empty, if not create & log to PostHardare.txt instead
+
+- Added date & timestamp (was broke, fixed)
+
+- Added Dell service tag to the list of information pulled from the laptop (wmic)
+
+- Made PreHardare.txt read-only
+
+-------------------------------------------------------------------------------------------
+Possible updates:
+
+5-12-2022: Changing name from LCHWC to LCHC (as Hardware is one word). 
+5-12-2022: Using script to collect when laptops are brought back. 3 things need to happen: creating a tag that's easily accessible in Zendesk (if tickets are solved before she sees) as well as making sure the name is added to the pre/post notes. Lastly, talking with Ms. Julie about implementation (as of current she manages laptop check-ins and check-outs.
+5-12-2022: Look into zendesk automatic tagging to tag all messages from LaptopHCChecker@UCDenver.edu with Laptop Checkout Specification (Administration).
+
+store files in a secure location.
+
+create a database that's queryable.
+
+How-to guides – Problem-oriented, take the user through a series of steps to reach a real-world goal
+
+Conversely, changelogs are comprehensive lists of the new features, enhancements, bugs, and other changes in reverse chronological order. Changelogs usually link to specific issues or feature requests within a change management system and also may include links to the developer who supplied the change.
+
+README – A high-level overview of the software, usually alongside the source code
+
+Add section for tech notes and how to use (one line, press enter to finish notes). notes on physical condition etc.
+
+use current date-timestamp to save a copy on \\data. intresting in the field testing
