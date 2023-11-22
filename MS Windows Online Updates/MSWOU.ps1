@@ -26,6 +26,10 @@
   <Example goes here. Repeat this attribute for more than one example>
 #>
 
+
+#--------------------------------------------------------------[Privilege Escalation]---------------------------------------------------------------
+
+# Request Admin rights for the Nuget install
 if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))  
 {  
   $arguments = "& '" +$myinvocation.mycommand.definition + "'"
@@ -103,4 +107,3 @@ Log-Start -LogPath $sLogPath -LogName $sLogName -ScriptVersion $sScriptVersion
 MSWindowsOnlineUpdater
 
 Log-Finish -LogPath $sLogFile
-Log-Email -LogPath $sLogPath -EmailFrom "$hostname.MSWOU@ucdenver.pwsh" -EmailTo "aaron.staten@ucdenver.pvt" -EmailSubject "MS Windows Online Updates Log - [" + (Get-Date).ToShortDateString() + "]"
