@@ -8,22 +8,22 @@
   updates with Windows Updates.
 
 .PARAMETER <Parameter_Name>
-    <Brief description of parameter input required. Repeat this attribute if required>
+    none
 
 .INPUTS
-  <Inputs if any, otherwise state None>
+  none
 
 .OUTPUTS
-  <Outputs if any, otherwise state None - example: Log file stored in C:\Windows\Temp\<name>.log>
+  Logs stored in C:\Windows\Logs\MSWOU\
 
 .NOTES
-  Version:        1.5
+  Version:        2.0
   Author:         Aaron Staten
   Creation Date:  11/22/2023
-  Purpose/Change: Initial script development
+  Purpose:        For CEDC IT Dept. use
   
 .EXAMPLE
-  <Example goes here. Repeat this attribute for more than one example>
+  & .\MSOU.ps1
 #>
 
 #--------------------------------------------------------------[Privilege Escalation]---------------------------------------------------------------
@@ -79,7 +79,6 @@ Function MSWindowsOnlineUpdater{
 
       # Install MS updates that are logged (Transcript) so we can keep track of what was installed if needed.
       Install-WindowsUpdate -MicrosoftUpdate -AcceptAll -IgnoreReboot -Verbose 
-      
     }
     
     Catch{
