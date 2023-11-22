@@ -61,7 +61,7 @@ Function MSWindowsOnlineUpdater{
       Log-Write -LogPath $sLogFile -LineValue "Process (code) Section"
       
       # If Nuget or PSWindowsUpdate aren't already installed, install them
-      If (-not(Get-PackageProvider NuGet)){Install-PackageProvider NuGet -Forcebootstrap -Confirm:$False -Source PSGallery}
+      #If (-not(Get-PackageProvider NuGet)){Install-PackageProvider NuGet -Forcebootstrap -Confirm:$False -ErrorAction silentlycontinue }
       
       If(-not(Get-InstalledModule PSWindowsUpdate -ErrorAction silentlycontinue))
       {
