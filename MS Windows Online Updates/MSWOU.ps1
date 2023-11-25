@@ -60,8 +60,6 @@ $Global:date = Get-Date -Format "-MM-dd-yyyy-HH-mm"
 $Global:trigger = New-Jobtrigger -Once -at (Get-Date).AddMinutes(60)
 $Global:options = New-ScheduledJobOption -StartIfOnBattery
 
-
-
 #-----------------------------------------------------------[Functions]------------------------------------------------------------
 
 Function MSWRemoteUpdatesPrerequisites{
