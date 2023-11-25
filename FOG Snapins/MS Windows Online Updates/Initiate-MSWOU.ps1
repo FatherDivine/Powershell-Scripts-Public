@@ -5,11 +5,6 @@ $date = Get-Date -Format "-MM-dd-yyyy-HH-mm"
 $MSWRemoteUpdatesPrerequisites = {. C:\temp\MSWOU.ps1 ; MSWRemoteUpdatesPrerequisites}
 $MSWOnlineUpdater = {. C:\temp\MSWOU.ps1 ; MSWOnlineUpdater}
 
-#Log File Info
-$sLogPath = "C:\Windows\Logs\MSWOU\"
-$sLogName = "MSWindowsOnlineUpdater$date.log"
-$sLogFile = Join-Path -Path $sLogPath -ChildPath $sLogName
-
 # Downloading the latest version of the script(s) via Github
 Start-Transcript -Path "C:\Windows\Logs\MSWOU\FOG-MSWOUDownloader$date.log"
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Logging-Functions/Logging-Functions.psm1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Logging-Functions\Logging-Functions.psm1' -Force)

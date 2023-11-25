@@ -60,6 +60,11 @@ $Global:date = Get-Date -Format "-MM-dd-yyyy-HH-mm"
 $Global:trigger = New-Jobtrigger -Once -at (Get-Date).AddMinutes(60)
 $Global:options = New-ScheduledJobOption -StartIfOnBattery
 
+#Log File Info
+$sLogPath = "C:\Windows\Logs\MSWOU\"
+$sLogName = "MSWindowsOnlineUpdater$Global:date.log"
+$sLogFile = Join-Path -Path $sLogPath -ChildPath $sLogName
+
 #-----------------------------------------------------------[Functions]------------------------------------------------------------
 
 Function MSWRemoteUpdatesPrerequisites{
