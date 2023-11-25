@@ -6,7 +6,9 @@
 .DESCRIPTION
   Installs  packages and modules necessary to run online-based
   MS updates remotely. Meant to be ran locally or as part of a
-  FOG snap-in (Use Initiate-MSWOU.ps1 to install MSWRUP.ps1 automatically)
+  FOG snap-in (Use Initiate-MSWOU.ps1 to install MSWRUP.ps1 automatically).
+  This is standalone for certain cases, as this function is integrated 
+  within MSWOU.ps1.
 
 .INPUTS
   none
@@ -66,7 +68,7 @@ Function MSWRemoteUpdatesPrerequisites{
       Log-Write -LogPath $sLogFile -LineValue "Process (code) Section"
       Start-Transcript -Path "C:\Windows\Logs\MSWOU\MSRemoteUpdatesPrereq2$date.log"
       
-      #If Nuget or PSWindowsUpdate module isn't already installed, install them
+      #If Nuget or PSWindowsUpdate module aren't already installed, install them
       Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
       
       If(-not(Get-InstalledModule PSWindowsUpdate -ErrorAction silentlycontinue))

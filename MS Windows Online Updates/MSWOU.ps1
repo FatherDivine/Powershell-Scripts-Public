@@ -50,7 +50,7 @@ $ErrorActionPreference = "SilentlyContinue"
 . "${PSScriptRoot}\Invoke-WUInstall.ps1"
 
 #Script Version
-$sScriptVersion = "2.5"
+$sScriptVersion = "3.0"
 
 # Variables 
 $date = Get-Date -Format "-MM-dd-yyyy-HH-mm"
@@ -64,6 +64,50 @@ $sLogFile = Join-Path -Path $sLogPath -ChildPath $sLogName
 
 #-----------------------------------------------------------[Functions]------------------------------------------------------------
 
+Function MSWRemoteUpdatesPrerequisites{
+  Param()
+  
+  Begin{
+    Log-Write -LogPath $sLogFile -LineValue "MSWRemoteUpdatesPrerequisites Function Begin Section"
+  }
+  
+  Process{
+    Try{
+      Log-Write -LogPath $sLogFile -LineValue "Process (code) Section"
+      Start-Transcript -Path "C:\Windows\Logs\MSWOU\MSRemoteUpdatesPrereq2$date.log"
+      
+      #If Nuget or PSWindowsUpdate module aren't already installed, install them
+      Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
+      
+      If(-not(Get-InstalledModule PSWindowsUpdate -ErrorAction silentlycontinue))
+      {
+      Set-PSRepository PSGallery -InstallationPolicy Trusted -Verbose
+      Install-Module PSWindowsUpdate -Confirm:$False -Force -Verbose
+      }
+
+      #Enable Remote PS management of Windows Updates as well as PS Remoting if not      
+      If (-not(Test-WSMan -ComputerName 'localhost' -ErrorAction SilentlyContinue)){
+        Enable-PSRemoting -Force -Verbose
+      }
+
+      Enable-WURemoting -Verbose
+    }
+    
+    Catch{
+      Log-Error -LogPath $sLogFile -ErrorDesc $_.Exception -ExitGracefully $True
+      Break
+    }
+  }
+  
+  End{
+    If($?){
+      Log-Write -LogPath $sLogFile -LineValue "MSRemoteUpdatesPrerequisites Function Completed Successfully."
+      Log-Write -LogPath $sLogFile -LineValue " "
+      Stop-Transcript
+    }
+  }
+}
+
 Function MSWOnlineUpdater{
   Param(
       [Parameter(ValueFromPipeline=$True,
@@ -72,7 +116,7 @@ Function MSWOnlineUpdater{
   )
   
   Begin{
-    Log-Write -LogPath $sLogFile -LineValue "Begin Section"
+    Log-Write -LogPath $sLogFile -LineValue "MSWOnlineUpdater Function Begin Section"
   }
   
   Process{
@@ -82,7 +126,7 @@ Function MSWOnlineUpdater{
       Start-Transcript -Path "C:\Windows\Logs\PSWindowsUpdate\PSWindowsUpdate$date.log"
 
       # Trust all pcs first.
-      Set-Item WSMan:\localhost\Client\TrustedHosts –Value *.ucdenver.pvt -Force
+      Set-Item WSMan:\localhost\Client\TrustedHosts –Value "*.ucdenver.pvt" -Force -Verbose
 
       #Install updates on remote pc(s).
       Invoke-WUInstall -ComputerName $ComputerName -Script {Import-Module PSWindowsUpdate; Install-WindowsUpdate -AcceptAll -AutoReboot -MicrosoftUpdate | Format-Table -AutoSize -Wrap | Out-File (New-Item -Path "C:\Windows\Logs\MSWOU\PSWindowsUpdate$date.log" -Force)} `
@@ -113,7 +157,13 @@ Function MSWOnlineUpdater{
 Log-Start -LogPath $sLogPath -LogName $sLogName -ScriptVersion $sScriptVersion
 
 #Script Execution goes here
-MSWOnlineUpdater
+Start-Job -Name MSWRemoteUpdatesPrerequisites -ScriptBlock {MSWRemoteUpdatesPrerequisites} -Verbose
+Wait-Job -Name MSWRemoteUpdatesPrerequisites -Verbose
+Receive-Job -Name MSWRemoteUpdatesPrerequisites -Verbose
+
+Start-Job -Name MSWOnlineUpdater -ScriptBlock {MSWOnlineUpdater} -Verbose
+Wait-Job -Name MSWOnlineUpdater -Verbose
+Receive-Job -Name MSWOnlineUpdater -Verbose
 
 Log-Finish -LogPath $sLogFile
 
