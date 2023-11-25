@@ -1,4 +1,5 @@
-#requires -version 2 -Module Invoke-WUInstall, Logging-Function
+#requires -version 2 
+Import-Module -Name Invoke-WUInstall, Logging-Function
 <#
 .SYNOPSIS
   Runs MS Windows updates on remote PCs.
