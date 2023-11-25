@@ -14,8 +14,7 @@ Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershel
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/MS%20Windows%20Online%20Updates/MSWOU.ps1" -OutFile "C:\Temp\MSWOU.ps1" -Verbose
 
 # Initialize the script
-Import-Module Invoke-WUInstall
-Import-Module Logging-Functions
+Import-Module Invoke-WUInstall, Logging-Functions
 . C:\Temp\MSWOU.ps1
 
 #Start Logging
