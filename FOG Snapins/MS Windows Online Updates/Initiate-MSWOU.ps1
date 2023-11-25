@@ -2,6 +2,8 @@
 
 # Variable declaration
 $date = Get-Date -Format "-MM-dd-yyyy-HH-mm"
+$MSWRemoteUpdatesPrerequisites = {. C:\temp\MSWOU.ps1 ; MSWRemoteUpdatesPrerequisites}
+$MSWOnlineUpdater = {. C:\temp\MSWOU.ps1 ; MSWOnlineUpdater}
 
 # Downloading the latest version of the script(s) via Github
 Start-Transcript -Path "C:\Windows\Logs\MSWOU\FOG-MSWOUDownloader$date.log"
@@ -20,13 +22,8 @@ Import-Module Logging-Functions
 Log-Start -LogPath $sLogPath -LogName $sLogName -ScriptVersion $sScriptVersion
 
 #Execute Scripts
-Start-Job -Name MSWRemoteUpdatesPrerequisites -ScriptBlock {MSWRemoteUpdatesPrerequisites} -Verbose
-Wait-Job -Name MSWRemoteUpdatesPrerequisites -Verbose
-Receive-Job -Name MSWRemoteUpdatesPrerequisites -Verbose
-
-Start-Job -Name MSWOnlineUpdater -ScriptBlock {MSWOnlineUpdater} -Verbose
-Wait-Job -Name MSWOnlineUpdater -Verbose
-Receive-Job -Name MSWOnlineUpdater -Verbose
+Start-Job -ScriptBlock $MSWRemoteUpdatesPrerequisites -Verbose| Wait-Job -Verbose | Receive-Job -Verbose
+Start-Job -ScriptBlock $MSWOnlineUpdater -Verbose| Wait-Job -Verbose | Receive-Job -Verbose
 
 #Finish Logging
 Log-Finish -LogPath $sLogFile
