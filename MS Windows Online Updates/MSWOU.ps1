@@ -57,7 +57,7 @@ $sScriptVersion = "3.5"
 
 # Variables 
 $date = Get-Date -Format "-MM-dd-yyyy-HH-mm"
-$trigger = New-Jobtrigger -Once -at (Get-Date).AddMinutes(5)
+$trigger = New-Jobtrigger -Once -at (Get-Date).AddMinutes(60)
 $options = New-ScheduledJobOption -StartIfOnBattery
 
 #Log File Info
@@ -128,7 +128,7 @@ Function MSWOnlineUpdater{
 
       Start-Transcript -Path "C:\Windows\Logs\PSWindowsUpdate\PSWindowsUpdate$date.log"
 
-      # Trust all pcs first.
+      #Trust all PCs first.
       Set-Item WSMan:\localhost\Client\TrustedHosts -Value "*.ucdenver.pvt" -Force -Verbose
 
       #Install updates on remote pc(s).
