@@ -56,9 +56,9 @@ Import-Module -Name Invoke-WUInstall, Logging-Function
 $sScriptVersion = "3.5"
 
 # Variables 
-$date = Get-Date -Format "-MM-dd-yyyy-HH-mm"
-$trigger = New-Jobtrigger -Once -at (Get-Date).AddMinutes(60)
-$options = New-ScheduledJobOption -StartIfOnBattery
+$Global:date = Get-Date -Format "-MM-dd-yyyy-HH-mm"
+$Global:trigger = New-Jobtrigger -Once -at (Get-Date).AddMinutes(60)
+$Global:options = New-ScheduledJobOption -StartIfOnBattery
 
 #Log File Info
 $sLogPath = "C:\Windows\Logs\MSWOU\"
