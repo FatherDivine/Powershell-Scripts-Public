@@ -77,7 +77,7 @@ Function MSWRemoteUpdatesPrerequisites{
   Process{
     Try{
       Log-Write -LogPath $sLogFile -LineValue "Process (code) Section"
-      Start-Transcript -Path "C:\Windows\Logs\MSWOU\MSRemoteUpdatesPrereq2$date.log"
+      Start-Transcript -Path "C:\Windows\Logs\MSWOU\MSRemoteUpdatesPrereq$date.log"
       
       #If Nuget or PSWindowsUpdate module aren't already installed, install them
       Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
