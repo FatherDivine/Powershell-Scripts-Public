@@ -1,20 +1,13 @@
 #requires -version 2
 <#
 .SYNOPSIS
-  Runs MS Windows updates on remote PCs.
+  Configures a PC for remote MS Updates.
 
 .DESCRIPTION
-  This script runs MS Windows updates 
-  remotely on a single or list/array 
-  of computers. Can be the localhost.
+  Installs  packages and modules necessary to run online-based
+  MS updates remotely. Meant to be ran locally or as part of a
+  FOG snap-in (Use Initiate-MSWOU.ps1 to install MSWRUP.ps1 automatically)
 
-.PARAMETER ComputerName
-    Accepts a single or array/listfile of
-    multiple computers. Can be fed in the
-    command or from a file. When this parameter
-    is not used, will default to localhost for
-    script use.
-    
 .INPUTS
   none
 
@@ -22,13 +15,13 @@
   Logs stored in C:\Windows\Logs\MSWOU\
 
 .NOTES
-  Version:        2.5
+  Version:        2.0
   Author:         Aaron Staten
   Creation Date:  11/22/2023
   Purpose:        For CEDC IT Dept. use
   
 .EXAMPLE
-  & .\MSOU.ps1 -ComputerName $NC2413
+  & .\MSWRUP.ps1
 #>
 
 #--------------------------------------------------------------[Privilege Escalation]---------------------------------------------------------------
@@ -47,29 +40,22 @@ $ErrorActionPreference = "SilentlyContinue"
 
 #Dot Source required Function Libraries
 . "${PSScriptRoot}\Logging_Functions.ps1"
-. "${PSScriptRoot}\Invoke-WUInstall.ps1"
 
 #Script Version
-$sScriptVersion = "2.5"
+$sScriptVersion = "2.0"
 
 # Variables 
 $date = Get-Date -Format "-MM-dd-yyyy-HH-mm"
-$trigger = New-Jobtrigger -Once -at (Get-Date).AddMinutes(5)
-$options = New-ScheduledJobOption -StartIfOnBattery
 
 #Log File Info
 $sLogPath = "C:\Windows\Logs\MSWOU\"
-$sLogName = "MSWindowsOnlineUpdater$date.log"
+$sLogName = "MSRemoteUpdatesPrereq$date.log"
 $sLogFile = Join-Path -Path $sLogPath -ChildPath $sLogName
 
 #-----------------------------------------------------------[Functions]------------------------------------------------------------
 
-Function MSWOnlineUpdater{
-  Param(
-      [Parameter(ValueFromPipeline=$True,
-      ValueFromPipelineByPropertyName=$True)]
-      [String[]]$ComputerName = 'localhost'
-  )
+Function MSWRemoteUpdatesPrerequisites{
+  Param()
   
   Begin{
     Log-Write -LogPath $sLogFile -LineValue "Begin Section"
@@ -78,19 +64,19 @@ Function MSWOnlineUpdater{
   Process{
     Try{
       Log-Write -LogPath $sLogFile -LineValue "Process (code) Section"
+      Start-Transcript -Path "C:\Windows\Logs\MSWOU\MSRemoteUpdatesPrereq2$date.log"
+      
+      #If Nuget or PSWindowsUpdate module isn't already installed, install them
+      Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
+      
+      If(-not(Get-InstalledModule PSWindowsUpdate -ErrorAction silentlycontinue))
+      {
+      Set-PSRepository PSGallery -InstallationPolicy Trusted -Verbose
+      Install-Module PSWindowsUpdate -Confirm:$False -Force -Verbose
+      }
 
-      Start-Transcript -Path "C:\Windows\Logs\PSWindowsUpdate\PSWindowsUpdate$date.log"
-
-      # Trust all pcs first.
-      Set-Item WSMan:\localhost\Client\TrustedHosts –Value *.ucdenver.pvt -Force
-
-      #Install updates on remote pc(s).
-      Invoke-WUInstall -ComputerName $ComputerName -Script {Import-Module PSWindowsUpdate; Install-WindowsUpdate -AcceptAll -AutoReboot -MicrosoftUpdate | Format-Table -AutoSize -Wrap | Out-File (New-Item -Path "C:\Windows\Logs\MSWOU\PSWindowsUpdate$date.log" -Force)} `
-      -Confirm:$false -SkipModuleTest -RunNow -Verbose
-
-      #Waits 60 minutes to check the status of the last 100 updates and logs to file
-      Register-ScheduledJob -Name WUHistoryJob -ScriptBlock {Get-WUHistory -last 100 -ComputerName $ComputerName | Format-Table -AutoSize -Wrap | Out-File (New-Item -Path "C:\Windows\Logs\MSWOU\WUHistory$date.log" -Force)} `
-      -Trigger $trigger -ScheduledJobOption $options -Verbose
+      #Enable Remote PS management of Windows Updates
+      Enable-WURemoting -Verbose
     }
     
     Catch{
@@ -101,7 +87,7 @@ Function MSWOnlineUpdater{
   
   End{
     If($?){
-      Log-Write -LogPath $sLogFile -LineValue "MSWindowsOnlineUpdater Function Completed Successfully."
+      Log-Write -LogPath $sLogFile -LineValue "MSRemoteUpdatesPrerequisites Function Completed Successfully."
       Log-Write -LogPath $sLogFile -LineValue " "
       Stop-Transcript
     }
@@ -113,7 +99,7 @@ Function MSWOnlineUpdater{
 Log-Start -LogPath $sLogPath -LogName $sLogName -ScriptVersion $sScriptVersion
 
 #Script Execution goes here
-MSWOnlineUpdater
+MSWRemoteUpdatesPrerequisites
 
 Log-Finish -LogPath $sLogFile
 
