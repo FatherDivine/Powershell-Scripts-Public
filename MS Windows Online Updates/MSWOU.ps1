@@ -153,19 +153,3 @@ Function MSWOnlineUpdater{
 }
 
 #-----------------------------------------------------------[Execution]------------------------------------------------------------
-
-Log-Start -LogPath $sLogPath -LogName $sLogName -ScriptVersion $sScriptVersion
-
-#Script Execution goes here
-Start-Job -Name MSWRemoteUpdatesPrerequisites -ScriptBlock {MSWRemoteUpdatesPrerequisites} -Verbose
-Wait-Job -Name MSWRemoteUpdatesPrerequisites -Verbose
-Receive-Job -Name MSWRemoteUpdatesPrerequisites -Verbose
-
-Start-Job -Name MSWOnlineUpdater -ScriptBlock {MSWOnlineUpdater} -Verbose
-Wait-Job -Name MSWOnlineUpdater -Verbose
-Receive-Job -Name MSWOnlineUpdater -Verbose
-
-Log-Finish -LogPath $sLogFile
-
-#Housekeeping
-exit
