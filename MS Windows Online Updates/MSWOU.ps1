@@ -53,7 +53,7 @@ $ErrorActionPreference = "SilentlyContinue"
 Import-Module -Name Invoke-WUInstall, Logging-Function
 
 #Script Version
-$global:sScriptVersion = "3.5"
+$sScriptVersion = "3.5"
 
 # Variables 
 $Global:date = Get-Date -Format "-MM-dd-yyyy-HH-mm"
@@ -61,9 +61,9 @@ $Global:trigger = New-Jobtrigger -Once -at (Get-Date).AddMinutes(60)
 $Global:options = New-ScheduledJobOption -StartIfOnBattery
 
 #Log File Info
-#$sLogPath = "C:\Windows\Logs\MSWOU\"
-#$sLogName = "MSWindowsOnlineUpdater$Global:date.log"
-#$sLogFile = Join-Path -Path $sLogPath -ChildPath $sLogName
+$sLogPath = "C:\Windows\Logs\MSWOU\"
+$sLogName = "MSWindowsOnlineUpdater$Global:date.log"
+$sLogFile = Join-Path -Path $sLogPath -ChildPath $sLogName
 
 #-----------------------------------------------------------[Functions]------------------------------------------------------------
 
@@ -71,12 +71,14 @@ Function MSWRemoteUpdatesPrerequisites{
   Param()
   
   Begin{
-    Log-Write -LogPath $global:sLogFile -LineValue "MSWRemoteUpdatesPrerequisites Function Begin Section"
+    #Start Logging
+    Log-Start -LogPath $sLogPath -LogName $sLogName -ScriptVersion $sScriptVersion
+    Log-Write -LogPath $sLogFile -LineValue "MSWRemoteUpdatesPrerequisites Function Begin Section"
   }
   
   Process{
     Try{
-      Log-Write -LogPath $global:sLogFile -LineValue "Process (code) Section"
+      Log-Write -LogPath $sLogFile -LineValue "Process (code) Section"
       Start-Transcript -Path "C:\Windows\Logs\MSWOU\MSRemoteUpdatesPrereq$Global:date.log"
       
       #If Nuget or PSWindowsUpdate module aren't already installed, install them
@@ -97,15 +99,17 @@ Function MSWRemoteUpdatesPrerequisites{
     }
     
     Catch{
-      Log-Error -LogPath $global:sLogFile -ErrorDesc $_.Exception -ExitGracefully $True
+      Log-Error -LogPath $sLogFile -ErrorDesc $_.Exception -ExitGracefully $True
       Break
     }
   }
   
   End{
     If($?){
-      Log-Write -LogPath $global:sLogFile -LineValue "MSRemoteUpdatesPrerequisites Function Completed Successfully."
-      Log-Write -LogPath $global:sLogFile -LineValue " "
+      #Finish Logging
+      Log-Write -LogPath $sLogFile -LineValue "MSRemoteUpdatesPrerequisites Function Completed Successfully."
+      Log-Write -LogPath $sLogFile -LineValue " "
+      Log-Finish -LogPath $sLogFile
       Stop-Transcript
     }
   }
@@ -119,12 +123,14 @@ Function MSWOnlineUpdater{
   )
   
   Begin{
-    Log-Write -LogPath $global:sLogFile -LineValue "MSWOnlineUpdater Function Begin Section"
+    #Start Logging
+    Log-Start -LogPath $sLogPath -LogName $sLogName -ScriptVersion $sScriptVersion
+    Log-Write -LogPath $sLogFile -LineValue "MSWOnlineUpdater Function Begin Section"
   }
   
   Process{
     Try{
-      Log-Write -LogPath $global:sLogFile -LineValue "Process (code) Section"
+      Log-Write -LogPath $sLogFile -LineValue "Process (code) Section"
 
       Start-Transcript -Path "C:\Windows\Logs\PSWindowsUpdate\PSWindowsUpdate$Global:date.log"
 
@@ -139,15 +145,17 @@ Function MSWOnlineUpdater{
     }
     
     Catch{
-      Log-Error -LogPath $global:sLogFile -ErrorDesc $_.Exception -ExitGracefully $True
+      Log-Error -LogPath $sLogFile -ErrorDesc $_.Exception -ExitGracefully $True
       Break
     }
   }
   
   End{
     If($?){
-      Log-Write -LogPath $global:sLogFile -LineValue "MSWindowsOnlineUpdater Function Completed Successfully."
-      Log-Write -LogPath $global:sLogFile -LineValue " "
+      #Finish Logging
+      Log-Write -LogPath $sLogFile -LineValue "MSWindowsOnlineUpdater Function Completed Successfully."
+      Log-Write -LogPath $sLogFile -LineValue " "
+      Log-Finish -LogPath $sLogFile
       Stop-Transcript
     }
   }

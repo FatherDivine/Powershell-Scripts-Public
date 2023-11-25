@@ -5,32 +5,27 @@ $date = Get-Date -Format "-MM-dd-yyyy-HH-mm"
 $MSWRemoteUpdatesPrerequisites = {. C:\temp\MSWOU.ps1 ; MSWRemoteUpdatesPrerequisites}
 $MSWOnlineUpdater = {. C:\temp\MSWOU.ps1 ; MSWOnlineUpdater}
 
-#Log File Info
-$global:sLogPath = "C:\Windows\Logs\MSWOU\"
-$global:sLogName = "MSWindowsOnlineUpdater$date.log"
-$global:sLogFile = Join-Path -Path $sLogPath -ChildPath $sLogName
-
 # Downloading the latest version of the script(s) via Github
 Start-Transcript -Path "C:\Windows\Logs\MSWOU\FOG-MSWOUDownloader$date.log"
+Write-Verbose 'Download the latest Logging-Functions and Invoke-WUInstall Modules to C:\Program Files\WindowsPowerShell\Modules\' -Verbose
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Logging-Functions/Logging-Functions.psm1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Logging-Functions\Logging-Functions.psm1' -Force)
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Logging-Functions/Logging-Functions.psd1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Logging-Functions\Logging-Functions.psd1' -Force)
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Invoke-WUInstall/Invoke-WUInstall.psm1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Invoke-WUInstall\Invoke-WUInstall.psm1' -Force)
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Invoke-WUInstall/Invoke-WUInstall.psd1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Invoke-WUInstall\Invoke-WUInstall.psd1' -Force)
+Write-Verbose 'Download the latest MSWOU.ps1 and place in C:\temp\' -Verbose
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/MS%20Windows%20Online%20Updates/MSWOU.ps1" -OutFile "C:\Temp\MSWOU.ps1" -Verbose
 
 # Initialize the script
 Import-Module Invoke-WUInstall, Logging-Functions
 . C:\Temp\MSWOU.ps1
 
-#Start Logging
-Log-Start -LogPath $global:sLogPath -LogName $global:sLogName -ScriptVersion $global:sScriptVersion
+
 
 #Execute Scripts
 Start-Job -ScriptBlock $MSWRemoteUpdatesPrerequisites -Verbose| Wait-Job -Verbose | Receive-Job -Verbose
 Start-Job -ScriptBlock $MSWOnlineUpdater -Verbose| Wait-Job -Verbose | Receive-Job -Verbose
 
-#Finish Logging
-Log-Finish -LogPath $sLogFile
+#Stop logging
 Stop-Transcript
 
 #Housekeeping
