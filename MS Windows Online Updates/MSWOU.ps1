@@ -1,4 +1,4 @@
-#requires -version 2
+#requires -version 2 -Module Invoke-WUInstall, Logging-Function
 <#
 .SYNOPSIS
   Runs MS Windows updates on remote PCs.
@@ -22,7 +22,7 @@
   Logs stored in C:\Windows\Logs\MSWOU\
 
 .NOTES
-  Version:        2.5
+  Version:        3.5
   Author:         Aaron Staten
   Creation Date:  11/22/2023
   Purpose:        For CEDC IT Dept. use
@@ -45,12 +45,12 @@
 #Set Error Action to Silently Continue
 $ErrorActionPreference = "SilentlyContinue"
 
-#Dot Source required Function Libraries
-. "${PSScriptRoot}\Logging_Functions.ps1"
-. "${PSScriptRoot}\Invoke-WUInstall.ps1"
+#Dot Source required Function Libraries if not using the Modules
+#. "${PSScriptRoot}\Logging_Functions.ps1"
+#. "${PSScriptRoot}\Invoke-WUInstall.ps1"
 
 #Script Version
-$sScriptVersion = "3.0"
+$sScriptVersion = "3.5"
 
 # Variables 
 $date = Get-Date -Format "-MM-dd-yyyy-HH-mm"
