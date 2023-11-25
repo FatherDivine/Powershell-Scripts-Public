@@ -1,5 +1,4 @@
 #requires -version 2 
-Import-Module -Name Invoke-WUInstall, Logging-Function
 <#
 .SYNOPSIS
   Runs MS Windows updates on remote PCs.
@@ -49,6 +48,9 @@ $ErrorActionPreference = "SilentlyContinue"
 #Dot Source required Function Libraries if not using the Modules
 #. "${PSScriptRoot}\Logging_Functions.ps1"
 #. "${PSScriptRoot}\Invoke-WUInstall.ps1"
+
+#Import Modules, better than above method
+Import-Module -Name Invoke-WUInstall, Logging-Function
 
 #Script Version
 $sScriptVersion = "3.5"
