@@ -1,7 +1,8 @@
 #requires -version 2 
 <#
 .SYNOPSIS
-  Runs MS Windows updates on remote PCs.
+  Allows the ability to configure a PC for
+  MS Windows updates as well as run them.
 
 .DESCRIPTION
   This script runs MS Windows updates 
@@ -22,7 +23,7 @@
   Logs stored in C:\Windows\Logs\MSWOU\
 
 .NOTES
-  Version:        3.5
+  Version:        4.0
   Author:         Aaron Staten
   Creation Date:  11/22/2023
   Purpose:        For CEDC IT Dept. use
@@ -53,11 +54,11 @@ $ErrorActionPreference = "SilentlyContinue"
 Import-Module -Name Invoke-WUInstall, Logging-Function
 
 #Script Version
-$sScriptVersion = "3.5"
+$sScriptVersion = "4.0"
 
 # Variables 
 $Global:date = Get-Date -Format "-MM-dd-yyyy-HH-mm"
-$Global:trigger = New-Jobtrigger -Once -at (Get-Date).AddMinutes(60)
+$Global:trigger = New-Jobtrigger -Once -at (Get-Date).AddMinutes(13)
 $Global:options = New-ScheduledJobOption -StartIfOnBattery
 
 
@@ -96,7 +97,6 @@ Function MSWRemoteUpdatesPrerequisites{
       If (-not(Test-WSMan -ComputerName 'localhost' -ErrorAction SilentlyContinue)){
         Enable-PSRemoting -Force -Verbose
       }
-
       Enable-WURemoting -Verbose
     }
     
@@ -126,7 +126,6 @@ Function MSWOnlineUpdater{
   
   Begin{
     #Log File Info
-    $date = Get-Date -Format "-MM-dd-yyyy-HH-mm"
     $sLogPath = "C:\Windows\Logs\MSWOU\"
     $sLogName = "MSWOU-MSWOnlineUpdater$Global:date.log"
     $sLogFile = Join-Path -Path $sLogPath -ChildPath $sLogName
@@ -139,17 +138,16 @@ Function MSWOnlineUpdater{
   Process{
     Try{
       Log-Write -LogPath $sLogFile -LineValue "Process (code) Section"
-
       Start-Transcript -Path "C:\Windows\Logs\MSWOU\MSWOU-MSWOnlineUpdater-T$Global:date.log"
 
       #Trust all PCs first.
       Set-Item WSMan:\localhost\Client\TrustedHosts -Value "*.ucdenver.pvt" -Force -Verbose
 
-      #Install updates on remote pc(s).
-      Invoke-WUInstall -ComputerName $ComputerName -Script {Import-Module PSWindowsUpdate; Install-WindowsUpdate -AcceptAll -AutoReboot -MicrosoftUpdate | Format-Table -AutoSize -Wrap | Out-File (New-Item -Path "C:\Windows\Logs\MSWOU\PSWindowsUpdate-List$date.log" -Force)} `
+      #Install updates on remote pc(s). Can't add date to log file no matter what I tried (Blaming Michal Gajda).
+      Invoke-WUInstall -ComputerName $ComputerName -Script {Import-Module PSWindowsUpdate; Install-WindowsUpdate -AcceptAll -AutoReboot -MicrosoftUpdate | Format-Table -AutoSize -Wrap | Out-File (New-Item -Path "C:\Windows\Logs\MSWOU\PSWindowsUpdate-List.log" -Force)} `
       -Confirm:$false -SkipModuleTest -RunNow -Verbose
 
-      #Waits 60 minutes to check the status of the last 100 updates and logs to file
+      #Waits 13 minutes to check the status of the last 100 updates and logs to file.
       Register-ScheduledJob -Name WUHistoryJob -ScriptBlock {Get-WUHistory -last 100 -ComputerName $ComputerName | Format-Table -AutoSize -Wrap | Out-File (New-Item -Path "C:\Windows\Logs\MSWOU\WUHistory.log" -Force)} `
       -Trigger $Global:trigger -ScheduledJobOption $Global:options -Verbose
     }
