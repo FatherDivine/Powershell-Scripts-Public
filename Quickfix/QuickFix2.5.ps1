@@ -50,7 +50,7 @@ $ErrorActionPreference = "SilentlyContinue"
 #. "${PSScriptRoot}\Logging_Functions.ps1"
 
 #Downloading the latest version of the modules & script(s) via Github if non-existant
-If (!(Test-Path "C:\Program Files\WindowsPowerShell\Modules\Logging-Functions\")){  
+If (!(Test-Path "C:\Program Files\WindowsPowerShell\Modules\Logging-Functions")){  
 Write-Verbose 'Downloading the latest Logging-Functions module and placing in C:\Program Files\WindowsPowerShell\Modules\Logging-Functions\' -Verbose
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Logging-Functions/Logging-Functions.psm1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Logging-Functions\Logging-Functions.psm1' -Force)
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Logging-Functions/Logging-Functions.psd1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Logging-Functions\Logging-Functions.psd1' -Force)
@@ -60,7 +60,7 @@ Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershel
 Import-Module -Name Logging-Functions
 
 #Create the Log folder if non-existant
-If (!(Test-Path "C:\Windows\Logs\QuickFix")){New-Item -ItemType Directory "C:\Windows\Logs\Quickfix" -Force}
+If (!(Test-Path "C:\Windows\Logs\QuickFix")){New-Item -ItemType Directory "C:\Windows\Logs\Quickfix\" -Force}
 
 #----------------------------------------------------------[Declarations]----------------------------------------------------------
 
@@ -127,6 +127,8 @@ Function QuickFix{
       }
       else{
         $ScriptBlock = {
+        write-verbose "Right area"
+        Write-Host "Right Area"
         #Create the Log folder if non-existant
         If (!(Test-Path "C:\Windows\Logs\QuickFix")){New-Item -ItemType Directory "C:\Windows\Logs\Quickfix" -Force}
 
