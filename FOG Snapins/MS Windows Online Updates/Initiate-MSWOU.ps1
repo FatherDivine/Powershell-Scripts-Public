@@ -36,7 +36,7 @@
 $date = Get-Date -Format "-MM-dd-yyyy-HH-mm"
 $MSWRemoteUpdatesPrerequisites = {. C:\temp\MSWOU.ps1 ; MSWRemoteUpdatesPrerequisites}
 $MSWOnlineUpdater = {. C:\temp\MSWOU.ps1 ; MSWOnlineUpdater}
-[System.Security.Principal.WindowsIdentity]::GetCurrent().Name | Out-File C:\temp\FogInitname.txt -Force
+
 #Logging
 Start-Transcript -Path "C:\Windows\Logs\MSWOU\Initiate-MSWOU$date.log"
 
