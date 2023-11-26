@@ -10,11 +10,11 @@
   of computers. Can be the localhost.
 
 .PARAMETER ComputerName
-    Accepts a single or array/listfile of
-    multiple computers. Can be fed in the
-    command or from a file. When this parameter
-    is not used, will default to localhost for
-    script use.
+  Accepts a single or array/listfile of
+  multiple computers. Can be fed in the
+  command or from a file. When this parameter
+  is not used, will default to localhost for
+  script use.
     
 .INPUTS
   none
@@ -51,7 +51,7 @@ $ErrorActionPreference = "SilentlyContinue"
 #. "${PSScriptRoot}\Invoke-WUInstall.ps1"
 
 #Import Modules, better than above method
-Import-Module -Name Invoke-WUInstall, Logging-Function
+Import-Module -Name Invoke-WUInstall, Logging-Functions
 
 #Script Version
 $sScriptVersion = "5.0"
@@ -148,6 +148,7 @@ Function MSWOnlineUpdater{
 
       #Register-ScheduledJob can't work with a SYSTEM user (case of FOG snap-ins).
       if ([System.Security.Principal.WindowsIdentity]::GetCurrent().Name -eq 'NT AUTHORITY\SYSTEM') {
+      
       #Checks the status of the last 100 updates and logs to file.
       Get-WUHistory -last 100 -ComputerName $ComputerName -Verbose | Format-Table -AutoSize -Wrap | Out-File (New-Item -Path "C:\Windows\Logs\MSWOU\WUHistory-FOG.log" -Force)
       }
