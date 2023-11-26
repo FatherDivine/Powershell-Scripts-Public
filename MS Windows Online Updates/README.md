@@ -50,6 +50,16 @@ How to use just to update PCs remotely after prerequisites are already installed
 . .\location\of\MSWOU.ps1
 MSWOnlineUpdater -Computername $ArrayofPCs
 
+For management after pre-reqs are installed, how to get updates history list for sets of remote computers:
+         
+PS C:\> "G1","G2" | Get-WUHistory
+
+
+Get information about specific installed updates:
+     
+PS C:\> $WUHistory = Get-WUHistory
+PS C:\> $WUHistory | Where-Object {$_.Title -match "KB2607047"} | Select-Object *
+
 
 To use it in a script or likes:
 
