@@ -41,13 +41,13 @@ $MSWOnlineUpdater = {. C:\temp\MSWOU.ps1 ; MSWOnlineUpdater}
 Start-Transcript -Path "C:\Windows\Logs\MSWOU\Initiate-MSWOU$date.log"
 
 # Downloading the latest version of the script(s) via Github
-Write-Verbose 'Downloading the latest Logging-Functions and Invoke-WUInstall Modules and placing in C:\Program Files\WindowsPowerShell\Modules\`n' -Verbose
+Write-Verbose 'Downloading the latest Logging-Functions and Invoke-WUInstall Modules and placing in C:\Program Files\WindowsPowerShell\Modules\' -Verbose
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Logging-Functions/Logging-Functions.psm1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Logging-Functions\Logging-Functions.psm1' -Force)
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Logging-Functions/Logging-Functions.psd1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Logging-Functions\Logging-Functions.psd1' -Force)
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Invoke-WUInstall/Invoke-WUInstall.psm1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Invoke-WUInstall\Invoke-WUInstall.psm1' -Force)
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Invoke-WUInstall/Invoke-WUInstall.psd1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Invoke-WUInstall\Invoke-WUInstall.psd1' -Force)
 
-Write-Verbose 'Downloading the latest MSWOU.ps1 and placing in C:\temp\`n' -Verbose
+Write-Verbose 'Downloading the latest MSWOU.ps1 and placing in C:\temp\' -Verbose
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/MS%20Windows%20Online%20Updates/MSWOU.ps1" -OutFile "C:\Temp\MSWOU.ps1" -Verbose
 
 #-----------------------------------------------------------[Execution]------------------------------------------------------------
