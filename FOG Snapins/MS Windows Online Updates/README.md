@@ -32,6 +32,8 @@ downloads (MSWOU.ps1, MSWRUP.ps1) each have a commented-out "Privilege Escalatio
 
 ### Prerequisites
 
+No prerequisites oustide of this file (Initiate-MSWOU.ps1)... That's all you need.
+
 PowerShell, and not pwsh though it may work in pwsh (PowerShell Core) it is untested.
 Likely if pwsh gives errors, a legacy module would have to be imported.
 
@@ -44,6 +46,7 @@ Likely if pwsh gives errors, a legacy module would have to be imported.
 
 
 2. In the case of FOG, just deploy a PowerShell-based snap-in using the Initiate-MSWOU.ps1 file.
+
 
 3. Deploying remotely from PowerShell using jobs (so you can see if everything succeeded or failed without accessing the logs in C:\Windows\Logs\MSWOU):
 
