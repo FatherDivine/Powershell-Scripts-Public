@@ -21,7 +21,7 @@
   Logs stored in C:\Windows\Logs\MSWOU\
 
 .NOTES
-  Version:        4.0
+  Version:        4.5
   Author:         Aaron Staten
   Creation Date:  11/22/2023
   Purpose:        For CEDC IT Dept. use
