@@ -37,10 +37,10 @@ $date = Get-Date -Format "-MM-dd-yyyy-HH-mm"
 $MSWRemoteUpdatesPrerequisites = {. C:\temp\MSWOU.ps1 ; MSWRemoteUpdatesPrerequisites}
 $MSWOnlineUpdater = {. C:\temp\MSWOU.ps1 ; MSWOnlineUpdater}
 
-#Logging
+#Start Logging
 Start-Transcript -Path "C:\Windows\Logs\MSWOU\Initiate-MSWOU$date.log"
 
-# Downloading the latest version of the script(s) via Github
+#Downloading the latest version of the modules & script(s) via Github.
 Write-Verbose 'Downloading the latest Logging-Functions and Invoke-WUInstall Modules and placing in C:\Program Files\WindowsPowerShell\Modules\' -Verbose
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Logging-Functions/Logging-Functions.psm1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Logging-Functions\Logging-Functions.psm1' -Force)
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Logging-Functions/Logging-Functions.psd1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Logging-Functions\Logging-Functions.psd1' -Force)
