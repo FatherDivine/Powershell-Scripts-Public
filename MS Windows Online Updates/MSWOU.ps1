@@ -139,7 +139,7 @@ Function MSWOnlineUpdater{
     Try{
       Log-Write -LogPath $sLogFile -LineValue "Process (code) Section"
       Start-Transcript -Path "C:\Windows\Logs\MSWOU\MSWOU-MSWOnlineUpdater-T$Global:date.log"
-      [System.Security.Principal.WindowsIdentity]::GetCurrent().Name | Out-File C:\temp\FOGname.txt -Force
+      
       #Trust all PCs first.
       Set-Item WSMan:\localhost\Client\TrustedHosts -Value "*.ucdenver.pvt" -Force -Verbose
 
@@ -151,13 +151,13 @@ Function MSWOnlineUpdater{
       if ([System.Security.Principal.WindowsIdentity]::GetCurrent().Name -eq 'NT AUTHORITY\SYSTEM') {
       #Checks the status of the last 100 updates and logs to file.
       Get-WUHistory -last 100 -ComputerName $ComputerName | Format-Table -AutoSize -Wrap | Out-File (New-Item -Path "C:\Windows\Logs\MSWOU\WUHistory-FOG.log" -Force) `
-      -Trigger $Global:trigger -ScheduledJobOption $Global:options -Verbose -Credential $Credentials  
-      
+        -Trigger $Global:trigger -ScheduledJobOption $Global:options -Verbose -Credential $Credentials  
       }
+
       else{
       #Waits 13 minutes for updates to finish to check the status of the last 100 updates and logs to file.
       Register-ScheduledJob -Name WUHistoryJob -ScriptBlock {Get-WUHistory -last 100 -ComputerName $ComputerName | Format-Table -AutoSize -Wrap | Out-File (New-Item -Path "C:\Windows\Logs\MSWOU\WUHistory.log" -Force)} `
-      -Trigger $Global:trigger -ScheduledJobOption $Global:options -Verbose
+        -Trigger $Global:trigger -ScheduledJobOption $Global:options -Verbose
       }
     }
     
