@@ -144,13 +144,12 @@ Function MSWOnlineUpdater{
       Set-Item WSMan:\localhost\Client\TrustedHosts -Value "*.ucdenver.pvt" -Force -Verbose
 
       #Install updates on remote pc(s). Can't add date to log file no matter what I tried (Blaming Michal Gajda).
-      Invoke-WUInstall -ComputerName $ComputerName -Script {Import-Module PSWindowsUpdate; Install-WindowsUpdate -AcceptAll -AutoReboot -MicrosoftUpdate | Format-Table -AutoSize -Wrap | Out-File (New-Item -Path "C:\Windows\Logs\MSWOU\PSWindowsUpdate-List.log" -Force)} `
-      -Confirm:$false -SkipModuleTest -RunNow -Verbose
+      Invoke-WUInstall -ComputerName $ComputerName -Script {Import-Module PSWindowsUpdate; Install-WindowsUpdate -AcceptAll -AutoReboot -MicrosoftUpdate -Verbose | Format-Table -AutoSize -Wrap | Out-File (New-Item -Path "C:\Windows\Logs\MSWOU\PSWindowsUpdate-List.log" -Force)} -Confirm:$false -SkipModuleTest -RunNow -Verbose
 
       #Register-ScheduledJob can't work with a SYSTEM user (case of FOG snap-ins).
       if ([System.Security.Principal.WindowsIdentity]::GetCurrent().Name -eq 'NT AUTHORITY\SYSTEM') {
       #Checks the status of the last 100 updates and logs to file.
-      Get-WUHistory -last 100 -ComputerName $ComputerName | Format-Table -AutoSize -Wrap | Out-File (New-Item -Path "C:\Windows\Logs\MSWOU\WUHistory-FOG.log" -Force) -Verbose
+      Get-WUHistory -last 100 -ComputerName $ComputerName -Verbose | Format-Table -AutoSize -Wrap | Out-File (New-Item -Path "C:\Windows\Logs\MSWOU\WUHistory-FOG.log" -Force)
       }
 
       else{
