@@ -23,7 +23,7 @@
   Logs stored in C:\Windows\Logs\MSWOU\
 
 .NOTES
-  Version:        4.0
+  Version:        4.5
   Author:         Aaron Staten
   Creation Date:  11/22/2023
   Purpose:        For CEDC IT Dept. use
@@ -54,7 +54,7 @@ $ErrorActionPreference = "SilentlyContinue"
 Import-Module -Name Invoke-WUInstall, Logging-Function
 
 #Script Version
-$sScriptVersion = "4.0"
+$sScriptVersion = "4.5"
 
 # Variables 
 $Global:date = Get-Date -Format "-MM-dd-yyyy-HH-mm"
@@ -147,9 +147,25 @@ Function MSWOnlineUpdater{
       Invoke-WUInstall -ComputerName $ComputerName -Script {Import-Module PSWindowsUpdate; Install-WindowsUpdate -AcceptAll -AutoReboot -MicrosoftUpdate | Format-Table -AutoSize -Wrap | Out-File (New-Item -Path "C:\Windows\Logs\MSWOU\PSWindowsUpdate-List.log" -Force)} `
       -Confirm:$false -SkipModuleTest -RunNow -Verbose
 
+      #Register-ScheduledJob can't work with a SYSTEM user (case of FOG snap-ins). The workaround is creating a local account first.
+      if ($env:username -eq 'SYSTEM') {
+      #Credentials Section
+      $Password = ConvertTo-SecureString "H4ckMe1234!"-AsPlainText -Force
+      $User = New-LocalUser "service.scheduler" -Password $Password -Description "For scheduling in tasks from system account"
+      $Credentials = New-Object System.Management.Automation.PSCredential($user.name, $password)
+
+      #Waits 13 minutes to check the status of the last 100 updates and logs to file.
+      Register-ScheduledJob -Name WUHistoryJob -ScriptBlock {Get-WUHistory -last 100 -ComputerName $ComputerName | Format-Table -AutoSize -Wrap | Out-File (New-Item -Path "C:\Windows\Logs\MSWOU\WUHistory.log" -Force)} `
+      -Trigger $Global:trigger -ScheduledJobOption $Global:options -Verbose -Credential $Credentials  
+      
+      #Destroy the local user for security reasons
+      Remove-LocalUser -Name "service.scheduler"
+      }
+      else{
       #Waits 13 minutes to check the status of the last 100 updates and logs to file.
       Register-ScheduledJob -Name WUHistoryJob -ScriptBlock {Get-WUHistory -last 100 -ComputerName $ComputerName | Format-Table -AutoSize -Wrap | Out-File (New-Item -Path "C:\Windows\Logs\MSWOU\WUHistory.log" -Force)} `
       -Trigger $Global:trigger -ScheduledJobOption $Global:options -Verbose
+      }
     }
     
     Catch{
