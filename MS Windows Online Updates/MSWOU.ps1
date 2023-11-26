@@ -150,8 +150,7 @@ Function MSWOnlineUpdater{
       #Register-ScheduledJob can't work with a SYSTEM user (case of FOG snap-ins).
       if ([System.Security.Principal.WindowsIdentity]::GetCurrent().Name -eq 'NT AUTHORITY\SYSTEM') {
       #Checks the status of the last 100 updates and logs to file.
-      Get-WUHistory -last 100 -ComputerName $ComputerName | Format-Table -AutoSize -Wrap | Out-File (New-Item -Path "C:\Windows\Logs\MSWOU\WUHistory-FOG.log" -Force) `
-        -Trigger $Global:trigger -ScheduledJobOption $Global:options -Verbose -Credential $Credentials  
+      Get-WUHistory -last 100 -ComputerName $ComputerName | Format-Table -AutoSize -Wrap | Out-File (New-Item -Path "C:\Windows\Logs\MSWOU\WUHistory-FOG.log" -Force) -Verbose
       }
 
       else{
