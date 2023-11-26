@@ -145,10 +145,12 @@ Function MSWOnlineUpdater{
       Set-Item WSMan:\localhost\Client\TrustedHosts -Value "*.ucdenver.pvt" -Force -Verbose
 
       #Install updates on remote pc(s).
-      Invoke-WUInstall -ComputerName $ComputerName -Script {Import-Module PSWindowsUpdate; Install-WindowsUpdate -AcceptAll -AutoReboot -MicrosoftUpdate | Format-Table -AutoSize -Wrap | Out-File (New-Item -Path "C:\Windows\Logs\MSWOU\PSWindowsUpdate-List.log" -Force)} -Confirm:$false -SkipModuleTest -RunNow -Verbose
+      Invoke-WUInstall -ComputerName $ComputerName -Script {Import-Module PSWindowsUpdate; Install-WindowsUpdate -AcceptAll -AutoReboot -MicrosoftUpdate | Format-Table -AutoSize -Wrap | Out-File (New-Item -Path "C:\Windows\Logs\MSWOU\PSWindowsUpdate-List$Global:Date.log" -Force)} `
+      -Confirm:$false -SkipModuleTest -RunNow -Verbose
 
       #Waits 60 minutes to check the status of the last 100 updates and logs to file
-      Register-ScheduledJob -Name WUHistoryJob -ScriptBlock {Get-WUHistory -last 100 -ComputerName $ComputerName | Format-Table -AutoSize -Wrap | Out-File (New-Item -Path "C:\Windows\Logs\MSWOU\WUHistory.log" -Force)} -Trigger $Global:trigger -ScheduledJobOption $Global:options -Verbose
+      Register-ScheduledJob -Name WUHistoryJob -ScriptBlock {Get-WUHistory -last 100 -ComputerName $ComputerName | Format-Table -AutoSize -Wrap | Out-File (New-Item -Path "C:\Windows\Logs\MSWOU\WUHistory.log" -Force)} `
+      -Trigger $Global:trigger -ScheduledJobOption $Global:options -Verbose
     }
     
     Catch{
