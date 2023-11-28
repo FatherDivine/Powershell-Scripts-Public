@@ -87,6 +87,7 @@ Function QuickFix{
   
   Begin{
     Log-Start -LogPath $sLogPath -LogName $sLogName -ScriptVersion $sScriptVersion
+    Log-Write -LogPath $sLogFile -LineValue "QuickFix is running on: $ComputerName"
     Log-Write -LogPath $sLogFile -LineValue "Begin Section"
   }
   
@@ -181,7 +182,7 @@ Function QuickFix{
   }
   End{
     If($?){
-      Log-Write -LogPath $sLogFile -LineValue "Function Completed Successfully."
+      Log-Write -LogPath $sLogFile -LineValue "QuickFix Function Completed Successfully."
       Log-Write -LogPath $sLogFile -LineValue " "
       Read-Host -Prompt "Press Enter to exit"
       Log-Finish -LogPath $sLogFile
