@@ -69,6 +69,7 @@ Import-Module -Name Logging-Functions -DisableNameChecking
 
 #Create Quickfix alias
 New-Alias -Name QuickFix -value Invoke-QuickFix -Description "Runs routine maintenance comamnds like SFC, disk check, disk optimize, DISM, and clears cookies & cache on a local or remote PC(s)."
+New-Alias -Name QF -value Invoke-QuickFix -Description "Runs routine maintenance comamnds like SFC, disk check, disk optimize, DISM, and clears cookies & cache on a local or remote PC(s)."
 
 #Create the Log folder if non-existant
 If (!(Test-Path "C:\Windows\Logs\QuickFix")){New-Item -ItemType Directory "C:\Windows\Logs\Quickfix\" -Force}
@@ -177,7 +178,7 @@ Function Invoke-QuickFix{
   
           #Logging
           $date = Get-Date -Format "-MM-dd-yyyy-HH-mm"
-          wait-job -name SFC,OptimizeVolume,DiskCheck,DISM,Cache1,Cache2,Cache3,Cookies1,Cookies2 -Verbose| Receive-Job -Verbose| Out-File (New-Item -Path "C:\Windows\Logs\QuickFix\QuickFix-Jobs$date.log" -Force)
+          wait-job -name SFC,OptimizeVolume,DiskCheck,DISM,Cache1,Cache2,Cache3,Cookies1,Cookies2 -Verbose| Receive-Job -WriteEvents -WriteJobInResults -Verbose| Out-File (New-Item -Path "C:\Windows\Logs\QuickFix\QuickFix-Jobs$date.log" -Force)
           }
        
         foreach ($PC in $ComputerName){
