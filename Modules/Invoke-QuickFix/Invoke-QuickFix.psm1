@@ -30,10 +30,10 @@
   Run on an array of PCs
   .\QuickFix.ps1 -ComputerName $NC2413
 
-  Run the Module Version from a PS prompt
-  QuickFix
+  Run the Module Version from a PS prompt (alias)
+  QF
 
-  Run the Module version with a list of PCs from a PS prompt
+  Run the Module version with a list of PCs from a PS prompt (another alias)
   QuickFix -ComputerName "Test-PC"
 
   Using the Full (non-aliased) name from a PS prompt
@@ -67,7 +67,7 @@ Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershel
 #Import Modules
 Import-Module -Name Logging-Functions -DisableNameChecking
 
-#Create Quickfix alias
+#Create Quickfix aliases
 New-Alias -Name QuickFix -value Invoke-QuickFix -Description "Runs routine maintenance comamnds like SFC, disk check, disk optimize, DISM, and clears cookies & cache on a local or remote PC(s)."
 New-Alias -Name QF -value Invoke-QuickFix -Description "Runs routine maintenance comamnds like SFC, disk check, disk optimize, DISM, and clears cookies & cache on a local or remote PC(s)."
 

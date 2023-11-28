@@ -31,7 +31,7 @@ Function Log-Start{
     Version:        1.1
     Author:         Luca Sturlese
     Creation Date:  19/05/12
-    Purpose/Change: Added debug mode support
+    Purpose/Change: Added debug mode support. 11-28-23: Added Force and silence to line 53. Every log call from a script gave a red access denied error but still wrote (Aaron S.)
 
   .EXAMPLE
     Log-Start -LogPath "C:\Windows\Temp" -LogName "Test_Script.log" -ScriptVersion "1.5"
