@@ -46,9 +46,6 @@ if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdenti
 #Set Error Action to Silently Continue
 $ErrorActionPreference = "SilentlyContinue"
 
-#Dot Source required Function Libraries for offline use
-#. "${PSScriptRoot}\Logging_Functions.ps1"
-
 #Downloading the latest version of the modules & script(s) via Github if non-existant
 If (!(Test-Path "C:\Program Files\WindowsPowerShell\Modules\Logging-Functions")){  
 Write-Verbose 'Downloading the latest Logging-Functions module and placing in C:\Program Files\WindowsPowerShell\Modules\Logging-Functions\' -Verbose
@@ -56,11 +53,13 @@ Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershel
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Logging-Functions/Logging-Functions.psd1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Logging-Functions\Logging-Functions.psd1' -Force)
 }
 
-#Import Modules, better than above method
+#Import Modules
 Import-Module -Name Logging-Functions
 
 #Create the Log folder if non-existant
 If (!(Test-Path "C:\Windows\Logs\QuickFix")){New-Item -ItemType Directory "C:\Windows\Logs\Quickfix\" -Force}
+
+
 
 #----------------------------------------------------------[Declarations]----------------------------------------------------------
 
