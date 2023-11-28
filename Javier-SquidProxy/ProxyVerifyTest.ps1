@@ -1,4 +1,7 @@
-﻿#First define what we are testing
+﻿#Simple open-ended tool for testing if the proxy is on or off (in instances before I started logging this info to C:\Windows\Logs\Proxy\ProxyStatus.txt. 
+#The best test now is checking that ProxyStatus.txt file)
+
+#First define what we are testing
 $regKey1 = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings"
 $regKey2 = "HKLM:\Software\Microsoft\Windows\CurrentVersion\Internet Settings"
 $regKey3 = "HKU:\.DEFAULT\Software\Microsoft\Windows\CurrentVersion\Internet Settings"
