@@ -8,25 +8,36 @@
   like sfc, DISM, and disk optimization. 
   Outputs the logging to C:\temp.
 
-.PARAMETER <Parameter_Name>
-    None
+.PARAMETER ComputerName
+    Allows for QuickFix to be ran against a remote PC or list of
+    remote PCs.
 
 .INPUTS
   None
 
 .OUTPUTS
-  None
+  Logs are sent to:
+  C:\Windows\Logs\QuickFix
 
 .NOTES
-  Version:        2.1
+  Version:        0.1 (Module)
   Author:         Aaron
   Creation Date:  9/27/23 (Updated 11-26-2023)
   For:            CEDC IT Dept.
-  Next Update:    2.6: Turn into Module
+  Planned Updates: Keep PS window open after module runs
   
 .EXAMPLE
-  #Run on an array of PCs
+  Run on an array of PCs
   .\QuickFix.ps1 -ComputerName $NC2413
+
+  Run the Module Version from a PS prompt
+  QuickFix
+
+  Run the Module version with a list of PCs from a PS prompt
+  QuickFix -ComputerName "Test-PC"
+
+  Using the Full (non-aliased) name from a PS prompt
+  Invoke-QuickFix
 
   #FOG Snapin Arguments for calling the function for the local PC
    powershell.exe -ExecutionPolicy Bypass -Command "& {. .\QuickFix.ps1; & QuickFix}" 
@@ -54,24 +65,23 @@ Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershel
 }
 
 #Import Modules
-Import-Module -Name Logging-Functions
+Import-Module -Name Logging-Functions -DisableNameChecking
 
 #Create Quickfix alias
 New-Alias -Name QuickFix -value Invoke-QuickFix -Description "Runs routine maintenance comamnds like SFC, disk check, disk optimize, DISM, and clears cookies & cache on a local or remote PC(s)."
-
 
 #Create the Log folder if non-existant
 If (!(Test-Path "C:\Windows\Logs\QuickFix")){New-Item -ItemType Directory "C:\Windows\Logs\Quickfix\" -Force}
 
 
-
 #----------------------------------------------------------[Declarations]----------------------------------------------------------
 
 #Script Version
-$sScriptVersion = "2.0"
+$sScriptVersion = "0.1"
 
 #Variables 
 $date = Get-Date -Format "-MM-dd-yyyy-HH-mm"
+$hostname = hostname
 
 #Log File Info
 $sLogPath = "C:\Windows\Logs\QuickFix\"
@@ -80,7 +90,7 @@ $sLogFile = Join-Path -Path $sLogPath -ChildPath $sLogName
 
 #-----------------------------------------------------------[Functions]------------------------------------------------------------
 
-Function QuickFix{
+Function Invoke-QuickFix{
   [cmdletbinding()]
   Param(
     [Parameter(Mandatory=$false,
@@ -90,7 +100,6 @@ Function QuickFix{
   
   Begin{
     Log-Start -LogPath $sLogPath -LogName $sLogName -ScriptVersion $sScriptVersion
-    Log-Write -LogPath $sLogFile -LineValue "QuickFix is running on: $ComputerName"
     Log-Write -LogPath $sLogFile -LineValue "Begin Section"
   }
   
@@ -98,7 +107,8 @@ Function QuickFix{
     Try{
       Log-Write -LogPath $sLogFile -LineValue "Process (code) Section"
       If ($null -eq $ComputerName){  
-        pause
+        Log-Write -LogPath $sLogFile -LineValue "QuickFix is running on: Localhost ($hostname)"
+
         # Configuration in case SFC says "Windows Resource Protection could not start the repair service
         sc.exe config trustedinstaller "start=auto"
         net start trustedinstaller
@@ -132,9 +142,7 @@ Function QuickFix{
         wait-job -name SFC,OptimizeVolume,DiskCheck,DISM,Cache1,Cache2,Cache3,Cookies1,Cookies2 -Verbose| Receive-Job -Verbose| Out-File (New-Item -Path "C:\Windows\Logs\QuickFix\QuickFix-Jobs.log" -Force)
       }
       else{
-        write-host "second area"
-          
-  
+          Log-Write -LogPath $sLogFile -LineValue "QuickFix is running on: $ComputerName"  
           $ScriptBlock = {
           #Create the Log folder if non-existant
           If (!(Test-Path "C:\Windows\Logs\QuickFix")){New-Item -ItemType Directory "C:\Windows\Logs\Quickfix" -Force}

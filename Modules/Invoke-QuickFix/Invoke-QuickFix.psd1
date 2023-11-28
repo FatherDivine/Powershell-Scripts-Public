@@ -18,13 +18,13 @@ ModuleVersion = '0.1'
 # CompatiblePSEditions = @()
 
 # ID used to uniquely identify this module
-GUID = '4fc44c14-79a2-400f-84e4-423cff1c3d33'
+GUID = '66c78862-cdb2-4406-8a49-a477f6f312cf'
 
 # Author of this module
 Author = 'Aaron Staten'
 
 # Company or vendor of this module
-CompanyName = 'Unknown'
+CompanyName = 'CEDC IT Dept.'
 
 # Copyright statement for this module
 Copyright = '(c) Aaron Staten. All rights reserved.'
@@ -69,16 +69,16 @@ Description = 'Runs routine maintenance comamnds like SFC, disk check, disk opti
 # NestedModules = @()
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = @()
+FunctionsToExport = @('Invoke-QuickFix')
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 CmdletsToExport = @()
 
 # Variables to export from this module
-VariablesToExport = 'QuickFix'
+VariablesToExport = '*'
 
 # Aliases to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no aliases to export.
-AliasesToExport = @()
+AliasesToExport = @('QuickFix')
 
 # DSC resources to export from this module
 # DscResourcesToExport = @()

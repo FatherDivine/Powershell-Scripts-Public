@@ -8,14 +8,16 @@
   like sfc, DISM, and disk optimization. 
   Outputs the logging to C:\temp.
 
-.PARAMETER <Parameter_Name>
-    None
+.PARAMETER ComputerName
+    Allows for QuickFix to be ran against a remote PC or list of
+    remote PCs.
 
 .INPUTS
   None
 
 .OUTPUTS
-  None
+  Logs are sent to:
+  C:\Windows\Logs\QuickFix
 
 .NOTES
   Version:        2.1
@@ -54,7 +56,7 @@ Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershel
 }
 
 #Import Modules
-Import-Module -Name Logging-Functions
+Import-Module -Name Logging-Functions -DisableNameChecking
 
 #Create the Log folder if non-existant
 If (!(Test-Path "C:\Windows\Logs\QuickFix")){New-Item -ItemType Directory "C:\Windows\Logs\Quickfix\" -Force}
