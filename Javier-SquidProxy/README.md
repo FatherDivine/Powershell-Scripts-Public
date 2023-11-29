@@ -24,13 +24,13 @@ The only issues may be if when Javier moves the logs manually (after using the p
 When it comes to activating the proxy, Javier will comment the parts of /etc/squid/squid.conf between:
 
 ############################
-####### START JP
+ START JP
 ############################
 
 and 
 
  #####################
-####### END JP
+END JP
 #####################
 
 while restarting squid proxy (systemctl restart squid). This will disable the proxying portion so internet works again as normal. At this time, we can remove the above changes by deploying the Disable-Proxy.ps1 script/snapin.
