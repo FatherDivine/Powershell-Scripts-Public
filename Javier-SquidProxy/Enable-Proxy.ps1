@@ -3,11 +3,12 @@
   Enables a proxy.
 
 .DESCRIPTION
-  This script enables Javiar's Squid proxy for exams
-  taken in the CEDC, specifically Computer Science.
+  This script enables Javiar's Proxy for exams
+  in the CEDC, specifically Computer Science.
+  
     
 .INPUTS
-   None. You cannot pipe objects to Enable-Proxy.ps1.
+  none
 
 .OUTPUTS
   The Proxy Status (Enabled/Disabled) stored in C:\Windows\Logs\Proxy\
@@ -18,24 +19,14 @@
   Creation Date:  11/28/2023
   Purpose:        For CEDC IT Dept. use
   
-.LINK
-https://github.com/FatherDivine/Powershell-Scripts-Public/blob/main/Javier-SquidProxy/Enable-Proxy.ps1
-
 .EXAMPLE
   & .\Enable-Proxy.ps1
-
-  The simplest execution from a PowerShell prompt.
-
-.EXAMPLE
-  Invoke-Command -FilePath .\Enable-Proxy.ps1 -ComputerName $PCs 
   
-  To invoke, thereby sending the script to a single PC or array of PCs.
+  Can be used as a FOG snap-in or invoked regularly:
+  Invoke-Command -FilePath .\Enable-Proxy.ps1 -ComputerName $PCs 
 
-.EXAMPLE
+  Or if you want to be fancy and make each it's own job
   Foreach ($PC in $PCs){Invoke-Command -FilePath .\Enable-Proxy.ps1 -ComputerName $PC -AsJob }
-
-  If you want to be fancy and make each it's own job.
-  This method is good for keeping track of which PC may have failed/offline.
 #>
 #----------------------------------------------------------[Initialization & Declarations]----------------------------------------------------------
 
@@ -54,13 +45,13 @@ $regKeys = @(
 $PreventProxyChanges = "HKCU:\SOFTWARE\Policies\Microsoft\Internet Explorer\Control Panel" 
 #-----------------------------------------------------------[Execution]------------------------------------------------------------
 
-#Adding the below values to the above registry keys
+#Adding the below proxy values to the above registry keys
 $regKeys | ForEach-Object {
 New-ItemProperty -path $_ ProxyEnable -value 1 -Force
 New-ItemProperty -path $_ ProxyServer -value "dceasapp783:3128" -Force   
 New-ItemProperty -path $_ ProxyOverride -value "<local>" -Force
 }
-#Lockdown the changes
+#Lockdown the ability to alter the proxy configuration
 New-ItemProperty -path $PreventProxyChanges Proxy -value 1 -Force
 
 #Log
