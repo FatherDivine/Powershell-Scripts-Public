@@ -9,10 +9,10 @@
 ## About <a name = "about"></a>
 
 Installs the latest version of the following PowerShell Modules:
-Logging-Functions
-Invoke-WUInstall
-Invoke-QuickFix
-Javier Squid Proxy (Enable/Disable-Proxy)
+Logging-Functions, 
+Invoke-WUInstall, 
+Invoke-QuickFix, 
+& Javier Squid Proxy (Enable/Disable-Proxy)
 
 
 ## Getting Started <a name = "getting_started"></a>
