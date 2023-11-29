@@ -96,24 +96,24 @@ get-jobs
 #
 
 
-3.) If using the PS Module form, define the computers you wish to deploy and type:  
+3.) If using the PS Module form, define the computers you wish to deploy and type: <br>
 
 
 Invoke-Command -ComputerName $PCList -ScriptBlock {Enable-Proxy}
 
-
-We could also wrap that into separate jobs as well using aliases to make things look cryptic:
+<br><br>
+We could also wrap that into separate jobs as well using aliases to make things look cryptic:<br>
 
 $PCList|%{icm $_ -ScriptBlock {Enable-Proxy} -AsJob}
 
-
+<br><br>
 The module is available here: https://github.com/FatherDivine/Powershell-Scripts-Public/tree/main/Modules/Javier-SquidProxy) 
 
 
 
-
+<br><br>
 Lastly, you can check the Proxy Status (if enabled/disabled) by navigating to C:\Windows\Logs\Proxy\
 and reading the "ProxyStatus.txt" file. This shows if It's enabled or disabled, as well as
-the date & time it last was. If this is a remote PC, you can do something like the below from File explorer:
+the date & time it last was. If this is a remote PC, you can do something like the below from File explorer:<br>
 
 \\PCHostname\c$\Windows\Logs\Proxy to open the folder and read the logs.
