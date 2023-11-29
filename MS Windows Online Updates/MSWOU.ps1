@@ -29,7 +29,7 @@
   Purpose:        For CEDC IT Dept. use
 
 .LINK
-https://github.com/FatherDivine/Powershell-Scripts-Public/blob/main/MS%20Windows%20Online%20Updates/MSWOU.ps1
+https://github.com/FatherDivine/Powershell-Scripts-Public/tree/main/MS%20Windows%20Online%20Updates
 
 .EXAMPLE
   & .\MSOU.ps1 -ComputerName $NC2413

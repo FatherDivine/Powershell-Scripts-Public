@@ -25,7 +25,9 @@
   Author:         Aaron Staten
   Creation Date:  11/22/2023
   Purpose:        For CEDC IT Dept. use
-  
+
+.LINK
+https://github.com/FatherDivine/Powershell-Scripts-Public/tree/main/FOG%20Snapins/MS%20Windows%20Online%20Updates
 .EXAMPLE
   & .\Initiate-MSWOU.ps1
 #>
