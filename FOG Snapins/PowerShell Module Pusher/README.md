@@ -59,17 +59,3 @@ Foreach ($PC in $JavierLabPCS) {Invoke-Command -ComputerName -$PC -ScriptBlock {
 Then you can check jobs by typing:
 
 Get-Job
-
-You'll see something like:
-
-Id     Name            PSJobTypeName   State         HasMoreData     Location             Command
---     ----            -------------   -----         -----------     --------             -------
-5      Job5            RemoteJob       Running       True            hostname          Disable-Proxy
-
-or something like:
-
-Id     Name            PSJobTypeName   State         HasMoreData     Location             Command
---     ----            -------------   -----         -----------     --------             -------
-1      Job1            RemoteJob       Completed     True            cedc-blank-name      Enable-Proxy
-3      Job3            RemoteJob       Failed        False           host-name-here        Enable-Proxy
-
