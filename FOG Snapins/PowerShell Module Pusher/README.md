@@ -1,46 +1,37 @@
-# Project Title
+# PowerShell Module Pusher
 
 ## Table of Contents
 
 - [About](#about)
 - [Getting Started](#getting_started)
 - [Usage](#usage)
-- [Contributing](../CONTRIBUTING.md)
 
 ## About <a name = "about"></a>
 
-Write about 1-2 paragraphs describing the purpose of your project.
+Installs the latest version of the following PowerShell Modules:
+Logging-Functions
+Invoke-WUInstall
+Invoke-QuickFix
+Javier Squid Proxy (Enable/Disable-Proxy)
+
 
 ## Getting Started <a name = "getting_started"></a>
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See [deployment](#deployment) for notes on how to deploy the project on a live system.
+Meant to be ran as a FOG Snapin, but could be ran locally like all PS code.
 
 ### Prerequisites
 
-What things you need to install the software and how to install them.
-
-```
-Give examples
-```
+Nada
 
 ### Installing
 
-A step by step series of examples that tell you how to get a development env running.
-
-Say what the step will be
-
-```
-Give the example
-```
-
-And repeat
-
-```
-until finished
-```
-
-End with an example of getting some data out of the system or using it for a little demo.
+Once the modules files are located in C:\Program Files\WindowsPowerShell\Modules, it will install automatically. At that point you can just type "Enable-Proxy" or "Disable-Proxy" in any PS session.
 
 ## Usage <a name = "usage"></a>
 
-Add notes about how to use the system.
+Enable-Proxy
+Disable-Proxy
+
+or you can do it for remote PCS:
+
+Invoke-Command -ComputerName $PCs -ScriptBlock {Enable-Proxy}

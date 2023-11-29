@@ -1,4 +1,4 @@
-## Javier's Squid Proxy
+# Javier's Squid Proxy
 
 ## Table of Contents
 
