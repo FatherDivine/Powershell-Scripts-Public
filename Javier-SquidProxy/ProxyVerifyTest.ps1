@@ -18,7 +18,7 @@ $PCs = @("CSCI-LW840-A1","CSCI-LW840-A2","CSCI-LW840-A4","CSCI-LW840-A5","CSCI-L
 #Create our log file
 New-Item -ItemType File -Path "C:\temp\ProxyLogs.txt" -Force
 
-
+$PCs = "cedc-nc2413-a2"
 Foreach ($PC in $PCs){
 Write-Output "$PC" -Verbose| Out-File "C:\Temp\ProxyLogs.txt" -Append
 Invoke-Command -ComputerName $PC -ScriptBlock {(Get-Item $using:regkey1).Property -contains "dceasapp783:3128"} -Verbose| Out-File "C:\Temp\ProxyLogs.txt" -Append

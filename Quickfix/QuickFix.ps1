@@ -1,16 +1,15 @@
-#requires -version 2
 <#
 .SYNOPSIS
   Runs maintenance commands and outputs a log.
 
 .DESCRIPTION
   Simple script to run a few maintenance commands on the PC,
-  like sfc, DISM, and disk optimization. 
-  Outputs the logging to C:\temp.
+  like sfc, DISM, and disk optimization. outputs the logging
+  to C:\Windows\Logs\QuickFix.
 
 .PARAMETER ComputerName
-    Allows for QuickFix to be ran against a remote PC or list of
-    remote PCs.
+  Allows for QuickFix to be ran against a remote PC or list of
+  remote PCs.
 
 .INPUTS
   None
@@ -26,12 +25,20 @@
   For:            CEDC IT Dept.
   Next Update:    2.6: Turn into Module
   
+.LINK
+https://github.com/FatherDivine/Powershell-Scripts-Public/blob/main/Quickfix/QuickFix.ps1
+
 .EXAMPLE
-  #Run on an array of PCs
   .\QuickFix.ps1 -ComputerName $NC2413
 
-  #FOG Snapin Arguments for calling the function for the local PC
-   powershell.exe -ExecutionPolicy Bypass -Command "& {. .\QuickFix.ps1; & QuickFix}" 
+   Runs on an array of PCs
+
+.EXAMPLE   
+  powershell.exe -ExecutionPolicy Bypass -Command "& {. .\QuickFix.ps1; & QuickFix}" 
+   
+  This will allow you to use command prompt to launch the script.
+  This may work for FOG Snapin arguments as well, allowing ont to
+  call the function directly.
 #>
 
 #--------------------------------------------------------------[Privilege Escalation]---------------------------------------------------------------
@@ -79,6 +86,11 @@ $sLogFile = Join-Path -Path $sLogPath -ChildPath $sLogName
 #-----------------------------------------------------------[Functions]------------------------------------------------------------
 
 Function QuickFix{
+  <#
+  .PARAMETER ComputerName
+  Allows for QuickFix to be ran against a remote PC or list of
+  remote PCs.
+  #>
   [cmdletbinding()]
   Param(
     [Parameter(Mandatory=$false,
@@ -192,4 +204,4 @@ Function QuickFix{
 }
 #-----------------------------------------------------------[Execution]------------------------------------------------------------
 
-# To be ran from command line: Broken for now
+# To be ran from command line as a function, Module.

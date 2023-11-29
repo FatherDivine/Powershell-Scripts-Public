@@ -27,7 +27,10 @@
   Author:         Aaron Staten
   Creation Date:  11/22/2023
   Purpose:        For CEDC IT Dept. use
-  
+
+.LINK
+https://github.com/FatherDivine/Powershell-Scripts-Public/blob/main/MS%20Windows%20Online%20Updates/MSWOU.ps1
+
 .EXAMPLE
   & .\MSOU.ps1 -ComputerName $NC2413
 #>
