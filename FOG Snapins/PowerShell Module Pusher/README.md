@@ -30,31 +30,31 @@ Once the modules files are located in C:\Program Files\WindowsPowerShell\Modules
 ## Usage <a name = "usage"></a>
 
 
-Javier's Squid Proxy:
+Javier's Squid Proxy:<br><br>
 
 These commands assume the Enable and Disable proxy modules are installed on the remote and local PC.
 #
 
 At any PC with the module, you can natively run the command from any PS session:
 
-Enable-Proxy
-Disable-Proxy
-
+Enable-Proxy<br>
+Disable-Proxy<br>
+<br>
 #
 How to run remotely from any PC with admin authentication:
 
 Invoke-Command -ComputerName $PC -ScriptBlock {Enable-Proxy}
+<br>
+# 
+If you want to separate as individual jobs so you can easily see which PC may have failed/not taken the changes, you can use the following aliased cmdlet:<br>
 
-#
-If you want to separate as individual jobs so you can easily see which PC may have failed/not taken the changes, you can use the following aliased cmdlet:
-
-$JavierLabPCS|%{icm $_ -Scriptblock {Enable-Proxy} -AsJob}
+$JavierLabPCS|%{icm $_ -Scriptblock {Enable-Proxy} -AsJob} <br><br>
 
 
 which is the same as:
 
 Foreach ($PC in $JavierLabPCS) {Invoke-Command -ComputerName -$PC -ScriptBlock {Enable-Proxy} -AsJob}
-
+<br>
 #
 Then you can check jobs by typing:
 
