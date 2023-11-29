@@ -61,7 +61,7 @@ New-ItemProperty -path $_ ProxyServer -value "dceasapp783:3128" -Force
 New-ItemProperty -path $_ ProxyOverride -value "<local>" -Force
 }
 #Lockdown the changes
-New-ItemProperty -path $PreventProxyChanges Proxy -value 1 -Force
+New-ItemProperty -path $PreventProxyChanges Proxy -value 1 -Force -ErrorAction SilentlyContinue
 
 #Log
 Write-Output "Proxy Enabled on $date" | Out-File (New-Item -Path "C:\Windows\Logs\Proxy\ProxyStatus.txt" -Force)

@@ -66,7 +66,7 @@ reg delete "HKLM\Software\Microsoft\Windows\CurrentVersion\Internet Settings\Con
 
 
 #Undo the lockdown on editing proxy configuration
-Remove-ItemProperty -path $PreventProxyChanges Proxy -Force
+Remove-ItemProperty -path $PreventProxyChanges Proxy -Force -ErrorAction SilentlyContinue
 
 #Remove the proxy keys
 $regKeys | ForEach-Object {
