@@ -108,7 +108,6 @@ Function QuickFix{
     Try{
       Log-Write -LogPath $sLogFile -LineValue "Process (code) Section"
       If ($null -eq $ComputerName){  
-        pause
         # Configuration in case SFC says "Windows Resource Protection could not start the repair service
         sc.exe config trustedinstaller "start=auto"
         net start trustedinstaller
@@ -142,9 +141,6 @@ Function QuickFix{
         wait-job -name SFC,OptimizeVolume,DiskCheck,DISM,Cache1,Cache2,Cache3,Cookies1,Cookies2 -Verbose| Receive-Job -Verbose| Out-File (New-Item -Path "C:\Windows\Logs\QuickFix\QuickFix-Jobs.log" -Force)
       }
       else{
-        write-host "second area"
-          
-  
           $ScriptBlock = {
           #Create the Log folder if non-existant
           If (!(Test-Path "C:\Windows\Logs\QuickFix")){New-Item -ItemType Directory "C:\Windows\Logs\Quickfix" -Force}
