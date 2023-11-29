@@ -47,7 +47,12 @@ $date = Get-Date -Format "MM-dd-yyyy-HH-mm"
 New-PSDrive -PSProvider Registry -Name HKU -Root HKEY_USERS
 
 #Define our registry keys
-$regKeys = @(
+$regKeys1 = @(
+    "HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings\Connections",
+    "HKLM:\Software\Microsoft\Windows\CurrentVersion\Internet Settings\Connections",
+    "HKU:\.DEFAULT\Software\Microsoft\Windows\CurrentVersion\Internet Settings\Connections"
+)
+$regKeys2 = @(
     "HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings",
     "HKLM:\Software\Microsoft\Windows\CurrentVersion\Internet Settings",
     "HKU:\.DEFAULT\Software\Microsoft\Windows\CurrentVersion\Internet Settings"
@@ -55,25 +60,20 @@ $regKeys = @(
 $PreventProxyChanges = "HKCU:\SOFTWARE\Policies\Microsoft\Internet Explorer\Control Panel" 
 #-----------------------------------------------------------[Execution]------------------------------------------------------------
 Function Disable-Proxy{
-#Delete the old saved legacy settings & default connections. Without this, Remove-ItemProperty doesn't actually remove.
-reg delete "HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings\Connections" /v SavedLegacySettings /f
-reg delete "HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings\Connections" /v DefaultConnectionSettings /f
-reg delete "HKLM\Software\Microsoft\Windows\CurrentVersion\Internet Settings\Connections" /v SavedLegacySettings /f
-reg delete "HKLM\Software\Microsoft\Windows\CurrentVersion\Internet Settings\Connections" /v DefaultConnectionSettings /f
-#These don't seem to exist, but just in case
-#reg delete "HKU\Software\Microsoft\Windows\CurrentVersion\Internet Settings\Connections" /v SavedLegacySettings /f
-#reg delete "HKU\.DEFAULT\Software\Microsoft\Windows\CurrentVersion\Internet Settings\Connections" /v DefaultConnectionSettings /f
-
-
 #Undo the lockdown on editing proxy configuration
-Remove-ItemProperty -path $PreventProxyChanges Proxy -Force -ErrorAction SilentlyContinue
+Remove-ItemProperty -path $PreventProxyChanges Proxy -Force
 
 #Remove the proxy keys
-$regKeys | ForEach-Object {
-Remove-ItemProperty -path $_ ProxyEnable -Force
-Remove-ItemProperty -path $_ ProxyServer -Force   
-Remove-ItemProperty -path $_ ProxyOverride -Force
+$regKeys1 | ForEach-Object {
+Remove-ItemProperty -Path $_ SavedLegacySettings -Force -ErrorAction SilentlyContinue
+Remove-ItemProperty -Path $_ DefaultConnectionSettings -Force -ErrorAction SilentlyContinue
+}
+$regKeys2 | ForEach-Object {
+Remove-ItemProperty -Path $_ ProxyEnable -Force -ErrorAction SilentlyContinue
+Remove-ItemProperty -Path $_ ProxyServer -Force -ErrorAction SilentlyContinue
+Remove-ItemProperty -Path $_ ProxyOverride -Force -ErrorAction SilentlyContinue
 }
 
+#Log
 Write-Output "Proxy Disabled on $date" | Out-File (New-Item -Path "C:\Windows\Logs\Proxy\ProxyStatus.txt" -Force)
 }

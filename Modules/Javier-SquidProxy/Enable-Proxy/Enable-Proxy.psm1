@@ -56,9 +56,9 @@ $PreventProxyChanges = "HKCU:\SOFTWARE\Policies\Microsoft\Internet Explorer\Cont
 Function Enable-Proxy{
 #Adding the below values to the above registry keys
 $regKeys | ForEach-Object {
-New-ItemProperty -path $_ ProxyEnable -value 1 -Force
-New-ItemProperty -path $_ ProxyServer -value "dceasapp783:3128" -Force   
-New-ItemProperty -path $_ ProxyOverride -value "<local>" -Force
+New-ItemProperty -path $_ ProxyEnable -value 1 -Force -ErrorAction SilentlyContinue
+New-ItemProperty -path $_ ProxyServer -value "dceasapp783:3128" -Force -ErrorAction SilentlyContinue
+New-ItemProperty -path $_ ProxyOverride -value "<local>" -Force -ErrorAction SilentlyContinue
 }
 #Lockdown the changes
 New-ItemProperty -path $PreventProxyChanges Proxy -value 1 -Force -ErrorAction SilentlyContinue
