@@ -94,16 +94,6 @@ We can check the jobs using the below command:
 get-jobs
  
 
-You'll see something like:
-
-"
-Id     Name            PSJobTypeName   State         HasMoreData     Location             Command
---     ----            -------------   -----         -----------     --------             -------
-5      Job5            RemoteJob       Running       True            hostname-here        Disable-Proxy
-7      Job7            RemoteJob       Running       True            cedc-hostname        Disable-Proxy"
-
-
-
 ##
 
 
