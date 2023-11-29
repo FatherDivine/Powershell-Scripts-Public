@@ -3,11 +3,11 @@
   Disables a proxy.
 
 .DESCRIPTION
-  This script disables Javiar's Proxy for exams
-  in the CEDC, specifically Computer Science.
+  This script disables Javiar's Squid proxy for exams
+  taken in the CEDC, specifically Computer Science.
     
 .INPUTS
-  none
+  None. You cannot pipe objects to Disable-Proxy.ps1.
 
 .OUTPUTS
   The Proxy Status (Enabled/Disabled) stored in C:\Windows\Logs\Proxy\
@@ -17,15 +17,25 @@
   Author:         Aaron Staten
   Creation Date:  11/28/2023
   Purpose:        For CEDC IT Dept. use
+
+.LINK
+https://github.com/FatherDivine/Powershell-Scripts-Public/blob/main/Javier-SquidProxy/Disable-Proxy.ps1
   
 .EXAMPLE
   & .\Enable-Proxy.ps1
-  
-  Can be used as a FOG snap-in or invoked regularly:
-  Invoke-Command -FilePath .\Enable-Proxy.ps1 -ComputerName $PCs 
 
-  Or if you want to be fancy and make each it's own job
+  The simplest execution from a PowerShell prompt.
+
+.EXAMPLE
+  Invoke-Command -FilePath .\Enable-Proxy.ps1 -ComputerName $PCs 
+  
+  To invoke, thereby sending the script to a single PC or array of PCs.
+
+.EXAMPLE
   Foreach ($PC in $PCs){Invoke-Command -FilePath .\Enable-Proxy.ps1 -ComputerName $PC -AsJob }
+
+  If you want to be fancy and make each it's own job.
+  This method is good for keeping track of which PC may have failed/offline.
 #>
 
 #----------------------------------------------------------[Initialization & Declarations]----------------------------------------------------------
@@ -47,6 +57,12 @@ $PreventProxyChanges = "HKCU:\SOFTWARE\Policies\Microsoft\Internet Explorer\Cont
 #Delete the old saved legacy settings & default connections. Without this, Remove-ItemProperty doesn't actually remove.
 reg delete "HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings\Connections" /v SavedLegacySettings /f
 reg delete "HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings\Connections" /v DefaultConnectionSettings /f
+reg delete "HKLM\Software\Microsoft\Windows\CurrentVersion\Internet Settings\Connections" /v SavedLegacySettings /f
+reg delete "HKLM\Software\Microsoft\Windows\CurrentVersion\Internet Settings\Connections" /v DefaultConnectionSettings /f
+#These don't seem to exist, but just in case
+#reg delete "HKU\Software\Microsoft\Windows\CurrentVersion\Internet Settings\Connections" /v SavedLegacySettings /f
+#reg delete "HKU\.DEFAULT\Software\Microsoft\Windows\CurrentVersion\Internet Settings\Connections" /v DefaultConnectionSettings /f
+
 
 #Undo the lockdown on editing proxy configuration
 Remove-ItemProperty -path $PreventProxyChanges Proxy -Force
