@@ -21,7 +21,8 @@ Javier will make all edits to the Squid proxy configuration file itself on the U
 The only issues may be if when Javier moves the logs manually (after using the proxy, so no impact on the exam), the read/write permissions are messed and squid will fail to start. Fastest way to solve is backup everything in /etc/squid (config) and logs (/var/log/squid likely) and uninstall/reinstall squid proxy, and place back the config files.
 
 
-When done testing, Javier will comment the parts of /etc/squid/squid.conf between
+When it comes to activating the proxy, Javier will comment the parts of /etc/squid/squid.conf between:
+
 ############################
 # START JP
 #########################3
@@ -40,7 +41,7 @@ https://gist.github.com/aldodelgado/ab70809ed513fa59c1a50f532d47297a
 https://devblogs.microsoft.com/powershell-community/how-to-change-the-start-page-for-the-edge-browser/ 
 
 
-### Prerequisites <a name = "prerequisites"></a>
+## Prerequisites <a name = "prerequisites"></a>
 
 No real prerequisites, other than a laptop, the scripts, and/or FOG snapin deployment knowledge.
 
@@ -87,3 +88,10 @@ Invoke-Command -ComputerName $PCList -ScriptBlock {Enable-Proxy}
 We could also wrap that into separate jobs as well using aliases to make things look cryptic:
 
 $PCList|%{icm -ScriptBlock {Enable-Proxy} $_ -AsJob}
+
+
+Lastly, you can check the Proxy Status (if enabled/disabled) by navigating to C:\Windows\Logs\Proxy\
+and reading the "ProxyStatus.txt" file. This shows if It's enabled or disabled, as well as
+the date & time it last was. If this is a remote PC, you can do something like the below from File explorer:
+
+\\PCHostname\c$\Windows\Logs\Proxy to open the folder and read the logs.
