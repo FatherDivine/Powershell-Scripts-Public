@@ -1,4 +1,3 @@
-#requires -version 2
 <#
 .SYNOPSIS
   <Overview of script>
@@ -20,7 +19,10 @@
   Author:         <Name>
   Creation Date:  <Date>
   Purpose/Change: Initial script development
-  
+ 
+.LINK
+GitHub README or script link
+
 .EXAMPLE
   <Example goes here. Repeat this attribute for more than one example>
 #>
@@ -31,15 +33,26 @@
 $ErrorActionPreference = "SilentlyContinue"
 
 #Dot Source required Function Libraries
-. "${PSScriptRoot}\Logging_Functions.ps1"
+#. "${PSScriptRoot}\Logging_Functions.ps1"
+
+#Import Modules
+Import-Module -Name Logging-Functions -DisableNameChecking
+
+#Create the Log folder if non-existant
+If (!(Test-Path "C:\Windows\Logs\<FolderName>")){New-Item -ItemType Directory "C:\Windows\Logs\<FolderName>\" -Force}
+
+
 
 #----------------------------------------------------------[Declarations]----------------------------------------------------------
 
 #Script Version
 $sScriptVersion = "1.0"
 
+#Variables 
+$date = Get-Date -Format "-MM-dd-yyyy-HH-mm"
+
 #Log File Info
-$sLogPath = "C:\Windows\Temp"
+$sLogPath = "C:\Windows\Logs\<FolderName>"
 $sLogName = "<script_name>.log"
 $sLogFile = Join-Path -Path $sLogPath -ChildPath $sLogName
 
@@ -48,10 +61,23 @@ $sLogFile = Join-Path -Path $sLogPath -ChildPath $sLogName
 <#
 
 Function <FunctionName>{
-  Param()
+ # Param()
+  < # 
+  .PARAMETER ComputerName
+    Allows for QuickFix to be ran against a remote PC or list of
+    remote PCs.
   
+  [cmdletbinding()]
+  Param(
+    [Parameter(Mandatory=$false,
+    ValueFromPipeline=$true)]
+    [string[]]$ComputerName = 'localhost'
+  )
+# >
   Begin{
-    Log-Write -LogPath $sLogFile -LineValue "<description of what is going on>..."
+    Log-Start -LogPath $sLogPath -LogName $sLogName -ScriptVersion $sScriptVersion
+    Log-Write -LogPath $sLogFile -LineValue "<FunctionName> is running on: $ComputerName"
+    Log-Write -LogPath $sLogFile -LineValue "Begin Section"
   }
   
   Process{
@@ -67,8 +93,10 @@ Function <FunctionName>{
   
   End{
     If($?){
-      Log-Write -LogPath $sLogFile -LineValue "Completed Successfully."
+      Log-Write -LogPath $sLogFile -LineValue "<FunctionName> Function Completed Successfully."
       Log-Write -LogPath $sLogFile -LineValue " "
+      Read-Host -Prompt "Press Enter to exit"
+      Log-Finish -LogPath $sLogFile
     }
   }
 }
@@ -77,8 +105,4 @@ Function <FunctionName>{
 
 #-----------------------------------------------------------[Execution]------------------------------------------------------------
 
-#Log-Start -LogPath $sLogPath -LogName $sLogName -ScriptVersion $sScriptVersion
-
-#Script Execution goes here
-
-#Log-Finish -LogPath $sLogFile
+#Script Execution goes here, when not using as a Module
