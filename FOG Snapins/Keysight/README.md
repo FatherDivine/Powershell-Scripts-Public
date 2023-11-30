@@ -5,53 +5,77 @@
 - [About](#about)
 - [Getting Started](#getting_started)
 - [Usage](#usage)
-- [Contributing](../CONTRIBUTING.md)
 
 ## About <a name = "about"></a>
 
-Purpose of this Function/Module is to update the environment variable on Keysight, as the server changed ports.
+Purpose of this Function/Module is to create functions that support Keysight software. This includes things that may be needed, like license files changes, HOME path/registry edits, or updating (and in some cases, uninstalling) certain softwares. 
 
-Idea is to have all software license (and config) changes in module form, so if a license needs changing one can just type "Set-<SoftwareName>License" to update the licensing of that software on a local PC or remotely (easy fog snap-in: ps1 script that just has "Set-<SoftwareName>License" or pull newest version from GitHub repo) But if modules are automatically being pushed/updated (possible worthwhile GroupPolicy), then there's no need. When we get university github, Fog can pull from there, using token (talk to Aman for more information on how that works)
 
-Could also load them onto all pcs from a local one by typing:
-
-Set-<SoftwareName>License -ComputerName $PCList (or single pc).
-
-This will become a template for all software license updaters (or configuration changers) so we can easily deploy to the local PC (if parameter "-ComputerName" is not set ) or to a range of PCs using the parameter. If one puts localhost in the parameter the logic will allow for a PC to 
-
-This will serve as a template for other times we must edit the configuration of software.
+The larger idea is to have all software license (and config) changes in module form, so if a license needs changing one can just type "<SoftwareCompany>-<SoftwareName>-<Function>" to support whatever is needed.
 
 
 ## Getting Started <a name = "getting_started"></a>
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See [deployment](#deployment) for notes on how to deploy the project on a live system.
+The code supports getting everything it needs. You may need to enable remote execution of PS code if you've never run PowerShell code in your environment. Open "PowerShell" as administrator and type:<br>
+
+Set-ExecutionPolicy -ExecutionPolicy Unrestricted
+<br><br>
+
+Another great cmdlet to type is the one that enables psremoting. This is necessary to run invoke commands on remote PCs. In our CEDC environment, this is already enabled on all LAB pcs: <br>
+
+Enable-PSRemoting
+
+<br><br>
+
+Lastly, if you downloaded the script/module online (Github), you may have to right click the script, Properties, and "Unblock" the code from being executed so you can run it.
 
 ### Prerequisites
 
-What things you need to install the software and how to install them.
+This script automatically downloads the latest Logging-Functions from Father Divine's Github repo if non-existant. That would be the only prerequisite to this script functioning properly.
 
-```
-Give examples
-```
-
-### Installing
-
-A step by step series of examples that tell you how to get a development env running.
-
-Say what the step will be
-
-```
-Give the example
-```
-
-And repeat
-
-```
-until finished
-```
 
 End with an example of getting some data out of the system or using it for a little demo.
 
 ## Usage <a name = "usage"></a>
 
-Add notes about how to use the system.
+Though this is meant to be a module/function, you can still use this with FOG by editing the .ps1(or renaming .psm1 to .ps1) and at the bottom of the script adding whatever function you need to execute. For fixing the homepath, for instance add:<br>
+
+Keysight-ADS-FixHomePath
+
+<br><br>
+That would be enough to upload as a FOG snap-in and have that function load on the local PC.
+
+#
+
+Another use is the function as a .ps1 file on your local PC. You could initialize the script then call the funnctions in that same PowerShell session. Once you close the window, you have to retype both commands. :
+
+#
+
+The #1 recommended version of using this is as a module, which can be loaded onto a PC from a  FOG SNAPIN (likely named Keysight Module Loader, PowerShell Module Pusher/Loader or likes), or thru execution of that FOG script on a local PC, as well as just copying the .psd1 and .psm1 files to C:\Program Files\WindowsPowerShell\Modules\Keysight\ folder is outlined below.<br>
+The benefit of using modules over the above methods are:<br>
+1.) The module is automatically loaded and available in every PowerShell session you open natively.<br>
+2.) There is less coding necessary, saving time.<br>
+3.) They are easy to update, and have a central location<br>
+4.) When the entire lab has a module (like QuickFix) you can just type "QuickFix" or even it's alias "QF" at any PS prompt and it will run on that PC. From that same LAB PC you could run QuickFix on every other PC in the lab.<br>
+#
+To fix the HOME path of the Keysight ADS program on the local PC (as if you're sitting at the one needing the fix), open a PowerShell session and type:<br>
+
+Keysight-ADS-FixHomePath 
+
+<br><br>
+To fix the HOME path of a specific remote PC, open a PowerShell session and type:<br>
+
+Keysight-ADS-FixHomePath -ComputerName "<Hostname>"
+
+<br><br>
+When it comes to a list/array of computers, here are two methods. If you have a text file with a list of PCs already defined (with 1 name on each line, no extra symbols), in a PowerShell session type:<br>
+
+$PCList = Get-Content "C:\Location\Of\Computers.txt"
+<#Or if in the same folder that you are already in: $PCList = Get-Content .\Computers.txt#>
+<br>
+Keysight-ADS-FixHomePath -ComputerName $PCList
+
+<br><br>
+The logging will take care of letting you know if a PC was turned off/not ran on.
+
+

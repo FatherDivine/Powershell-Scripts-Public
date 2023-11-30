@@ -20,7 +20,7 @@
   Purpose/Change: Initial script development
  
 .LINK
-GitHub README or script link
+  https://github.com/FatherDivine/Powershell-Scripts-Public/tree/main/FOG%20Snapins/Keysight
 
 .EXAMPLE
   <Example goes here. Repeat this attribute for more than one example>
@@ -144,9 +144,9 @@ Function Keysight-ADS-FixHomePath{
 Function Keysight-VersionCheck{
   #Tells what version of Keysight is installed
   #Outputs on the screen and C:\Windows\Logs\Keysight\KeySight-Version.log~
-  
   }
 
+  Function KeySight-Uninstall{} 
 #-----------------------------------------------------------[Execution]------------------------------------------------------------
 
 #Script Execution goes here, when not using as a Module
