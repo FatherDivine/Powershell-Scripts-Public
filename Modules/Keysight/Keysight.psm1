@@ -87,27 +87,31 @@ Function Keysight-ADS-FixHomePath{
     Log-Write -LogPath $sLogFile -LineValue "Keysight-ADS-FixHomePath is running on: $ComputerName"
     Log-Write -LogPath $sLogFile -LineValue "Begin Section"
     Start-Transcript -Path "C:\Windows\Logs\Keysight\Keysight-ADS-FixHomePath-T$date.log" -Force
-    #Registry locations that need editing
-    $regKeys = @(
-    "HKLM:\SOFTWARE\Keysight\ADS\4.91\eeenv"
-    )
-    #Our registry test-path variable
-    $RegistryTestValue = 'Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Keysight\ADS\4.91\eeenv'
-    
+    Write-Verbose "Keysight-ADS-FixHomePath is running on: $ComputerName" -Verbose
+
+    #Our heavylifting scriptblock. While @() allows the invoke-command verbose to transcript, it won't actually execute on the remote PC. 
     $KeysightScriptblock = {
+      #Registry locations that need editing
+      $regKeys = @(
+      "HKLM:\SOFTWARE\Keysight\ADS\4.91\eeenv"
+      )
+      #Our registry test-path variable
+      $RegistryTestValue = 'Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Keysight\ADS\4.91\eeenv'
+      
       #Test if the registry value was already set, and set if not
       $RegistryTest = Get-ItemPropertyValue $RegistryTestValue -Name HOME
-      If ($RegistryTest -eq 'C:\ADS'){Write-Verbose 'C:\ADS already set as HOME' -Verbose}
+      If ('C:\ADS' -eq $RegistryTest){Write-Verbose 'C:\ADS already set as HOME' -Verbose}
       else {
         Write-Verbose "Setting C:\ADS as HOME at $regKeys" -Verbose
 
         #Apply the changes to registry        
         $regKeys | ForEach-Object {
-          Set-ItemProperty -path $_ HOME -value C:\ADS -Force -ErrorAction SilentlyContinue
+          Set-ItemProperty -path $_ HOME -value C:\ADS -Force #-ErrorAction SilentlyContinue
         }
       }
 
       #Create the directory structure if hpeesof folder is non-existant
+      Write-Verbose 'Creating Directory Structure C:\ADS if non-existant.' -Verbose
       If (!(Test-Path "C:\ADS\hpeesof\config")){
         #Test for ADS, create if non-existant. Logic is in case someone created C:\ADS manually, but didn't put the files.
         If (!(Test-Path "C:\ADS")){
@@ -116,10 +120,12 @@ Function Keysight-ADS-FixHomePath{
         }
       
         #Move the files from C:\cladmin\hpeesof to C:\ADS if it exists there
+        Write-Verbose 'Finding a copy of hpeesof to move to C:\ADS. Might be C:\users\cladmin or Github.' -Verbose
         If (Test-Path "C:\users\cladmin\hpeesof"){Move-Item -Path "C:\users\cladmin\hpeesof" -Destination "C:\ADS\" -Force -Verbose}
       
         #As a backup if not there, grab from Github & unzip
         else{
+          Write-Verbose 'C:\users\cladmin\hpeesof was non-existant. Grabbing the latest version from Github.' -Verbose
           # Create a new temporary file
           $Extracthpeesof = ".zip"
           
@@ -131,25 +137,31 @@ Function Keysight-ADS-FixHomePath{
           
           #Remove temporary file
           $Extracthpeesof | Remove-Item
-      
         }
       }
+          #Set the correct permissions for the C:\ADS\hpeesof folder: ADS users must have write access.
+          Write-Verbose 'Updating the permissions of C:\ADS\hpeesof so Authenticated Users can access.' -Verbose
+          $ACLPath = "C:\ADS\hpeesof"
+          $ACL  = Get-Acl -Path $ACLPath
+          $user = New-Object -TypeName 'System.Security.Principal.SecurityIdentifier' -ArgumentList @([System.Security.Principal.WellKnownSidType]::AuthenticatedUserSid, $null)
+          $rule = New-Object System.Security.AccessControl.FileSystemAccessRule($user, 'FullControl', 'ContainerInherit,ObjectInherit', 'None', 'Allow')
+          $ACL.SetAccessRule($rule)
+
+          #Set the ACL, write any errors
+          try{Set-Acl -Path $ACLPath -AclObject $ACL}catch{Write-Error "An Error occured. Could not set the folder permissions: $_" -Verbose}
+         
     }
   }
   
   Process{
     Try{
+      Log-Write -LogPath $sLogFile -LineValue "The Process (code) Section."
       #Execute Keysight scriptblock on localhost only
-      If ('localhost' -eq $ComputerName){ 
-      &$KeysightScriptblock
-      }
+      If ('localhost' -eq $ComputerName){& $KeysightScriptblock}
 
       #Execute Keysight scriptblock on every PC listed in $ComputerName
-      else{
-        foreach ($PC in $ComputerName){
-          Invoke-Command -ScriptBlock $KeysightScriptblock -ComputerName $PC -AsJob
-        }  
-      }
+      else{foreach ($PC in $ComputerName){Invoke-Command -ScriptBlock $KeysightScriptblock -ComputerName $PC -Verbose}}
+      
     }
     
     Catch{
@@ -162,9 +174,10 @@ Function Keysight-ADS-FixHomePath{
     If($?){
       Log-Write -LogPath $sLogFile -LineValue "Keysight-ADS-FixHomePath Function Completed Successfully."
       Log-Write -LogPath $sLogFile -LineValue " "
+      Stop-Transcript 
       Read-Host -Prompt "Press Enter to exit"
       Log-Finish -LogPath $sLogFile
-      Stop-Transcript 
+      
     }
   }
 }
