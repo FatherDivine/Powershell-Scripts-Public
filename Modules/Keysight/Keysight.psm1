@@ -82,10 +82,11 @@ Function Keysight-ADS-FixHomePath{
     $sLogName = "Keysight-ADS-FixHomePath$date.log"
     $sLogFile = Join-Path -Path $sLogPath -ChildPath $sLogName
 
+    #LogStart
     Log-Start -LogPath $sLogPath -LogName $sLogName -ScriptVersion $sScriptVersion
     Log-Write -LogPath $sLogFile -LineValue "Keysight-ADS-FixHomePath is running on: $ComputerName"
     Log-Write -LogPath $sLogFile -LineValue "Begin Section"
-
+    Start-Transcript -Path "C:\Windows\Logs\Keysight\Keysight-ADS-FixHomePath-T$date.log" -Force
     #Registry locations that need editing
     $regKeys = @(
     "HKLM:\SOFTWARE\Keysight\ADS\4.91\eeenv"
@@ -117,8 +118,21 @@ Function Keysight-ADS-FixHomePath{
         #Move the files from C:\cladmin\hpeesof to C:\ADS if it exists there
         If (Test-Path "C:\users\cladmin\hpeesof"){Move-Item -Path "C:\users\cladmin\hpeesof" -Destination "C:\ADS\" -Force -Verbose}
       
-        #If not there, grab from module & unzip
-        else{Expand-Archive "C:\Program Files\WindowsPowerShell\Modules\Keysight\hpeesof.zip" -DestinationPath "C:\ADS" -Force -Verbose}
+        #As a backup if not there, grab from Github & unzip
+        else{
+          # Create a new temporary file
+          $Extracthpeesof = ".zip"
+          
+          #Store the download into the temporary file
+          Invoke-WebRequest -Uri https://github.com/FatherDivine/Powershell-Scripts-Public/raw/main/Modules/Keysight/hpeesof.zip  -OutFile $Extracthpeesof
+          
+          #Extract the temporary file
+          $Extracthpeesof | Expand-Archive -DestinationPath "C:\ADS" -Force -Verbose
+          
+          #Remove temporary file
+          $Extracthpeesof | Remove-Item
+      
+        }
       }
     }
   }
@@ -150,6 +164,7 @@ Function Keysight-ADS-FixHomePath{
       Log-Write -LogPath $sLogFile -LineValue " "
       Read-Host -Prompt "Press Enter to exit"
       Log-Finish -LogPath $sLogFile
+      Stop-Transcript 
     }
   }
 }
