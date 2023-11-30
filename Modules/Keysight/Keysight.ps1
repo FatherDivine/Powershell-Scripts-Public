@@ -3,8 +3,6 @@
   Various functions related to Keysight software.
 
 .DESCRIPTION
-
-.PARAMETER <Parameter_Name>
     The purpose of this Function/Module is to create functions that support Keysight software. 
     This includes things that may be needed, like license files changes, HOME path/registry edits, 
     or updating (and in some cases, uninstalling) certain softwares. 
