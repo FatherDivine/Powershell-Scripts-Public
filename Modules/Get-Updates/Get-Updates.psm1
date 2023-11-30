@@ -94,9 +94,9 @@ $DCUScriptBlock = {
     }
 
     #Apply Updates
-    Start-Process -FilePath "C:\Program Files\Dell\CommandUpdate\dcu-cli.exe" -ArgumentList @("/version") -Wait -Verbose -NoNewWindow | Out-File (New-Item -Path 'C:\Windows\Log\Get-Updates\Get-Updates-DCU.log' -Force)
-    Start-Process -FilePath "C:\Program Files\Dell\CommandUpdate\dcu-cli.exe" -ArgumentList @("/scan") -Wait -Verbose -NoNewWindow | Out-File -FilePath 'C:\Windows\Log\Get-Updates\Get-Updates-DCU.log' -Append
-    Start-Process -FilePath "C:\Program Files\Dell\CommandUpdate\dcu-cli.exe" -ArgumentList @("/applyUpdates") -Wait -Verbose -NoNewWindow | Out-File -FilePath 'C:\Windows\Log\Get-Updates\Get-Updates-DCU.log' -Append
+    Start-Process -FilePath "C:\Program Files\Dell\CommandUpdate\dcu-cli.exe" -ArgumentList @("/version") -Wait -Verbose -NoNewWindow | Out-File (New-Item -Path 'C:\Windows\Logs\Get-Updates\Get-Updates-DCU.log' -Force)
+    Start-Process -FilePath "C:\Program Files\Dell\CommandUpdate\dcu-cli.exe" -ArgumentList @("/scan") -Wait -Verbose -NoNewWindow | Out-File -FilePath 'C:\Windows\Logs\Get-Updates\Get-Updates-DCU.log' -Append
+    Start-Process -FilePath "C:\Program Files\Dell\CommandUpdate\dcu-cli.exe" -ArgumentList @("/applyUpdates") -Wait -Verbose -NoNewWindow | Out-File -FilePath 'C:\Windows\Logs\Get-Updates\Get-Updates-DCU.log' -Append
     }
 
     $WUScriptBlock = {
