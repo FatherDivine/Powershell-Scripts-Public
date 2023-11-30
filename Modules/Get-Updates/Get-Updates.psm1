@@ -29,6 +29,7 @@
   Purpose/Change: Initial script development
   
 .LINK
+  https://github.com/FatherDivine/Powershell-Scripts-Public/tree/main/Modules/Get-Updates
   
 .EXAMPLE
   Get-Updates -ComputerName CEDC-NC2413-P
@@ -62,11 +63,10 @@ if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdenti
 $ErrorActionPreference = "SilentlyContinue"
 
 #Import Modules
-Import-Module -Name Logging-Functions -DisableNameChecking
+Import-Module -Name Invoke-WUInstall, Logging-Functions -DisableNameChecking
 
 #Create the Log folder if non-existant
 If (!(Test-Path "C:\Windows\Logs\Get-Updates")){New-Item -ItemType Directory "C:\Windows\Logs\Get-Updates\" -Force}
-
 
 #----------------------------------------------------------[Declarations]----------------------------------------------------------
 
@@ -75,11 +75,10 @@ $sScriptVersion = "0.1"
 
 #Variables 
 $date = Get-Date -Format "-MM-dd-yyyy-HH-mm"
+$trigger = New-Jobtrigger -Once -at (Get-Date).AddMinutes(13)
+$options = New-ScheduledJobOption -StartIfOnBattery
 
-#Log File Info
-$sLogPath = "C:\Windows\Logs\Get-Updates\"
-$sLogName = "Get-Updates.log"
-$sLogFile = Join-Path -Path $sLogPath -ChildPath $sLogName
+
 
 #Our Scriptblock
 $DCUScriptBlock = {
@@ -95,10 +94,9 @@ $DCUScriptBlock = {
     }
 
     #Apply Updates
-    Start-Process -FilePath "C:\Program Files\Dell\CommandUpdate\dcu-cli.exe" -ArgumentList @("/version") -Wait -Verbose | Out-File (New-Item -Path 'C:\Windows\Log\Get-Updates\Get-Updates-DCU.log' -Force)
-    Start-Process -FilePath "C:\Program Files\Dell\CommandUpdate\dcu-cli.exe" -ArgumentList @("/scan") -Wait -Verbose | Out-File -FilePath 'C:\Windows\Log\Get-Updates\Get-Updates-DCU.log' -Append
-    Start-Process -FilePath "C:\Program Files\Dell\CommandUpdate\dcu-cli.exe" -ArgumentList @("/applyUpdates") -Wait -Verbose | Out-File -FilePath 'C:\Windows\Log\Get-Updates\Get-Updates-DCU.log' -Append
-
+    Start-Process -FilePath "C:\Program Files\Dell\CommandUpdate\dcu-cli.exe" -ArgumentList @("/version") -Wait -Verbose -NoNewWindow | Out-File (New-Item -Path 'C:\Windows\Log\Get-Updates\Get-Updates-DCU.log' -Force)
+    Start-Process -FilePath "C:\Program Files\Dell\CommandUpdate\dcu-cli.exe" -ArgumentList @("/scan") -Wait -Verbose -NoNewWindow | Out-File -FilePath 'C:\Windows\Log\Get-Updates\Get-Updates-DCU.log' -Append
+    Start-Process -FilePath "C:\Program Files\Dell\CommandUpdate\dcu-cli.exe" -ArgumentList @("/applyUpdates") -Wait -Verbose -NoNewWindow | Out-File -FilePath 'C:\Windows\Log\Get-Updates\Get-Updates-DCU.log' -Append
     }
 
     $WUScriptBlock = {
@@ -111,9 +109,7 @@ $DCUScriptBlock = {
     Invoke-WUInstall -ComputerName $ComputerName -Script {Import-Module PSWindowsUpdate; Install-WindowsUpdate -AcceptAll -AutoReboot -MicrosoftUpdate -Verbose | Format-Table -AutoSize -Wrap | Out-File (New-Item -Path "C:\Windows\Logs\Get-Updates\Get-WindowsUpdates-List.log" -Force)} -Confirm:$false -SkipModuleTest -RunNow -Verbose
 
     #Waits 13 minutes for updates to finish to check the status of the last 100 updates and logs to file.
-    Register-ScheduledJob -Name WUHistoryJob -ScriptBlock {Get-WUHistory -last 100 -ComputerName $ComputerName | Format-Table -AutoSize -Wrap | Out-File (New-Item -Path "C:\Windows\Logs\Get-Updates\Get-WindowsUpdates-WUHistory.log" -Force)} `
-        -Trigger $Global:trigger -ScheduledJobOption $Global:options -Verbose        
-
+    Register-ScheduledJob -Name WUHistoryJob -ScriptBlock {Get-WUHistory -last 100 -ComputerName $ComputerName | Format-Table -AutoSize -Wrap | Out-File (New-Item -Path "C:\Windows\Logs\Get-Updates\Get-WindowsUpdates-WUHistory.log" -Force)} -Trigger $trigger -ScheduledJobOption $options -Verbose        
     }
 
 #-----------------------------------------------------------[Functions]------------------------------------------------------------
@@ -122,8 +118,8 @@ $DCUScriptBlock = {
 Function Get-Updates{
   <#
   .PARAMETER ComputerName
-    Allows for QuickFix to be ran against a remote PC or list of
-    remote PCs.
+      Allows for Get-DriverUpdates to be ran against a remote PC or 
+      list of remote PCs.
   #>
   [cmdletbinding()]
   Param(
@@ -133,6 +129,12 @@ Function Get-Updates{
   )
   
   Begin{
+
+    #Log File Info
+    $sLogPath = "C:\Windows\Logs\Get-Updates\"
+    $sLogName = "Get-Updates$date.log"
+    $sLogFile = Join-Path -Path $sLogPath -ChildPath $sLogName
+    
     Log-Start -LogPath $sLogPath -LogName $sLogName -ScriptVersion $sScriptVersion
     Log-Write -LogPath $sLogFile -LineValue "Get-Updates is running on: $ComputerName"
     Log-Write -LogPath $sLogFile -LineValue "Begin Section"
@@ -144,13 +146,19 @@ Function Get-Updates{
         Log-Write -LogPath $sLogFile -LineValue "Process (code) Section"
         
         #If running locally
-        If ($ComputerName -eq 'localhost'){& $DCUScriptBlock;& $WUScriptBlock}
+        If ($ComputerName -eq 'localhost'){
+          $date = Get-Date -Format "-MM-dd-yyyy-HH-mm"
+          Write-Host "seeing if this is the issue"
+          pause
+          Start-Job -Name DCUScript -ScriptBlock {$DCUScriptBlock} | wait-job -Verbose | Receive-Job -Verbose | Out-File (New-Item -Path "C:\Windows\Logs\Get-Updates\Get-Updates-DCU-Jobs$date.log" -Force)
+          Start-Job -Name WUScript -ScriptBlock {$WUScriptBlock} | wait-job -Verbose | Receive-Job -Verbos e| Out-File (New-Item -Path "C:\Windows\Logs\Get-Updates\Get-Updates-WU-Jobs$date.log" -Force)
+        }
 
         #If running on remote PCs
         Else{
             foreach ($PC in $ComputerName){
-            Invoke-Command -ScriptBlock $DCUScriptBlock -ComputerName $PC -AsJob
-            Invoke-Command -ScriptBlock $WUScriptBlock -ComputerName $PC -AsJob
+            Invoke-Command -ScriptBlock {$DCUScriptBlock} -ComputerName $PC -AsJob | Wait-Job -Verbose | Receive-Job -Verbose | Out-File (New-Item -Path "C:\Windows\Logs\Get-Updates\Get-Updates-DCU-Jobs$date.log" -Force)
+            Invoke-Command -ScriptBlock {$WUScriptBlock} -ComputerName $PC -AsJob | Wait-Job -Verbose | Receive-Job -Verbose | Out-File (New-Item -Path "C:\Windows\Logs\Get-Updates\Get-Updates-WU-Jobs$date.log" -Force)
             }           
         }     
     }
@@ -164,6 +172,7 @@ Function Get-Updates{
     If($?){
       Log-Write -LogPath $sLogFile -LineValue "Completed Successfully."
       Log-Write -LogPath $sLogFile -LineValue " "
+      Read-Host "Press Enter to Exit"      
       Log-Finish -LogPath $sLogFile
       Stop-Transcript
     }
@@ -172,8 +181,8 @@ Function Get-Updates{
 Function Get-DriverUpdates{
     <#
     .PARAMETER ComputerName
-      Allows for QuickFix to be ran against a remote PC or list of
-      remote PCs.
+      Allows for Get-DriverUpdates to be ran against a remote PC or 
+      list of remote PCs.
     #>
     [cmdletbinding()]
     Param(
@@ -183,6 +192,10 @@ Function Get-DriverUpdates{
     )
     
     Begin{
+      #Log File Info
+      $sLogPath = "C:\Windows\Logs\Get-Updates\"
+      $sLogName = "Get-DriverUpdates$date.log"
+      $sLogFile = Join-Path -Path $sLogPath -ChildPath $sLogName      
       Log-Start -LogPath $sLogPath -LogName $sLogName -ScriptVersion $sScriptVersion
       Log-Write -LogPath $sLogFile -LineValue "Get-Updates is running on: $ComputerName"
       Log-Write -LogPath $sLogFile -LineValue "Begin Section"
@@ -212,6 +225,7 @@ Function Get-DriverUpdates{
       If($?){
         Log-Write -LogPath $sLogFile -LineValue "Completed Successfully."
         Log-Write -LogPath $sLogFile -LineValue " "
+        Read-Host "Press Enter to Exit"
         Log-Finish -LogPath $sLogFile
         Stop-Transcript
       }
@@ -221,8 +235,8 @@ Function Get-DriverUpdates{
   Function Get-WindowsUpdates{
     <#
     .PARAMETER ComputerName
-      Allows for QuickFix to be ran against a remote PC or list of
-      remote PCs.
+      Allows for Get-DriverUpdates to be ran against a remote PC or 
+      list of remote PCs.
     #>
     [cmdletbinding()]
     Param(
@@ -232,6 +246,10 @@ Function Get-DriverUpdates{
     )
     
     Begin{
+      #Log File Info
+      $sLogPath = "C:\Windows\Logs\Get-Updates\"
+      $sLogName = "Get-WindowsUpdates$date.log"
+      $sLogFile = Join-Path -Path $sLogPath -ChildPath $sLogName
       Log-Start -LogPath $sLogPath -LogName $sLogName -ScriptVersion $sScriptVersion
       Log-Write -LogPath $sLogFile -LineValue "Get-Updates is running on: $ComputerName"
       Log-Write -LogPath $sLogFile -LineValue "Begin Section"
@@ -261,18 +279,11 @@ Function Get-DriverUpdates{
       If($?){
         Log-Write -LogPath $sLogFile -LineValue "Completed Successfully."
         Log-Write -LogPath $sLogFile -LineValue " "
+        Read-Host "Press Enter to Exit"        
         Log-Finish -LogPath $sLogFile
         Stop-Transcript
       }
     }
   }
   
-
-
 #-----------------------------------------------------------[Execution]------------------------------------------------------------
-
-#Log-Start -LogPath $sLogPath -LogName $sLogName -ScriptVersion $sScriptVersion
-
-#Script Execution goes here
-
-#Log-Finish -LogPath $sLogFile
