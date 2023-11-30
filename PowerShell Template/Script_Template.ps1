@@ -27,7 +27,7 @@ GitHub README or script link
   <Example goes here. Repeat this attribute for more than one example>
 #>
 
-#---------------------------------------------------------[Initialisations]--------------------------------------------------------
+#---------------------------------------------------------[Initialisations & Declarations]--------------------------------------------------------
 
 #Set Error Action to Silently Continue
 $ErrorActionPreference = "SilentlyContinue"
