@@ -5,7 +5,9 @@
 .DESCRIPTION
 
 .PARAMETER <Parameter_Name>
-    <Brief description of parameter input required. Repeat this attribute if required>
+    The purpose of this Function/Module is to create functions that support Keysight software. 
+    This includes things that may be needed, like license files changes, HOME path/registry edits, 
+    or updating (and in some cases, uninstalling) certain softwares. 
 
 .INPUTS
   none
@@ -23,7 +25,20 @@
   https://github.com/FatherDivine/Powershell-Scripts-Public/tree/main/FOG%20Snapins/Keysight
 
 .EXAMPLE
-  <Example goes here. Repeat this attribute for more than one example>
+  Keysight-ADS-FixHomePath
+
+  When calling the function when installed as a module, will fix the HOME path of an ADS installation.
+
+.EXAMPLE
+  Keysight-ADS-FixHomePath -ComputerName "<HostnameHere>"
+
+  When called as a function, will fix the HOME path of an ADS instlalation of a remote PC or array/list of computers.
+
+.EXAMPLE
+  . .\Keysight.ps1 ; & KeySight-ADS-FixHomePath
+
+  Dot-sourced one-liner method of initializing the Keysight.ps1 script, then calling the function within it. This is 
+  for non-module (or FOG snap-in) usage.
 #>
 
 #---------------------------------------------------------[Initialisations & Declarations]--------------------------------------------------------
@@ -104,8 +119,8 @@ Function Keysight-ADS-FixHomePath{
         #Move the files from C:\cladmin\hpeesof to C:\ADS if it exists there
         If (Test-Path "C:\users\cladmin\hpeesof"){Move-Item -Path "C:\users\cladmin\hpeesof" -Destination "C:\ADS\" -Force -Verbose}
       
-        #If not there, grab from module
-        else{Copy-Item -Path "C:\Program Files\WindowsPowerShell\Modules\Keysight\hpeesof" -Destination "C:\ADS\" -Recurse -Force -Verbose}
+        #If not there, grab from module & unzip
+        else{Expand-Archive "C:\Program Files\WindowsPowerShell\Modules\Keysight\hpeesof.zip" -DestinationPath "C:\ADS" -Force -Verbose}
       }
     }
   }
@@ -149,4 +164,6 @@ Function Keysight-VersionCheck{
   Function KeySight-Uninstall{} 
 #-----------------------------------------------------------[Execution]------------------------------------------------------------
 
-#Script Execution goes here, when not using as a Module
+#Script Execution goes here, when not using as a Module.
+#Can execute a function for FOG snap-ins like this:
+#& Keysight-ADS-FixHomePath

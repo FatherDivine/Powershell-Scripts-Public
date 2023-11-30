@@ -78,4 +78,15 @@ Keysight-ADS-FixHomePath -ComputerName $PCList
 <br><br>
 The logging will take care of letting you know if a PC was turned off/not ran on.
 
+<br><br>
+  The last example is a dot-sourced one-liner, best used when the environment doesn't have the module installed nor FOG, but you need to run the script (.ps1, or .ps1m renamed to a .ps1) file. This is to be ran from the a PowerShell session, and you are in the same location that the file is:<br>
 
+ . .\Keysight.ps1 ; & KeySight-ADS-FixHomePath
+
+<br>
+If the file is somewhere else, you can use this:<br>
+
+. "c:\location\of\Keysight.ps1"; & KeySight-ADS-FixHomePath -ComputerName "<hostname>"
+<br><br>
+and yes, that is 2 dots in the first command, and one dot in the second. The second dit in the first signifies looking in the same directory that the PowerShell session is located. In the second command, we tell it where to look instead of in the same location. But the first dot must always be there in both commands.
+#
