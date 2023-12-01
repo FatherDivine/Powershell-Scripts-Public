@@ -196,8 +196,7 @@ Function Invoke-QuickFix{
     If($?){
       Log-Write -LogPath $sLogFile -LineValue "QuickFix Function Completed Successfully."
       Log-Write -LogPath $sLogFile -LineValue " "
-      Read-Host -Prompt "Press Enter to exit"
-      Log-Finish -LogPath $sLogFile
+      Log-Finish -LogPath $sLogFile -NoExit
     }
   }
 }

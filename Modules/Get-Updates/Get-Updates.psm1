@@ -176,9 +176,8 @@ Function Get-Updates{
     If($?){
       Log-Write -LogPath $sLogFile -LineValue "Completed Successfully."
       Log-Write -LogPath $sLogFile -LineValue " "
-      Read-Host "Press Enter to Exit"
       Stop-Transcript
-      Log-Finish -LogPath $sLogFile
+      Log-Finish -LogPath $sLogFile -NoExit
       
     }
   }
@@ -230,8 +229,7 @@ Function Get-DriverUpdates{
       If($?){
         Log-Write -LogPath $sLogFile -LineValue "Completed Successfully."
         Log-Write -LogPath $sLogFile -LineValue " "
-        Read-Host "Press Enter to Exit"
-        Log-Finish -LogPath $sLogFile
+        Log-Finish -LogPath $sLogFile -NoExit
         Stop-Transcript
       }
     }
@@ -283,9 +281,8 @@ Function Get-DriverUpdates{
     End{
       If($?){
         Log-Write -LogPath $sLogFile -LineValue "Completed Successfully."
-        Log-Write -LogPath $sLogFile -LineValue " "
-        Read-Host "Press Enter to Exit"        
-        Log-Finish -LogPath $sLogFile
+        Log-Write -LogPath $sLogFile -LineValue " "     
+        Log-Finish -LogPath $sLogFile -NoExit
         Stop-Transcript
       }
     }
