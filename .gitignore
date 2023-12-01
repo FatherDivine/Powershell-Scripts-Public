@@ -2,3 +2,5 @@ Modules/CEDCLAB-Arrays/CEDCLAB-Arrays.psm1
 Modules/CEDCLAB-Arrays/CEDCLAB-Arrays.psd1
 Modules/Set-Profile/Set-Profile.psd1
 Modules/Set-Profile/Set-Profile.psm1
+Modules/Set-PSProfile/Set-PSProfile.ps1
+Modules/Set-PSProfile/Set-PSProfile.psd1
