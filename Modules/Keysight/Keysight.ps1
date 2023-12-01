@@ -175,7 +175,6 @@ Function Keysight-ADS-FixHomePath{
       Log-Write -LogPath $sLogFile -LineValue "Keysight-ADS-FixHomePath Function Completed Successfully."
       Log-Write -LogPath $sLogFile -LineValue " "
       Stop-Transcript 
-      Read-Host -Prompt "Press Enter to exit"
       Log-Finish -LogPath $sLogFile
       
     }
@@ -192,4 +191,4 @@ Function Keysight-VersionCheck{
 
 #Script Execution goes here, when not using as a Module.
 #Can execute a function for FOG snap-ins like this:
-#& Keysight-ADS-FixHomePath
+& Keysight-ADS-FixHomePath

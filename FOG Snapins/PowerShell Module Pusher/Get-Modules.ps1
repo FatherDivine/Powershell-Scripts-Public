@@ -62,12 +62,12 @@ Write-Verbose 'QuickFix for auotmatically running maintenance routines like SFC,
   Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Invoke-QuickFix/Invoke-QuickFix.psd1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Invoke-QuickFix\Invoke-QuickFix.psd1' -Force) -Verbose
 #  }
 
-Write-Verbose 'Javier''s Squid proxy modules used for Exams in Computer Science. Easy remote deployment: $JavierLabPCS|%{icm -ComputerName $_ -Scriptblock {Enable-Proxy} -AsJob}' -Verbose
+Write-Verbose "Javier's Squid proxy modules used for Exams in Computer Science. Easy remote deployment: $JavierLabPCS|%{icm -ComputerName $_ -Scriptblock {Enable-Proxy} -AsJob}" -Verbose
 #}If (!(Test-Path "C:\Program Files\WindowsPowerShell\Modules\Enable-Proxy\")){  
   Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Javier-SquidProxy/Enable-Proxy/Enable-Proxy.psm1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Javier-SquidProxy\Enable-Proxy\Enable-Proxy.psm1' -Force) -Verbose
   Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Javier-SquidProxy/Enable-Proxy/Enable-Proxy.psd1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Javier-SquidProxy\Enable-Proxy\Enable-Proxy.psd1' -Force) -Verbose
 #  }
-Write-Verb-se 'Javier''s Squid proxy modules used for Exams in Computer Science. Easy remote deployment: $JavierLabPCS|%{icm -ComputerName $_ -Scriptblock {Disable-Proxy} -AsJob}' -Verbose
+Write-Verbose "Javier's Squid proxy modules used for Exams in Computer Science. Easy remote deployment: $JavierLabPCS|%{icm -ComputerName $_ -Scriptblock {Disable-Proxy} -AsJob}" -Verbose
 #}If (!(Test-Path "C:\Program Files\WindowsPowerShell\Modules\Disable-Proxy\")){  
   Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Javier-SquidProxy/Disable-Proxy/Disable-Proxy.psm1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Javier-SquidProxy\Disable-Proxy\Disable-Proxy.psm1' -Force) -Verbose
   Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Javier-SquidProxy/Disable-Proxy/Disable-Proxy.psd1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Javier-SquidProxy\Disable-Proxy\Disable-Proxy.psd1' -Force) -Verbose
@@ -80,20 +80,20 @@ Write-Verbose "Keysight Module to fix various issues with Keysight programs" -Ve
   Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Keysight/README.md" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Keysight\README.md' -Force) -Verbose
 #}
 
-#Set PS profile
+<#Set PS profile when our Github license is up:
 Write-Verbose 'Updating AllUsersAllHosts PS Profile.' -Verbose
           # Create a new temporary file
           $Extracthpeesof = ".ps1"
           
           #Store the download into the temporary file
-          Invoke-WebRequest -Uri https://github.com/FatherDivine/Powershell-Scripts-Public/raw/main/Modules/Keysight/hpeesof.zip  -OutFile $Extracthpeesof
+          Invoke-WebRequest -Uri https://github.com/FatherDivine/Powershell-Scripts-Public/raw/main/Modules/Get-PSProfile\  -OutFile $Extracthpeesof
           
           #Extract the temporary file
-          $Extracthpeesof | Expand-Archive -DestinationPath "C:\ADS" -Force -Verbose
+          $Extracthpeesof | Copy-Item -DestinationPath $PSProfile.AllUsersAllHosts -Force -Verbose
           
           #Remove temporary file
           $Extracthpeesof | Remove-Item
-
+#>
 #Stop logging
 Stop-Transcript
 
