@@ -1,5 +1,4 @@
-
-  <#
+<#
 .SYNOPSIS
   Installs Keysight module.
 
