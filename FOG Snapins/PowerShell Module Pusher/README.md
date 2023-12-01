@@ -38,9 +38,10 @@ These commands assume the Enable and Disable proxy modules are installed on the 
 
 At any PC with the module, you can natively run the command from any PS session:<br>
 
+```powershell
 Enable-Proxy<br>
 Disable-Proxy<br>
-
+```
 #
 How to run remotely from any PC with admin authentication:<br><br>
 
@@ -49,17 +50,21 @@ Invoke-Command -ComputerName $PC -ScriptBlock {Enable-Proxy}
 # 
 If you want to separate as individual jobs so you can easily see which PC may have failed/not taken the changes, you can use the following aliased cmdlet:<br><br>
 
+```powershell
 $JavierLabPCS|%{icm $_ -Scriptblock {Enable-Proxy} -AsJob} <br><br>
-
+```
 
 which is the same as:<br><br>
 
+```powershell
 Foreach ($PC in $JavierLabPCS) {Invoke-Command -ComputerName -$PC -ScriptBlock {Enable-Proxy} -AsJob}
-
+```
 #
 Then you can check jobs by typing:
 
+```powershell
 Get-Job
+```
 
 #
 Keysight Tool<br><br>

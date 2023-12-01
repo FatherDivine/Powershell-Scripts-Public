@@ -42,17 +42,21 @@ Likely if pwsh gives errors, a legacy module would have to be imported.
 
 1. Direct command-line deployment from PowerShell:
 
+```powershell
 & .\Initiate-MSWOU.ps1
-
+```
 
 2. In the case of FOG, just deploy a PowerShell-based snap-in using the Initiate-MSWOU.ps1 file.
 
 
 3. Deploying remotely from PowerShell using jobs (so you can see if everything succeeded or failed without accessing the logs in C:\Windows\Logs\MSWOU):
 
+```powershell
 Invoke-Command -FilePath .\Initiate-MSWOU.ps1 -ComputerName $PCList -AsJob
-
+```
 
 or if you want to have each job separate in the case of many PCs:
 
+```powershell
 foreach ($PC in $PCList){Invoke-Command -FilePath .\Initiate-MSWOU.ps1 -ComputerName $PC -AsJob}
+```

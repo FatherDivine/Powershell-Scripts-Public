@@ -40,31 +40,36 @@ Likely if pwsh gives errors, a legacy module would have to be imported.
 ## Usage <a name = "usage"></a>
 
 How to use as a tool to run updates remotely using the dot sourcing (.ps1) file method:
-
+```powershell
 . .\MSWOU.ps1 
 & MSWOnlineUpdater -ComputerName $NC2413 
-
+```
 
 How to use just to update PCs remotely after prerequisites are already installed:
 
+```powershell
 . .\location\of\MSWOU.ps1
 MSWOnlineUpdater -Computername $ArrayofPCs
-
+```
 For management after pre-reqs are installed, how to get updates history list for sets of remote computers:
-         
-PS C:\> "G1","G2" | Get-WUHistory
 
+```powershell
+PS C:\> "G1","G2" | Get-WUHistory
+```
 
 Get information about specific installed updates:
-     
+
+```powershell
 PS C:\> $WUHistory = Get-WUHistory
 PS C:\> $WUHistory | Where-Object {$_.Title -match "KB2607047"} | Select-Object *
-
+```
 
 To use it in a script or likes:
 
+```powershell
 $MSWRemoteUpdatesPrerequisites = {. ${PSScriptRoot}\MSWOU.ps1 ; MSWRemoteUpdatesPrerequisites}
 $MSWOnlineUpdater = {. C:\temp\MSWOU.ps1 ; MSWOnlineUpdater}
+```
 
 Start-Job -ScriptBlock $MSWRemoteUpdatesPrerequisites -Verbose| Wait-Job -Verbose | Receive-Job -Verbose
 Start-Job -ScriptBlock $MSWOnlineUpdater -Verbose| Wait-Job -Verbose | Receive-Job -Verbose

@@ -18,13 +18,16 @@ The larger idea is to have all software license (and config) changes in module f
 
 The code supports getting everything it needs. You may need to enable remote execution of PS code if you've never run PowerShell code in your environment. Open "PowerShell" as administrator and type:<br>
 
+```powershell
 Set-ExecutionPolicy -ExecutionPolicy Unrestricted
+```
 <br><br>
 
 Another great cmdlet to type is the one that enables psremoting. This is necessary to run invoke commands on remote PCs. In our CEDC environment, this is already enabled on all LAB pcs: <br>
 
+```powershell
 Enable-PSRemoting
-
+```
 <br><br>
 
 Lastly, if you downloaded the script/module online (Github), you may have to right click the script, Properties, and "Unblock" the code from being executed so you can run it.
@@ -40,8 +43,9 @@ End with an example of getting some data out of the system or using it for a lit
 
 Though this is meant to be a module/function, you can still use this with FOG by editing the .ps1(or renaming .psm1 to .ps1) and at the bottom of the script adding whatever function you need to execute. For fixing the homepath, for instance add:<br>
 
+```powershell
 Keysight-ADS-FixHomePath
-
+```
 <br><br>
 That would be enough to upload as a FOG snap-in and have that function load on the local PC.
 
@@ -61,33 +65,38 @@ The benefit of using modules over the above methods are:<br>
 #
 To fix the HOME path of the Keysight ADS program on the local PC (as if you're sitting at the one needing the fix), open a PowerShell session and type:<br>
 
+```powershell
 Keysight-ADS-FixHomePath 
-
+```
 <br><br>
 To fix the HOME path of a specific remote PC, open a PowerShell session and type:<br>
 
+```powershell
 Keysight-ADS-FixHomePath -ComputerName "<Hostname>"
-
+```
 <br><br>
 When it comes to a list/array of computers, here are two methods. If you have a text file with a list of PCs already defined (with 1 name on each line, no extra symbols), in a PowerShell session type:<br>
 
 $PCList = Get-Content "C:\Location\Of\Computers.txt"
 <#Or if in the same folder that you are already in: $PCList = Get-Content .\Computers.txt#>
 <br>
+```powershell
 Keysight-ADS-FixHomePath -ComputerName $PCList
-
+```
 <br><br>
 The logging will take care of letting you know if a PC was turned off/not ran on.
 
 <br><br>
   The last example is a dot-sourced one-liner, best used when the environment doesn't have the module installed nor FOG, but you need to run the script (.ps1, or .ps1m renamed to a .ps1) file. This is to be ran from the a PowerShell session, and you are in the same location that the file is:<br>
 
+```powershell
  . .\Keysight.ps1 ; & KeySight-ADS-FixHomePath
-
+```
 <br>
 If the file is somewhere else, you can use this:<br>
-
+```powershell
 . "c:\location\of\Keysight.ps1"; & KeySight-ADS-FixHomePath -ComputerName "<hostname>"
+```
 <br><br>
 and yes, that is 2 dots in the first command, and one dot in the second. The second dit in the first signifies looking in the same directory that the PowerShell session is located. In the second command, we tell it where to look instead of in the same location. But the first dot must always be there in both commands.
 #
