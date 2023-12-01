@@ -1,10 +1,10 @@
 
   <#
 .SYNOPSIS
-  Installs Keysight module
+  Installs Keysight module.
 
 .DESCRIPTION
-  Installs the latest Keysight module from Github
+  Installs the latest Keysight module from Github.
 
 .INPUTS
   None
@@ -13,7 +13,7 @@
   None
 
 .NOTES
-  Version:        1.0
+  Version:        0.1
   Author:         Aaron Staten
   Creation Date:  11-30-23
   Purpose/Change: Initial script development
@@ -21,8 +21,6 @@
 .LINK
 https://github.com/FatherDivine/Powershell-Scripts-Public/tree/main/Modules/Keysight
 
-.EXAMPLE
-  <Example goes here. Repeat this attribute for more than one example>
 #>
 
 #---------------------------------------------------------[Initialisations & Declarations]--------------------------------------------------------
@@ -33,13 +31,9 @@ $ErrorActionPreference = "SilentlyContinue"
 #----------------------------------------------------------[Declarations]----------------------------------------------------------
 
 #Script Version
-$sScriptVersion = "1.0"
-
-#Variables 
+$sScriptVersion = "0.1"
 
 #-----------------------------------------------------------[Functions]------------------------------------------------------------
-
-
 
 #-----------------------------------------------------------[Execution]------------------------------------------------------------
 
@@ -52,3 +46,4 @@ $sScriptVersion = "1.0"
     Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Keysight/README.md" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Keysight\README.md' -Force) -Verbose
   #}
   Import-Module -Name Keysight -DisableNameChecking
+  exit
