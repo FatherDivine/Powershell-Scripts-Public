@@ -73,15 +73,16 @@ If (!(Test-Path "C:\Windows\Logs\Get-Updates")){New-Item -ItemType Directory "C:
 #Script Version
 $sScriptVersion = "0.1"
 
-#Variables 
-$date = Get-Date -Format "-MM-dd-yyyy-HH-mm"
-$trigger = New-Jobtrigger -Once -at (Get-Date).AddMinutes(13)
-$options = New-ScheduledJobOption -StartIfOnBattery
+
 
 
 
 #Our Scriptblock
 $DCUScriptBlock = {
+    #Variables 
+    $date = Get-Date -Format "-MM-dd-yyyy-HH-mm"
+
+
     #Dell Command Updates Section
 
     #Download and install Dell Command | Update if not already installed
@@ -89,17 +90,23 @@ $DCUScriptBlock = {
         Write-Verbose "Installing Dell Command | Update" -Verbose 
         Invoke-WebRequest -Uri "https://dl.dell.com/FOLDER10791716M/1/Dell-Command-Update-Windows-Universal-Application_JCVW3_WIN_5.1.0_A00.EXE" -OutFile (New-Item -Path 'C:\Temp\Dell-Command-Update-WUA_JCVW3.EXE' -Force) -Verbose
         
-        #Start the installer
+        #Start the Dell command | Update installer
         Start-Process -FilePath 'C:\Temp\Dell-Command-Update-WUA_JCVW3.EXE' -ArgumentList /s -Wait
     }
 
     #Apply Updates
-    Start-Process -FilePath "C:\Program Files\Dell\CommandUpdate\dcu-cli.exe" -ArgumentList @("/version") -Wait -Verbose -NoNewWindow | Out-File (New-Item -Path 'C:\Windows\Logs\Get-Updates\Get-Updates-DCU.log' -Force)
-    Start-Process -FilePath "C:\Program Files\Dell\CommandUpdate\dcu-cli.exe" -ArgumentList @("/scan") -Wait -Verbose -NoNewWindow | Out-File -FilePath 'C:\Windows\Logs\Get-Updates\Get-Updates-DCU.log' -Append
-    Start-Process -FilePath "C:\Program Files\Dell\CommandUpdate\dcu-cli.exe" -ArgumentList @("/applyUpdates") -Wait -Verbose -NoNewWindow | Out-File -FilePath 'C:\Windows\Logs\Get-Updates\Get-Updates-DCU.log' -Append
+    Start-Process -FilePath "C:\Program Files\Dell\CommandUpdate\dcu-cli.exe" -ArgumentList @("/version") -Wait -Verbose -NoNewWindow | Out-File (New-Item -Path "C:\Windows\Logs\Get-Updates\Get-Updates-DCU$date.log" -Force)
+    Start-Process -FilePath "C:\Program Files\Dell\CommandUpdate\dcu-cli.exe" -ArgumentList @("/scan") -Wait -Verbose -NoNewWindow | Out-File -FilePath "C:\Windows\Logs\Get-Updates\Get-Updates-DCU$date.log" -Append
+    Start-Process -FilePath "C:\Program Files\Dell\CommandUpdate\dcu-cli.exe" -ArgumentList @("/applyUpdates") -Wait -Verbose -NoNewWindow | Out-File -FilePath "C:\Windows\Logs\Get-Updates\Get-Updates-DCU$date.log" -Append
     }
 
     $WUScriptBlock = {
+    #Variables 
+    $date = Get-Date -Format "-MM-dd-yyyy-HH-mm"
+    $trigger = New-Jobtrigger -Once -at (Get-Date).AddMinutes(13)
+    $options = New-ScheduledJobOption -StartIfOnBattery
+
+
     #Windows Updates Section
 
     #First trust all PCs.
@@ -109,7 +116,7 @@ $DCUScriptBlock = {
     Invoke-WUInstall -ComputerName $ComputerName -Script {Import-Module PSWindowsUpdate; Install-WindowsUpdate -AcceptAll -AutoReboot -MicrosoftUpdate -Verbose | Format-Table -AutoSize -Wrap | Out-File (New-Item -Path "C:\Windows\Logs\Get-Updates\Get-WindowsUpdates-List.log" -Force)} -Confirm:$false -SkipModuleTest -RunNow -Verbose
 
     #Waits 13 minutes for updates to finish to check the status of the last 100 updates and logs to file.
-    Register-ScheduledJob -Name WUHistoryJob -ScriptBlock {Get-WUHistory -last 100 -ComputerName $ComputerName | Format-Table -AutoSize -Wrap | Out-File (New-Item -Path "C:\Windows\Logs\Get-Updates\Get-WindowsUpdates-WUHistory.log" -Force)} -Trigger $trigger -ScheduledJobOption $options -Verbose        
+    Register-ScheduledJob -Name WUHistoryJob -ScriptBlock {Get-WUHistory -last 100 -ComputerName $ComputerName | Format-Table -AutoSize -Wrap | Out-File (New-Item -Path "C:\Windows\Logs\Get-Updates\Get-WindowsUpdates-WUHistory$date.log" -Force)} -Trigger $trigger -ScheduledJobOption $options -Verbose        
     }
 
 #-----------------------------------------------------------[Functions]------------------------------------------------------------
@@ -147,9 +154,6 @@ Function Get-Updates{
         
         #If running locally
         If ($ComputerName -eq 'localhost'){
-          $date = Get-Date -Format "-MM-dd-yyyy-HH-mm"
-          Write-Host "seeing if this is the issue"
-          pause
           Start-Job -Name DCUScript -ScriptBlock {$DCUScriptBlock} | wait-job -Verbose | Receive-Job -Verbose | Out-File (New-Item -Path "C:\Windows\Logs\Get-Updates\Get-Updates-DCU-Jobs$date.log" -Force)
           Start-Job -Name WUScript -ScriptBlock {$WUScriptBlock} | wait-job -Verbose | Receive-Job -Verbos e| Out-File (New-Item -Path "C:\Windows\Logs\Get-Updates\Get-Updates-WU-Jobs$date.log" -Force)
         }
@@ -172,9 +176,10 @@ Function Get-Updates{
     If($?){
       Log-Write -LogPath $sLogFile -LineValue "Completed Successfully."
       Log-Write -LogPath $sLogFile -LineValue " "
-      Read-Host "Press Enter to Exit"      
-      Log-Finish -LogPath $sLogFile
+      Read-Host "Press Enter to Exit"
       Stop-Transcript
+      Log-Finish -LogPath $sLogFile
+      
     }
   }
 }
