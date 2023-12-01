@@ -80,6 +80,20 @@ Write-Verbose "Keysight Module to fix various issues with Keysight programs" -Ve
   Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Keysight/README.md" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Keysight\README.md' -Force) -Verbose
 #}
 
+#Set PS profile
+Write-Verbose 'Updating AllUsersAllHosts PS Profile.' -Verbose
+          # Create a new temporary file
+          $Extracthpeesof = ".ps1"
+          
+          #Store the download into the temporary file
+          Invoke-WebRequest -Uri https://github.com/FatherDivine/Powershell-Scripts-Public/raw/main/Modules/Keysight/hpeesof.zip  -OutFile $Extracthpeesof
+          
+          #Extract the temporary file
+          $Extracthpeesof | Expand-Archive -DestinationPath "C:\ADS" -Force -Verbose
+          
+          #Remove temporary file
+          $Extracthpeesof | Remove-Item
+
 #Stop logging
 Stop-Transcript
 
