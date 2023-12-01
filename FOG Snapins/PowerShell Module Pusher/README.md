@@ -13,6 +13,7 @@ Logging-Functions <br>
 Invoke-WUInstall <br>
 Invoke-QuickFix <br>
 Javier Squid Proxy (Enable/Disable-Proxy)<br>
+Keysight Tool <br>
 
 
 ## Getting Started <a name = "getting_started"></a>
@@ -59,3 +60,8 @@ Foreach ($PC in $JavierLabPCS) {Invoke-Command -ComputerName -$PC -ScriptBlock {
 Then you can check jobs by typing:
 
 Get-Job
+
+#
+Keysight Tool<br><br>
+
+Used to fixed various issues relating to Keysight software (like ADS)
