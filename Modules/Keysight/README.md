@@ -51,12 +51,13 @@ Another use is the function as a .ps1 file on your local PC. You could initializ
 
 #
 
-The #1 recommended version of using this is as a module, which can be loaded onto a PC from a  FOG SNAPIN (likely named Keysight Module Loader, PowerShell Module Pusher/Loader or likes), or thru execution of that FOG script on a local PC, as well as just copying the .psd1 and .psm1 files to C:\Program Files\WindowsPowerShell\Modules\Keysight\ folder is outlined below.<br>
+The #1 recommended version of using this is as a module, which can be loaded onto a PC from a  FOG SNAPIN (likely named Keysight Module Loader, PowerShell Module Pusher/Loader or likes), or thru execution of that FOG script on a local PC, as well as just copying the .psd1 and .psm1 files to C:\Program Files\WindowsPowerShell\Modules\Keysight\ folder is outlined below.<br><br>
+
 The benefit of using modules over the above methods are:<br>
 1.) The module is automatically loaded and available in every PowerShell session you open natively.<br>
 2.) There is less coding necessary, saving time.<br>
 3.) They are easy to update, and have a central location<br>
-4.) When the entire lab has a module (like QuickFix) you can just type "QuickFix" or even it's alias "QF" at any PS prompt and it will run on that PC. From that same LAB PC you could run QuickFix on every other PC in the lab.<br>
+4.) When the entire lab has a module (like QuickFix) you can just type "QuickFix" or even it's alias "QF" at any PS prompt and it will run on that PC. From that same LAB PC you could run QuickFix on every other PC in the lab.<br><br>
 #
 To fix the HOME path of the Keysight ADS program on the local PC (as if you're sitting at the one needing the fix), open a PowerShell session and type:<br>
 
