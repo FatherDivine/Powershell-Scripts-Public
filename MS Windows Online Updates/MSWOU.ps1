@@ -54,7 +54,7 @@ $ErrorActionPreference = "SilentlyContinue"
 #. "${PSScriptRoot}\Invoke-WUInstall.ps1"
 
 #Import Modules, better than above method
-Import-Module -Name Invoke-WUInstall, Logging-Functions
+Import-Module -Name Invoke-WUInstall, Logging-Functions -DisableNameChecking
 
 #Script Version
 $sScriptVersion = "5.0"
