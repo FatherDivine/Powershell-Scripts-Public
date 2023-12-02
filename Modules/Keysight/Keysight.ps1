@@ -79,14 +79,14 @@ Function Keysight-ADS-FixHomePath{
   Begin{
     #Log File Info
     $sLogPath = "C:\Windows\Logs\Keysight"
-    $sLogName = "Keysight-ADS-FixHomePath$date.log"
+    $sLogName = "ADS-FixHomePath$date.log"
     $sLogFile = Join-Path -Path $sLogPath -ChildPath $sLogName
 
     #LogStart
     Log-Start -LogPath $sLogPath -LogName $sLogName -ScriptVersion $sScriptVersion
     Log-Write -LogPath $sLogFile -LineValue "Keysight-ADS-FixHomePath is running on: $ComputerName"
     Log-Write -LogPath $sLogFile -LineValue "Begin Section"
-    Start-Transcript -Path "C:\Windows\Logs\Keysight\Keysight-ADS-FixHomePath-T$date.log" -Force
+    Start-Transcript -Path "C:\Windows\Logs\Keysight\ADS-FixHomePath-T$date.log" -Force
     Write-Verbose "Keysight-ADS-FixHomePath is running on: $ComputerName" -Verbose
 
     #Our heavylifting scriptblock. While @() allows the invoke-command verbose to transcript, it won't actually execute on the remote PC. 
