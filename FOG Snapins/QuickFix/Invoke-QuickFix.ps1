@@ -1,3 +1,4 @@
+#requires -version 2
 <#
 .SYNOPSIS
   Runs maintenance commands and outputs a log.
@@ -6,6 +7,7 @@
   Simple script to run a few maintenance commands on the PC,
   like sfc, DISM, and disk optimization. 
   Outputs the logging to C:\temp.
+  This is the standalone/FOG snap-in version that runs on the local PC.
 
 .PARAMETER ComputerName
     Allows for QuickFix to be ran against a remote PC or list of
@@ -196,6 +198,8 @@ Function Invoke-QuickFix{
   }
 }
 #-----------------------------------------------------------[Exports]------------------------------------------------------------
+
+& Invoke-QuickFix
 
 #Need to be included at the end of your *psm1 file.
 export-modulemember -alias * -function *
