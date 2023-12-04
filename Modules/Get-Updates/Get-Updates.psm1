@@ -101,13 +101,16 @@ $DCUScriptBlock = {
         Invoke-WebRequest -Uri "https://dl.dell.com/FOLDER10791716M/1/Dell-Command-Update-Windows-Universal-Application_JCVW3_WIN_5.1.0_A00.EXE" -OutFile (New-Item -Path 'C:\Temp\Dell-Command-Update-WUA_JCVW3.EXE' -Force) -Verbose
         
         Write-Verbose 'Start the Dell command | Update installer' -Verbose
-        Start-Process -FilePath 'C:\Temp\Dell-Command-Update-WUA_JCVW3.EXE' -ArgumentList /s -Wait
+        Start-Process -FilePath 'C:\Temp\Dell-Command-Update-WUA_JCVW3.EXE' -ArgumentList @("/s") -Wait -Verbose -NoNewWindow
     }
 
     Write-Verbose "Apply Updates" -Verbose
     Start-Process -FilePath "C:\Program Files\Dell\CommandUpdate\dcu-cli.exe" -ArgumentList @("/version") -Wait -Verbose -NoNewWindow
     Start-Process -FilePath "C:\Program Files\Dell\CommandUpdate\dcu-cli.exe" -ArgumentList @("/scan") -Wait -Verbose -NoNewWindow
     Start-Process -FilePath "C:\Program Files\Dell\CommandUpdate\dcu-cli.exe" -ArgumentList @("/applyUpdates") -Wait -Verbose -NoNewWindow
+
+    #Housekeeping
+    Remove-Item -Path 'C:\Temp\Dell-Command-Update-WUA_JCVW3.EXE' -Force
     }
 
     $WUScriptBlock = {
@@ -126,6 +129,7 @@ $DCUScriptBlock = {
     Invoke-WUInstall -ComputerName $ComputerName -Script {Import-Module PSWindowsUpdate; Install-WindowsUpdate -AcceptAll -AutoReboot -MicrosoftUpdate -Verbose | Format-Table -AutoSize -Wrap | Out-File (New-Item -Path "C:\Windows\Logs\Get-Updates\Get-WindowsUpdates-List.log" -Force)} -Confirm:$false -SkipModuleTest -RunNow -Verbose
 
     Write-Verbose "Set a scheduled job 13 minutes in the future, after updates finish, to check the status of the last 100 updates and logs to file." -Verbose
+    if (Get-ScheduledJob -name WUHistoryJob){Unregister-ScheduledJob -Name WUHistoryJob}
     Register-ScheduledJob -Name WUHistoryJob -ScriptBlock {Get-WUHistory -last 100 -ComputerName $ComputerName | Format-Table -AutoSize -Wrap | Out-File (New-Item -Path "C:\Windows\Logs\Get-Updates\Get-WindowsUpdates-WUHistory$date.log" -Force)} -Trigger $trigger -ScheduledJobOption $options -Verbose        
     }
 
@@ -149,6 +153,7 @@ Function Get-Updates{
 
     #Variables
     $date = Get-Date -Format "-MM-dd-yyyy-HH-mm"
+    $hostname = hostname
 
     #Log File Info
     $sLogPath = "C:\Windows\Logs\Get-Updates\"
@@ -166,18 +171,18 @@ Function Get-Updates{
         Log-Write -LogPath $sLogFile -LineValue "Process (code) Section"
         
         #If running locally
-        If ($ComputerName -eq 'localhost'){
-          Write-Verbose "Running Get-Updates on the localhost" -Verbose
-          Start-Job -Name DCUScript -ScriptBlock {$DCUScriptBlock} | wait-job -Verbose | Receive-Job -Verbose
-          Start-Job -Name WUScript -ScriptBlock {$WUScriptBlock} | wait-job -Verbose | Receive-Job -Verbose
+        If ('localhost' -eq $ComputerName){
+          Write-Verbose "Running Get-Updates on the localhost ($hostname)." -Verbose
+          Start-Job -Name DCUScript -ScriptBlock {$DCUScriptBlock} | wait-job -Verbose | Receive-Job -WriteEvents -WriteJobInResults -Wait -Verbose
+          Start-Job -Name WUScript -ScriptBlock {$WUScriptBlock} | wait-job -Verbose | Receive-Job -WriteEvents -WriteJobInResults -Wait -Verbose
         }
 
         #If running on remote PCs
         Else{
             foreach ($PC in $ComputerName){
             Write-Verbose "`r`nRunning Get-Updates on $PC"
-            Invoke-Command -ScriptBlock $DCUScriptBlock -ComputerName $PC -AsJob | Wait-Job -Verbose | Receive-Job -Verbose
-            Invoke-Command -ScriptBlock $WUScriptBlock -ComputerName $PC -AsJob | Wait-Job -Verbose | Receive-Job -Verbose
+            Invoke-Command -ScriptBlock $DCUScriptBlock -ComputerName $PC -AsJob | Wait-Job -Verbose | Receive-Job -WriteEvents -WriteJobInResults -Wait -Verbose
+            Invoke-Command -ScriptBlock $WUScriptBlock -ComputerName $PC -AsJob | Wait-Job -Verbose | Receive-Job -WriteEvents -WriteJobInResults -Wait -Verbose
             }           
         }     
     }
@@ -227,8 +232,8 @@ Function Get-DriverUpdates{
     Process{
       Try{      
         #If running locally
-        Write-Verbose "Running Get-Updates on the localhost" -Verbose
-        If ($ComputerName -eq 'localhost'){& $DCUScriptBlock}
+        Write-Verbose "Running Get-Updates on the localhost ($hostname)." -Verbose
+        If ('localhost' -eq $ComputerName){& $DCUScriptBlock}
 
         #If running on remote PCs
         Else{
@@ -285,7 +290,7 @@ Function Get-DriverUpdates{
     Process{
       Try{
         #If running locally
-        If ($ComputerName -eq 'localhost'){Write-Verbose "Running Get-Updates on the localhost" -Verbose;& $WUScriptBlock}
+        If ('localhost' -eq $ComputerName){Write-Verbose "Running Get-Updates on the localhost ($hostname)." -Verbose;& $WUScriptBlock}
 
         #If running on remote PCs
         Else{
