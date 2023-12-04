@@ -175,7 +175,7 @@ Function Keysight-ADS-FixHomePath{
       Log-Write -LogPath $sLogFile -LineValue "Keysight-ADS-FixHomePath Function Completed Successfully."
       Log-Write -LogPath $sLogFile -LineValue " "
       Stop-Transcript 
-      Log-Finish -LogPath $sLogFile -NoExit
+      Log-Finish -LogPath $sLogFile -NoExit $True
       
     }
   }

@@ -83,9 +83,6 @@ $ErrorActionPreference = "SilentlyContinue"
 #Import Modules
 Import-Module -Name Invoke-WUInstall, Logging-Functions -DisableNameChecking
 
-#Create the Log folder if non-existant
-If (!(Test-Path "C:\Windows\Logs\Get-Updates")){New-Item -ItemType Directory "C:\Windows\Logs\Get-Updates\" -Force}
-
 #----------------------------------------------------------[Declarations]----------------------------------------------------------
 
 #Script Version
@@ -93,32 +90,40 @@ $sScriptVersion = "0.1"
 
 #Our Scriptblock
 $DCUScriptBlock = {
-    #Dell Command Updates Section
+  #Create the Log folder if non-existant
+  If (!(Test-Path "C:\Windows\Logs\Get-Updates" -ErrorAction SilentlyContinue)){New-Item -ItemType Directory "C:\Windows\Logs\Get-Updates\" -Force}
 
-    Write-Verbose 'Download and install Dell Command | Update if not already installed' -Verbose
-    If (!(Test-Path "C:\Program Files\Dell\CommandUpdate\dcu-cli.exe")){
-        Write-Verbose 'Installing Dell Command | Update' -Verbose 
-        Invoke-WebRequest -Uri "https://dl.dell.com/FOLDER10791716M/1/Dell-Command-Update-Windows-Universal-Application_JCVW3_WIN_5.1.0_A00.EXE" -OutFile (New-Item -Path 'C:\Temp\Dell-Command-Update-WUA_JCVW3.EXE' -Force) -Verbose
+  #Variables
+  $date = Get-Date -Format "-MM-dd-yyyy-HH-mm"
+
+  #Dell Command Updates Section
+
+  Write-Verbose 'Download and install Dell Command | Update if not already installed.' -Verbose
+  If (!(Test-Path "C:\Program Files\Dell\CommandUpdate\dcu-cli.exe")){
+    Write-Verbose 'Installing Dell Command | Update.' -Verbose 
+    Invoke-WebRequest -Uri "https://dl.dell.com/FOLDER10791716M/1/Dell-Command-Update-Windows-Universal-Application_JCVW3_WIN_5.1.0_A00.EXE" -OutFile (New-Item -Path 'C:\Temp\Dell-Command-Update-WUA_JCVW3.EXE' -Force) -Verbose
         
-        Write-Verbose 'Start the Dell command | Update installer' -Verbose
-        Start-Process -FilePath 'C:\Temp\Dell-Command-Update-WUA_JCVW3.EXE' -ArgumentList @("/s") -Wait -Verbose -NoNewWindow
-    }
+    Write-Verbose 'Starting Dell command | Update installer.' -Verbose
+    Start-Process -FilePath 'C:\Temp\Dell-Command-Update-WUA_JCVW3.EXE' -ArgumentList @("/s") -Wait -Verbose -NoNewWindow
+  }
 
-    Write-Verbose "Apply Updates" -Verbose
+    Write-Verbose "Applying Updates." -Verbose
     Start-Process -FilePath "C:\Program Files\Dell\CommandUpdate\dcu-cli.exe" -ArgumentList @("/version") -Wait -Verbose -NoNewWindow
     Start-Process -FilePath "C:\Program Files\Dell\CommandUpdate\dcu-cli.exe" -ArgumentList @("/scan") -Wait -Verbose -NoNewWindow
-    Start-Process -FilePath "C:\Program Files\Dell\CommandUpdate\dcu-cli.exe" -ArgumentList @("/applyUpdates") -Wait -Verbose -NoNewWindow
+    Start-Process -FilePath "C:\Program Files\Dell\CommandUpdate\dcu-cli.exe" -ArgumentList @("/applyUpdates") -Wait -Verbose -NoNewWindow -RedirectStandardOutput (New-Item -Path "C:\Windows\Logs\Get-Updates\Get-DriverUpdates-List.log" -Force)
 
-    #Housekeeping
-    Remove-Item -Path 'C:\Temp\Dell-Command-Update-WUA_JCVW3.EXE' -Force
-    }
+    #Delete temporary files
+    If (Test-Path 'C:\Temp\Dell-Command-Update-WUA_JCVW3.EXE'){Remove-Item -Path 'C:\Temp\Dell-Command-Update-WUA_JCVW3.EXE' -Force}
+}
 
     $WUScriptBlock = {
+    #Create the Log folder if non-existant
+    If (!(Test-Path "C:\Windows\Logs\Get-Updates" -ErrorAction SilentlyContinue)){New-Item -ItemType Directory "C:\Windows\Logs\Get-Updates\" -Force}  
+    
     #Variables 
-    $date = Get-Date -Format "-MM-dd-yyyy-HH-mm"
+    #$date = Get-Date -Format "-MM-dd-yyyy-HH-mm"
     $trigger = New-Jobtrigger -Once -at (Get-Date).AddMinutes(13)
     $options = New-ScheduledJobOption -StartIfOnBattery
-
 
     #Windows Updates Section
 
@@ -126,11 +131,11 @@ $DCUScriptBlock = {
     Set-Item WSMan:\localhost\Client\TrustedHosts -Value "*.ucdenver.pvt" -Force -Verbose
 
     Write-Verbose "Install updates on remote pc(s). Can't add date to log file no matter what I tried (Blaming Michal Gajda)." -Verbose
-    Invoke-WUInstall -ComputerName $ComputerName -Script {Import-Module PSWindowsUpdate; Install-WindowsUpdate -AcceptAll -AutoReboot -MicrosoftUpdate -Verbose | Format-Table -AutoSize -Wrap | Out-File (New-Item -Path "C:\Windows\Logs\Get-Updates\Get-WindowsUpdates-List.log" -Force)} -Confirm:$false -SkipModuleTest -RunNow -Verbose
+    Invoke-WUInstall -ComputerName $ComputerName -Script {Import-Module PSWindowsUpdate; Install-WindowsUpdate -AcceptAll -AutoReboot -MicrosoftUpdate -Verbose | Format-Table -AutoSize -Wrap} -Confirm:$false -SkipModuleTest -RunNow -Verbose
 
     Write-Verbose "Set a scheduled job 13 minutes in the future, after updates finish, to check the status of the last 100 updates and logs to file." -Verbose
-    if (Get-ScheduledJob -name WUHistoryJob){Unregister-ScheduledJob -Name WUHistoryJob}
-    Register-ScheduledJob -Name WUHistoryJob -ScriptBlock {Get-WUHistory -last 100 -ComputerName $ComputerName | Format-Table -AutoSize -Wrap | Out-File (New-Item -Path "C:\Windows\Logs\Get-Updates\Get-WindowsUpdates-WUHistory$date.log" -Force)} -Trigger $trigger -ScheduledJobOption $options -Verbose        
+    if (Get-ScheduledJob -Name WUHistoryJob -ErrorAction SilentlyContinue){Unregister-ScheduledJob -Name WUHistoryJob}
+    Register-ScheduledJob -Name WUHistoryJob -ScriptBlock {Get-WUHistory -last 100 -ComputerName $ComputerName | Format-Table -AutoSize -Wrap | Out-File (New-Item -Path "C:\Windows\Logs\Get-Updates\Get-WindowsUpdates-List.log" -Force)} -Trigger $trigger -ScheduledJobOption $options -Verbose        
     }
 
 #-----------------------------------------------------------[Functions]------------------------------------------------------------
@@ -173,6 +178,8 @@ Function Get-Updates{
         #If running locally
         If ('localhost' -eq $ComputerName){
           Write-Verbose "Running Get-Updates on the localhost ($hostname)." -Verbose
+          #& $DCUScriptBlock
+          #& $WUScriptBlock
           Start-Job -Name DCUScript -ScriptBlock {$DCUScriptBlock} | wait-job -Verbose | Receive-Job -WriteEvents -WriteJobInResults -Wait -Verbose
           Start-Job -Name WUScript -ScriptBlock {$WUScriptBlock} | wait-job -Verbose | Receive-Job -WriteEvents -WriteJobInResults -Wait -Verbose
         }
@@ -180,7 +187,7 @@ Function Get-Updates{
         #If running on remote PCs
         Else{
             foreach ($PC in $ComputerName){
-            Write-Verbose "`r`nRunning Get-Updates on $PC"
+            Write-Verbose "Running Get-Updates on $PC" -Verbose
             Invoke-Command -ScriptBlock $DCUScriptBlock -ComputerName $PC -AsJob | Wait-Job -Verbose | Receive-Job -WriteEvents -WriteJobInResults -Wait -Verbose
             Invoke-Command -ScriptBlock $WUScriptBlock -ComputerName $PC -AsJob | Wait-Job -Verbose | Receive-Job -WriteEvents -WriteJobInResults -Wait -Verbose
             }           
@@ -194,10 +201,10 @@ Function Get-Updates{
   
   End{
     If($?){
-      Log-Write -LogPath $sLogFile -LineValue "Completed Successfully."
+      Log-Write -LogPath $sLogFile -LineValue "Get-Updates Function Completed Successfully."
       Log-Write -LogPath $sLogFile -LineValue " "
       Stop-Transcript
-      Log-Finish -LogPath $sLogFile -NoExit
+      Log-Finish -LogPath $sLogFile -NoExit $True
       
     }
   }
@@ -226,7 +233,7 @@ Function Get-DriverUpdates{
       Log-Start -LogPath $sLogPath -LogName $sLogName -ScriptVersion $sScriptVersion
       Log-Write -LogPath $sLogFile -LineValue "Get-Updates is running on: $ComputerName"
       Log-Write -LogPath $sLogFile -LineValue "Begin Section"
-      Start-Transcript -Path "C:\Windows\Logs\Get-Updates\Get-DriverUpdates$date.log"
+      Start-Transcript -Path "C:\Windows\Logs\Get-Updates\Get-DriverUpdates-T$date.log"
     }
     
     Process{
@@ -238,7 +245,7 @@ Function Get-DriverUpdates{
         #If running on remote PCs
         Else{
             foreach ($PC in $ComputerName){
-            Write-Verbose "`r`nRunning Get-Updates on $PC"
+            Write-Verbose "Running Get-Updates on $PC" -Verbose
             Invoke-Command -ScriptBlock $DCUScriptBlock -ComputerName $PC -AsJob
             }           
         }          
@@ -252,9 +259,9 @@ Function Get-DriverUpdates{
     
     End{
       If($?){
-        Log-Write -LogPath $sLogFile -LineValue "Completed Successfully."
+        Log-Write -LogPath $sLogFile -LineValue "Get-DriverUpdates Function Completed Successfully."
         Log-Write -LogPath $sLogFile -LineValue " "
-        Log-Finish -LogPath $sLogFile -NoExit
+        Log-Finish -LogPath $sLogFile -NoExit $True
         Stop-Transcript
       }
     }
@@ -284,7 +291,7 @@ Function Get-DriverUpdates{
       Log-Start -LogPath $sLogPath -LogName $sLogName -ScriptVersion $sScriptVersion
       Log-Write -LogPath $sLogFile -LineValue "Get-Updates is running on: $ComputerName"
       Log-Write -LogPath $sLogFile -LineValue "Begin Section"
-      Start-Transcript -Path "C:\Windows\Logs\Get-Updates\Get-WindowsUpdates$date.log"
+      Start-Transcript -Path "C:\Windows\Logs\Get-Updates\Get-WindowsUpdates-T$date.log"
     }
     
     Process{
@@ -295,7 +302,7 @@ Function Get-DriverUpdates{
         #If running on remote PCs
         Else{
             foreach ($PC in $ComputerName){
-            Write-Verbose "`r`nRunning Get-Updates on $PC"
+            Write-Verbose "Running Get-Updates on $PC" -Verbose
             Invoke-Command -ScriptBlock $WUScriptBlock -ComputerName $PC -AsJob
             }           
         } 
@@ -309,9 +316,9 @@ Function Get-DriverUpdates{
     
     End{
       If($?){
-        Log-Write -LogPath $sLogFile -LineValue "Completed Successfully."
+        Log-Write -LogPath $sLogFile -LineValue "Get-WindowsUpdates Function Completed Successfully."
         Log-Write -LogPath $sLogFile -LineValue " "     
-        Log-Finish -LogPath $sLogFile -NoExit
+        Log-Finish -LogPath $sLogFile -NoExit $True
         Stop-Transcript
       }
     }

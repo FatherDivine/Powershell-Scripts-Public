@@ -191,7 +191,7 @@ Function Invoke-QuickFix{
     If($?){
       Log-Write -LogPath $sLogFile -LineValue "QuickFix Function Completed Successfully."
       Log-Write -LogPath $sLogFile -LineValue " "
-      Log-Finish -LogPath $sLogFile -NoExit
+      Log-Finish -LogPath $sLogFile -NoExit $True
     }
   }
 }
