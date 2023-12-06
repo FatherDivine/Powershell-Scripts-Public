@@ -61,7 +61,7 @@ $PreventProxyChanges = "HKCU:\SOFTWARE\Policies\Microsoft\Internet Explorer\Cont
 #-----------------------------------------------------------[Execution]------------------------------------------------------------
 $reglog= @()
 #Undo the lockdown on editing proxy configuration
-Remove-ItemProperty -path $PreventProxyChanges Proxy -Force
+Remove-ItemProperty -path $PreventProxyChanges Proxy -Force -ErrorAction SilentlyContinue
 
 #Remove the proxy keys
 $regKeys1 | ForEach-Object {
