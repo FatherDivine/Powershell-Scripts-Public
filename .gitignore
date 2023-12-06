@@ -47,3 +47,10 @@ Network Trash Folder
 Temporary Items
 .apdisk
 Modules/Javier-Proxy/Javier-Proxy/Public/Statena-Proxy.ps1
+Modules/DomainTool/DomainTool/Public/Get-Domain.ps1
+Modules/DomainTool/DomainTool/Public/Join-Domain.ps1
+Modules/DomainTool/DomainTool/Public/Unjoin-Domain.ps1
+Modules/DomainTool/DomainTool/Public/Add-ServiceTag.ps1
+Modules/DomainTool/DomainTool/Private/Sanitize-Hostname.ps1
+Modules/DomainTool/DomainTool/Private/Get-Credentials.ps1
+Modules/DomainTool/DomainTool/Private/Enable-PSRemote.ps1
