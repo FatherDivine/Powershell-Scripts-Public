@@ -9,7 +9,7 @@
 
 ## About <a name = "about"></a>
 
-This script enables Javiar's Squid proxy for exams in the CEDC, specifically Computer Science.
+This Module enables Javiar's Squid proxy for exams in the CEDC, specifically Computer Science.
 The purpose is to prevent cheating by only allowing the websites needed for the exam (like Github and Canvas for example).
 
 The base process is making registry changes to enable (and lock down the changes to prevent editing) and then deleting those changes by reversing them.
@@ -53,7 +53,9 @@ There are many ways to enable/disable the proxy. The best methods are
 
 1.) Use the FOG snap-ins entitled "Javier Proxy Enable" and "Javier Proxy Disable",
 deploying to the FOG group named "Javier LW840-LW844-NC2413" which already has all
-the PCs for all 3 labs in it.
+the PCs for all 3 labs in it.<br>
+
+As such, you can also grab the Enable-Proxy.ps1 and Disable-Proxy.ps1 files in the "Public" folder to upload to FOG or execute without a module. Just make sure you call the function at the bottom of that ps1 ile... Just add "& Enable-Proxy" or "& Disable-Proxy" to the end of the .ps1 script file.
 
 #
 
@@ -62,7 +64,6 @@ the PCs for all 3 labs in it.
 the below command from an Administrative Powershell Session that's in the same folder as the files
 themself. Note you must specify the computers. You can creat a computer list.txt file (using the lists
 located in \\data\..\Software\Scripts\PC LISTS (FOR SCRIPTS)) or use the below code:<br><br>
-
 
 
 #Create array with all PCs needing the Proxy<br>
