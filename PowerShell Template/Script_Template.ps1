@@ -26,6 +26,24 @@ GitHub README or script link
 .EXAMPLE
   <Example goes here. Repeat this attribute for more than one example>
 #>
+#---------------------------------------------------------[Force Module Elevation]--------------------------------------------------------
+#With this code, the script/module/function won't run unless elevated, thus local users can't use off the bat.
+<#
+$Elevated = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+if ( -not $Elevated ) {
+  throw "This module requires elevation."
+}
+#>
+
+#--------------------------------------------------------------[Privilege Escalation]---------------------------------------------------------------
+
+#When admin rights are needed
+if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))  
+{  
+  $arguments = "& '" +$myinvocation.mycommand.definition + "'"
+  Start-Process powershell -Verb runAs -ArgumentList $arguments
+  Break
+}
 
 #---------------------------------------------------------[Initialisations & Declarations]--------------------------------------------------------
 
@@ -40,8 +58,6 @@ Import-Module -Name Logging-Functions -DisableNameChecking
 
 #Create the Log folder if non-existant
 If (!(Test-Path "C:\Windows\Logs\<FolderName>")){New-Item -ItemType Directory "C:\Windows\Logs\<FolderName>\" -Force}
-
-
 
 #----------------------------------------------------------[Declarations]----------------------------------------------------------
 
