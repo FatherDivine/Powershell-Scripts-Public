@@ -1,7 +1,7 @@
 #Global variables
-$script:here = "C:\Users\statena\OneDrive - The University of Colorado Denver\CEDC IT\Projects\Aaron S\Powershell-Scripts-Public\Modules\Javier-Proxy\Javier-Proxy"
-$script:pubFunctions = ('Enable-Proxy','Disable-Proxy')
 $script:TemplatePowerShellModule = 'Javier-Proxy'
+$script:here = "$PSScriptRoot\..\$TemplatePowerShellModule"
+$script:pubFunctions = ('Enable-Proxy','Disable-Proxy')
 $script:Folders = ('Public')
 
 Describe "$TemplatePowerShellModule PowerShell Module Tests" {
