@@ -78,19 +78,19 @@ Write-Verbose "`r`nKeysight Module to fix various issues with Keysight programs"
   Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Keysight/README.md" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Keysight\README.md' -Force) -Verbose
 #}
 
-Write-Verbose "`r`nJavier Squid proxy enable module used for Exams in Computer Science. Easy remote deployment:"
+Write-Verbose "`r`nJavier's Squid proxy enable module used for Exams in Computer Science. Easy remote deployment:" -Verbose
 Write-Verbose '$JavierLabPCS|%{icm -ComputerName $_ -Scriptblock {Enable-Proxy} -AsJob}' -Verbose
-#}If (!(Test-Path "C:\Program Files\WindowsPowerShell\Modules\Enable-Proxy\")){  
-  Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Javier-SquidProxy/Enable-Proxy/Enable-Proxy.psm1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Javier-SquidProxy\Enable-Proxy\Enable-Proxy.psm1' -Force) -Verbose
-  Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Javier-SquidProxy/Enable-Proxy/Enable-Proxy.psd1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Javier-SquidProxy\Enable-Proxy\Enable-Proxy.psd1' -Force) -Verbose
-#  }
-
-Write-Verbose "`r`nJavier Squid proxy disable module used for Exams in Computer Science. Easy remote deployment:" -Verbose
-Write-Verbose '$JavierLabPCS|%{icm -ComputerName $_ -Scriptblock {Disable-Proxy} -AsJob}' -Verbose
-#}If (!(Test-Path "C:\Program Files\WindowsPowerShell\Modules\Disable-Proxy\")){  
-  Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Javier-SquidProxy/Disable-Proxy/Disable-Proxy.psm1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Javier-SquidProxy\Disable-Proxy\Disable-Proxy.psm1' -Force) -Verbose
-  Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Javier-SquidProxy/Disable-Proxy/Disable-Proxy.psd1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Javier-SquidProxy\Disable-Proxy\Disable-Proxy.psd1' -Force) -Verbose
-#  }
+Write-Verbose "or" -Verbose
+Write-Verbose 'Foreach ($PC in $JavierLabPCS){Invoke-Command -ComputerName $PC -Scriptblock {Disable-Proxy} -AsJob}' -Verbose
+#If (!(Test-Path "C:\Program Files\WindowsPowerShell\Modules\Javier-Proxy")){  
+  Write-Verbose "Downloading the latest Javier-Proxy module and placing in C:\Program Files\WindowsPowerShell\Modules\$Module\" -Verbose
+  Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Javier-Proxy/Javier-Proxy/Javier-Proxy.psd1" -OutFile (New-Item -Path "C:\Program Files\WindowsPowerShell\Modules\Javier-Proxy\Javier-Proxy.psd1" -Force)
+  Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Javier-Proxy/Javier-Proxy/Javier-Proxy.psm1" -OutFile (New-Item -Path "C:\Program Files\WindowsPowerShell\Modules\Javier-Proxy\Javier-Proxy.psm1" -Force)
+  Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Javier-Proxy/Javier-Proxy/Public/Enable-Proxy.ps1" -OutFile (New-Item -Path "C:\Program Files\WindowsPowerShell\Modules\Javier-Proxy\Public\Enable-Proxy.ps1" -Force)
+  Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Javier-Proxy/Javier-Proxy/Public/Disable-Proxy.ps1" -OutFile (New-Item -Path "C:\Program Files\WindowsPowerShell\Modules\Javier-Proxy\Public\Disable-Proxy.ps1" -Force)
+  Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Javier-Proxy/Javier-Proxy/Public/Enable-ASProxy.ps1" -OutFile (New-Item -Path "C:\Program Files\WindowsPowerShell\Modules\Javier-Proxy\Public\Enable-ASProxy.ps1" -Force)
+  Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Javier-Proxy/Javier-Proxy/Public/Disable-ASProxy.ps1" -OutFile (New-Item -Path "C:\Program Files\WindowsPowerShell\Modules\Javier-Proxy\Public\Disable-ASProxy.ps1" -Force)
+#}
 
 <#Set PS profile when our Github license is up:
 Write-Verbose 'Updating AllUsersAllHosts PS Profile.' -Verbose
