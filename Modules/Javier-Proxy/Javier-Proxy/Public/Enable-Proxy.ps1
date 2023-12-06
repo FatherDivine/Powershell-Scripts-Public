@@ -13,9 +13,9 @@
   The Proxy Status (Enabled/Disabled) stored in C:\Windows\Logs\Proxy\
 
 .NOTES
-  Version:        0.1
+  Version:        0.2
   Author:         Aaron Staten
-  Creation Date:  11/28/2023
+  Creation Date:  11/28/2023 (Last updated 12/5/2023)
   Purpose:        For CEDC IT Dept. use
   
 .LINK
@@ -43,7 +43,8 @@ https://github.com/FatherDivine/Powershell-Scripts-Public/blob/main/Javier-Squid
 #Variable declaration
 $date = Get-Date -Format "MM-dd-yyyy-HH-mm"
 
-#-----------------------------------------------------------[Execution]------------------------------------------------------------
+#-----------------------------------------------------------[Functions]------------------------------------------------------------
+
 Function Enable-Proxy{
   [cmdletbinding()]
   Param()
@@ -87,3 +88,5 @@ Function Enable-Proxy{
     If($?){}
   }
 }
+
+#-----------------------------------------------------------[Execution]------------------------------------------------------------
