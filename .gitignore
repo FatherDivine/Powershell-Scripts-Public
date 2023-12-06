@@ -54,3 +54,5 @@ Modules/DomainTool/DomainTool/Public/Add-ServiceTag.ps1
 Modules/DomainTool/DomainTool/Private/Sanitize-Hostname.ps1
 Modules/DomainTool/DomainTool/Private/Get-Credentials.ps1
 Modules/DomainTool/DomainTool/Private/Enable-PSRemote.ps1
+Modules/DomainTool/DomainTool/Private/Cred.xml
+Modules/DomainTool/DomainTool/Private/Key.xml
