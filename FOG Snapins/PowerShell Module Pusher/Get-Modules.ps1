@@ -78,14 +78,14 @@ Write-Verbose "`r`nKeysight Module to fix various issues with Keysight programs"
   Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Keysight/README.md" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Keysight\README.md' -Force) -Verbose
 #}
 
-Write-Verbose "`r`nJavier Squid proxy modules used for Exams in Computer Science. Easy remote deployment:"
+Write-Verbose "`r`nJavier Squid proxy enable module used for Exams in Computer Science. Easy remote deployment:"
 Write-Verbose '$JavierLabPCS|%{icm -ComputerName $_ -Scriptblock {Enable-Proxy} -AsJob}' -Verbose
 #}If (!(Test-Path "C:\Program Files\WindowsPowerShell\Modules\Enable-Proxy\")){  
   Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Javier-SquidProxy/Enable-Proxy/Enable-Proxy.psm1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Javier-SquidProxy\Enable-Proxy\Enable-Proxy.psm1' -Force) -Verbose
   Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Javier-SquidProxy/Enable-Proxy/Enable-Proxy.psd1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Javier-SquidProxy\Enable-Proxy\Enable-Proxy.psd1' -Force) -Verbose
 #  }
 
-Write-Verbose "`r`nJavier Squid proxy modules used for Exams in Computer Science. Easy remote deployment:" -Verbose
+Write-Verbose "`r`nJavier Squid proxy disable module used for Exams in Computer Science. Easy remote deployment:" -Verbose
 Write-Verbose '$JavierLabPCS|%{icm -ComputerName $_ -Scriptblock {Disable-Proxy} -AsJob}' -Verbose
 #}If (!(Test-Path "C:\Program Files\WindowsPowerShell\Modules\Disable-Proxy\")){  
   Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Javier-SquidProxy/Disable-Proxy/Disable-Proxy.psm1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Javier-SquidProxy\Disable-Proxy\Disable-Proxy.psm1' -Force) -Verbose
