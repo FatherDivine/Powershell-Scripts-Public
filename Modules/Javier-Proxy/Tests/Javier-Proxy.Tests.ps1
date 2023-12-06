@@ -68,5 +68,4 @@ Describe 'Function Tests' {
                 $errors.count | Should -be 0
             }
         }# Context Public Function Tests
-  #  } # end of Public function foreach
 } # end of describe block
