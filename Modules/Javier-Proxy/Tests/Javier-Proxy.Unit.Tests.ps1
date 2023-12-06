@@ -2,7 +2,7 @@
 $script:here = "C:\Users\statena\OneDrive - The University of Colorado Denver\CEDC IT\Projects\Aaron S\Powershell-Scripts-Public\Modules\Javier-Proxy\Javier-Proxy"
 $script:pubFunctions = ('Enable-Proxy','Disable-Proxy')
 $script:TemplatePowerShellModule = 'Javier-Proxy'
-$script:folders = ('Public')
+$script:Folder = ('Public')
 
 Describe "$TemplatePowerShellModule PowerShell Module Tests" {
 
@@ -27,9 +27,8 @@ Describe "$TemplatePowerShellModule PowerShell Module Tests" {
 }
 
     Describe 'Folders Tests' {
-        BeforeAll{  
-        }
-        It "$folder Should -exist" {
+
+        It "$folder Should exist" {
             "$here\$Folder" | Should -Exist
         }
     }
@@ -37,28 +36,28 @@ Describe "$TemplatePowerShellModule PowerShell Module Tests" {
 Describe 'Function Tests' {
 
         Context 'Public Functions' -ForEach $pubFunctions { 
-            It "$_.ps1 Should -exist" {
+            It "$_.ps1 Should exist" {
                 "$here\Public\$_.ps1" | Should -Exist
             }
-            It "$_.ps1 Should -have help block" {
+            It "$_.ps1 Should have help block" {
                 "$here\Public\$_.ps1" | Should -FileContentMatch '<#'
                 "$here\Public\$_.ps1" | Should -FileContentMatch '#>'
             }
-            It "$_.ps1 Should -have a SYNOPSIS section in the help block" {
+            It "$_.ps1 Should have a SYNOPSIS section in the help block" {
                 "$here\Public\$_.ps1" | Should -FileContentMatch '.SYNOPSIS'
             }
-            It "$_.ps1 Should -have a DESCRIPTION section in the help block" {
+            It "$_.ps1 Should have a DESCRIPTION section in the help block" {
                 "$here\Public\$_.ps1" | Should -FileContentMatch '.DESCRIPTION'
             }
-            It "$_.ps1 Should -have a EXAMPLE section in the help block" {
+            It "$_.ps1 Should have a EXAMPLE section in the help block" {
                 "$here\Public\$_.ps1" | Should -FileContentMatch '.EXAMPLE'
             }
-            It "$_.ps1 Should -be an advanced function" {
+            It "$_.ps1 Should be an advanced function" {
                 "$here\Public\$_.ps1" | Should -FileContentMatch 'function'
                 "$here\Public\$_.ps1" | Should -FileContentMatch 'CmdLetBinding'
                 "$here\Public\$_.ps1" | Should -FileContentMatch 'param'
             }
-            It "$_.ps1 Should -contain Write-Verbose blocks" {
+            It "$_.ps1 Should contain Write-Verbose blocks" {
                 "$here\Public\$_.ps1" | Should -FileContentMatch 'Write-Verbose'
             }
             It "$_.ps1 is valid PowerShell code" {
