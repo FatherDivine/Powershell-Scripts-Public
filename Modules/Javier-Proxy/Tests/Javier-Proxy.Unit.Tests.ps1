@@ -2,7 +2,7 @@
 $script:here = "C:\Users\statena\OneDrive - The University of Colorado Denver\CEDC IT\Projects\Aaron S\Powershell-Scripts-Public\Modules\Javier-Proxy\Javier-Proxy"
 $script:pubFunctions = ('Enable-Proxy','Disable-Proxy')
 $script:TemplatePowerShellModule = 'Javier-Proxy'
-$script:Folder = ('Public')
+$script:Folders = ('Public')
 
 Describe "$TemplatePowerShellModule PowerShell Module Tests" {
 
@@ -28,8 +28,8 @@ Describe "$TemplatePowerShellModule PowerShell Module Tests" {
 
     Describe 'Folders Tests' {
 
-        It "$folder Should exist" {
-            "$here\$Folder" | Should -Exist
+        It "$Folders Should exist" {
+            "$here\$Folders" | Should -Exist
         }
     }
 
