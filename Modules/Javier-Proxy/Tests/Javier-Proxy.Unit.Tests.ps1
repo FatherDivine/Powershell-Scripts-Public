@@ -28,14 +28,14 @@ Describe "$TemplatePowerShellModule PowerShell Module Tests" {
 
     Describe 'Folders Tests' {
 
-        It "$Folders Should exist" {
+        It "$Folders Folder Should exist" {
             "$here\$Folders" | Should -Exist
         }
     }
 
 Describe 'Function Tests' {
 
-        Context 'Public Functions' -ForEach $pubFunctions { 
+        Context 'Public Functions' -ForEach $pubFunctions {
             It "$_.ps1 Should exist" {
                 "$here\Public\$_.ps1" | Should -Exist
             }

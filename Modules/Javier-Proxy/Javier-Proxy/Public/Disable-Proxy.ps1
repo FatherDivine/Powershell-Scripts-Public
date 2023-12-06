@@ -5,7 +5,7 @@
 .DESCRIPTION
   This script disables Javiar's Squid proxy for exams
   taken in the CEDC, specifically Computer Science.
-    
+
 .INPUTS
   None. You cannot pipe objects to Disable-Proxy.ps1.
 
@@ -20,15 +20,15 @@
 
 .LINK
 https://github.com/FatherDivine/Powershell-Scripts-Public/blob/main/Javier-SquidProxy/Disable-Proxy.ps1
-  
+
 .EXAMPLE
   & .\Enable-Proxy.ps1
 
   The simplest execution from a PowerShell prompt.
 
 .EXAMPLE
-  Invoke-Command -FilePath .\Enable-Proxy.ps1 -ComputerName $PCs 
-  
+  Invoke-Command -FilePath .\Enable-Proxy.ps1 -ComputerName $PCs
+
   To invoke, thereby sending the script to a single PC or array of PCs.
 
 .EXAMPLE
@@ -64,9 +64,9 @@ Function Disable-Proxy{
       "HKLM:\Software\Microsoft\Windows\CurrentVersion\Internet Settings",
       "HKU:\.DEFAULT\Software\Microsoft\Windows\CurrentVersion\Internet Settings"
     )
-    $PreventProxyChanges = "HKCU:\SOFTWARE\Policies\Microsoft\Internet Explorer\Control Panel" 
+    $PreventProxyChanges = "HKCU:\SOFTWARE\Policies\Microsoft\Internet Explorer\Control Panel"
   }
-  
+
   Process{
     Try{
       #Undo the lockdown on editing proxy configuration
@@ -89,9 +89,9 @@ Function Disable-Proxy{
     Catch{
       Write-Verbose "Error Detected: $_.Exception" -Verbose
       Break
-    }  
+    }
   }
-  End{ 
+  End{
     If($?){}
   }
 }

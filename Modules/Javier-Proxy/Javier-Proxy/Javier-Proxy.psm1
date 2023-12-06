@@ -1,4 +1,4 @@
-# using module .\TemplatePowerShellModule\Class\TemplatePowerShellModule.Class1.psm1
+# using module .\Class\Module.Class1.psm1
 # Above needs to remain the first line to import Classes
 # remove the comment when using classes
 

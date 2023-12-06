@@ -5,7 +5,7 @@
 .DESCRIPTION
   This script enables Javiar's Squid proxy for exams
   taken in the CEDC, specifically Computer Science.
-    
+
 .INPUTS
    None. You cannot pipe objects to Enable-Proxy.ps1.
 
@@ -17,7 +17,7 @@
   Author:         Aaron Staten
   Creation Date:  11/28/2023
   Purpose:        For CEDC IT Dept. use
-  
+
 .LINK
 https://github.com/FatherDivine/Powershell-Scripts-Public/blob/main/Javier-SquidProxy/Enable-Proxy.ps1
 
@@ -27,8 +27,8 @@ https://github.com/FatherDivine/Powershell-Scripts-Public/blob/main/Javier-Squid
   The simplest execution from a PowerShell prompt.
 
 .EXAMPLE
-  Invoke-Command -FilePath .\Enable-Proxy.ps1 -ComputerName $PCs 
-  
+  Invoke-Command -FilePath .\Enable-Proxy.ps1 -ComputerName $PCs
+
   To invoke, thereby sending the script to a single PC or array of PCs.
 
 .EXAMPLE
@@ -47,7 +47,7 @@ $date = Get-Date -Format "MM-dd-yyyy-HH-mm"
 Function Enable-Proxy{
   [cmdletbinding()]
   Param()
-  
+
   Begin{
     #Define HKU as it isn't there by default
     New-PSDrive -PSProvider Registry -Name HKU -Root HKEY_USERS
@@ -59,7 +59,7 @@ Function Enable-Proxy{
       "HKU:\.DEFAULT\Software\Microsoft\Windows\CurrentVersion\Internet Settings"
     )
 
-    $PreventProxyChanges = "HKCU:\SOFTWARE\Policies\Microsoft\Internet Explorer\Control Panel" 
+    $PreventProxyChanges = "HKCU:\SOFTWARE\Policies\Microsoft\Internet Explorer\Control Panel"
   }
 
   Process{
