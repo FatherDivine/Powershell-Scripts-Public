@@ -2,7 +2,7 @@
 $script:TemplatePowerShellModule = 'Javier-Proxy'
 $script:here = "$PSScriptRoot\..\$TemplatePowerShellModule"
 $script:pubFunctions = ('Enable-Proxy','Disable-Proxy')
-$script:Folders = ('Public')
+$script:Folders = ('Public','Private')
 
 Describe "$TemplatePowerShellModule PowerShell Module Tests" {
 
@@ -28,8 +28,8 @@ Describe "$TemplatePowerShellModule PowerShell Module Tests" {
 
     Describe 'Folders Tests' {
 
-        It "$Folders Folder Should exist" {
-            "$here\$Folders" | Should -Exist
+        It "<_> Folder Should exist" -ForEach $Folders {
+            "$here\$_" | Should -Exist
         }
     }
 
