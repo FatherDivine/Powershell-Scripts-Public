@@ -67,9 +67,9 @@ Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershel
 
 Write-Verbose "`r`nGet-Updates used for local and remote Dell driver updates using Dell Command | Update" -Verbose
 #}If (!(Test-Path "C:\Program Files\WindowsPowerShell\Modules\Get-Updates\")){  
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Get-Updates/Get-Updates.psm1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Get-Updates\Get-Updates.psm1' -Force) -Verbose
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Get-Updates/Get-Updates.psd1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Get-Updates\Get-Updates.psd1' -Force) -Verbose
-
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Get-Updates/Get-Updates/Get-Updates.psm1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Get-Updates\Get-Updates.psm1' -Force) -Verbose
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Get-Updates/Get-Updates/Get-Updates.psd1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Get-Updates\Get-Updates.psd1' -Force) -Verbose
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Get-Updates/Get-Updates/Public/Get-Updates.ps1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Get-Updates\Public\Get-Updates.ps1' -Force) -Verbose
 
 Write-Verbose "`r`nQuickFix for auotmatically running maintenance routines like SFC, disk check, disk optimize, DISM, clear cache & cookies." -Verbose
 Write-Verbose "Just type QuickFix or QF from a PowerShell prompt." -Verbose
