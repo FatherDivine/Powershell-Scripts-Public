@@ -112,9 +112,9 @@ Write-Verbose "`r`nJavier's Squid proxy enable module used for Exams in Computer
 Write-Verbose '$JavierLabPCS|%{icm -ComputerName $_ -Scriptblock {Enable-Proxy} -AsJob}' -Verbose
 Write-Verbose "or" -Verbose
 Write-Verbose 'Foreach ($PC in $JavierLabPCS){Invoke-Command -ComputerName $PC -Scriptblock {Disable-Proxy} -AsJob}' -Verbose
-If (Test-Path "C:\Program Files\WindowsPowerShell\Modules\Javier-Proxy"){
+If ((Test-Path "C:\Program Files\WindowsPowerShell\Modules\Javier-Proxy") -or (Test-Path "C:\Program Files\WindowsPowerShell\Modules\Javier-SquidProxy")  ){
   Write-Verbose "Removing the old version of Javier-Proxy first." -Verbose
-  Try {Remove-Item -Path "C:\Program Files\WindowsPowerShell\Modules\Javier-Proxy" -Recurse -Force -Verbose}Catch{Write-Error "Error Occured: $_"}
+  Try {Remove-Item -Path "C:\Program Files\WindowsPowerShell\Modules\Javier-*" -Recurse -Force -Verbose}Catch{Write-Error "Error Occured: $_"}
 }
   Write-Verbose "Downloading the latest Javier-Proxy module and placing in C:\Program Files\WindowsPowerShell\Modules\$Module\" -Verbose
   Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Javier-Proxy/Javier-Proxy/Javier-Proxy.psd1" -OutFile (New-Item -Path "C:\Program Files\WindowsPowerShell\Modules\Javier-Proxy\Javier-Proxy.psd1" -Force)

@@ -43,39 +43,52 @@ https://github.com/FatherDivine/Powershell-Scripts-Public/blob/main/Javier-Squid
 #Variable declaration
 $date = Get-Date -Format "MM-dd-yyyy-HH-mm"
 
+#Install required modules
+if(! (Get-Module RunAsUser -ListAvailable)){
+  install-module RunAsUser
+}
+
 #-----------------------------------------------------------[Functions]------------------------------------------------------------
+
 
 Function Enable-Proxy{
   [cmdletbinding()]
   Param()
 
   Begin{
-    #Define HKU as it isn't there by default
-    New-PSDrive -PSProvider Registry -Name HKU -Root HKEY_USERS
+    #Invoke as current user Scriptblock
+    $Scriptblock = {    
+      #Define HKU as it isn't there by default
+      New-PSDrive -PSProvider Registry -Name HKU -Root HKEY_USERS
 
-    #Define our registry keys
-    $regKeys = @(
-      "HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings",
-      "HKLM:\Software\Microsoft\Windows\CurrentVersion\Internet Settings",
-      "HKU:\.DEFAULT\Software\Microsoft\Windows\CurrentVersion\Internet Settings"
-    )
+      #Define our registry keys
+      $regKeys = @(
+        "HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings",
+        "HKLM:\Software\Microsoft\Windows\CurrentVersion\Internet Settings",
+        "HKU:\.DEFAULT\Software\Microsoft\Windows\CurrentVersion\Internet Settings"
+      )
 
-    $PreventProxyChanges = "HKCU:\SOFTWARE\Policies\Microsoft\Internet Explorer\Control Panel"
+      $PreventProxyChanges = "HKCU:\SOFTWARE\Policies\Microsoft\Internet Explorer\Control Panel"
+
+      #Adding the below values to the above registry keys
+      $regKeys | ForEach-Object {
+        New-ItemProperty -path $_ ProxyEnable -value 1 -Force -ErrorAction SilentlyContinue
+        New-ItemProperty -path $_ ProxyServer -value "dceasapp783:3128" -Force -ErrorAction SilentlyContinue
+        New-ItemProperty -path $_ ProxyOverride -value "<local>" -Force -ErrorAction SilentlyContinue
+        New-ItemProperty -path $_ ProxySettingsPerUser -value "0" -Force -ErrorAction SilentlyContinue 
+      }
+        #Lockdown the changes
+        New-ItemProperty -path $PreventProxyChanges Proxy -value 1 -Force -ErrorAction SilentlyContinue
+      
+        #Log
+        Write-Output "Proxy Enabled on $date" | Out-File (New-Item -Path "C:\Windows\Logs\Proxy\ProxyStatus.txt" -Force)
+    }
   }
 
   Process{
     Try{
-    #Adding the below values to the above registry keys
-    $regKeys | ForEach-Object {
-      New-ItemProperty -path $_ ProxyEnable -value 1 -Force -ErrorAction SilentlyContinue
-      New-ItemProperty -path $_ ProxyServer -value "dceasapp783:3128" -Force -ErrorAction SilentlyContinue
-      New-ItemProperty -path $_ ProxyOverride -value "<local>" -Force -ErrorAction SilentlyContinue
-    }
-    #Lockdown the changes
-    New-ItemProperty -path $PreventProxyChanges Proxy -value 1 -Force -ErrorAction SilentlyContinue
-
-    #Log
-    Write-Output "Proxy Enabled on $date" | Out-File (New-Item -Path "C:\Windows\Logs\Proxy\ProxyStatus.txt" -Force)
+      $psexecScriptblock = {Invoke-AsCurrentUser -ScriptBlock $Scriptblock}
+      & ..\Bin\PsExec.exe -s powershell.exe -WindowStyle Hidden -NonInteractive -Command $psexecScriptblock
     }
 
     Catch{

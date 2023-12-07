@@ -43,6 +43,11 @@ https://github.com/FatherDivine/Powershell-Scripts-Public/blob/main/Javier-Squid
 #Variable declaration
 $date = Get-Date -Format "MM-dd-yyyy-HH-mm"
 
+#Install required modules
+if(! (Get-Module RunAsUser -ListAvailable)){
+  install-module RunAsUser
+}
+
 #-----------------------------------------------------------[Functions]------------------------------------------------------------
 
 Function Disable-Proxy{
@@ -50,6 +55,7 @@ Function Disable-Proxy{
   Param()
 
   Begin{
+    $scriptblock = {
     #Define HKU as it isn't there by default
     New-PSDrive -PSProvider Registry -Name HKU -Root HKEY_USERS
 
@@ -65,10 +71,7 @@ Function Disable-Proxy{
       "HKU:\.DEFAULT\Software\Microsoft\Windows\CurrentVersion\Internet Settings"
     )
     $PreventProxyChanges = "HKCU:\SOFTWARE\Policies\Microsoft\Internet Explorer\Control Panel"
-  }
 
-  Process{
-    Try{
       #Undo the lockdown on editing proxy configuration
       Remove-ItemProperty -path $PreventProxyChanges Proxy -Force -ErrorAction SilentlyContinue
 
@@ -84,7 +87,14 @@ Function Disable-Proxy{
       }
 
       #Log
-      Write-Output "Proxy Disabled on $date" | Out-File (New-Item -Path "C:\Windows\Logs\Proxy\ProxyStatus.txt" -Force)
+      Write-Output "Proxy Disabled on $date" | Out-File (New-Item -Path "C:\Windows\Logs\Proxy\ProxyStatus.txt" -Force)    
+    }
+  }
+
+  Process{
+    Try{
+      Invoke-AsCurrentUser -scriptblock $Scriptblock
+      
       }
     Catch{
       Write-Verbose "Error Detected: $_.Exception" -Verbose
