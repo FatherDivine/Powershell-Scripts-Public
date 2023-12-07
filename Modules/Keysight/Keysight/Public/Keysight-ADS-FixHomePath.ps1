@@ -92,10 +92,10 @@ Function Keysight-ADS-FixHomePath{
 
     #LogStart
     Log-Start -LogPath $sLogPath -LogName $sLogName -ScriptVersion $sScriptVersion
-    Log-Write -LogPath $sLogFile -LineValue "Keysight-ADS-FixHomePath is running on: $ComputerName"
+    Log-Write -LogPath $sLogFile -LineValue "Keysight-ADS-FixHomePath is attempting to execute on: $ComputerName"
     Log-Write -LogPath $sLogFile -LineValue "Begin Section"
     Start-Transcript -Path "C:\Windows\Logs\Keysight\ADS-FixHomePath-T$date.log" -Force
-    Write-Verbose "Keysight-ADS-FixHomePath is running on: $ComputerName" -Verbose
+    Write-Verbose "Keysight-ADS-FixHomePath is attempting to execute on: $ComputerName" -Verbose
 
     #Our heavylifting scriptblock. While @() allows the invoke-command verbose to transcript, it won't actually execute on the remote PC.
     $KeysightScriptblock = {
