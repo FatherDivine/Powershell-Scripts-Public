@@ -3,9 +3,9 @@
   Various functions related to Keysight software.
 
 .DESCRIPTION
-    The purpose of this Function/Module is to create functions that support Keysight software. 
-    This includes things that may be needed, like license files changes, HOME path/registry edits, 
-    or updating (and in some cases, uninstalling) certain softwares. 
+    The purpose of this Function/Module is to create functions that support Keysight software.
+    This includes things that may be needed, like license files changes, HOME path/registry edits,
+    or updating (and in some cases, uninstalling) certain softwares.
 
 .INPUTS
   none
@@ -18,7 +18,7 @@
   Author:         Aaron Staten
   Creation Date:  11-30-2023
   Purpose/Change: Initial script development
- 
+
 .LINK
   https://github.com/FatherDivine/Powershell-Scripts-Public/tree/main/FOG%20Snapins/Keysight
 
@@ -35,7 +35,7 @@
 .EXAMPLE
   . .\Keysight.ps1 ; & KeySight-ADS-FixHomePath
 
-  Dot-sourced one-liner method of initializing the Keysight.ps1 script, then calling the function within it. This is 
+  Dot-sourced one-liner method of initializing the Keysight.ps1 script, then calling the function within it. This is
   for non-module (or FOG snap-in) usage.
 #>
 
@@ -49,14 +49,22 @@ $sScriptVersion = "0.1"
 
 #Import necessary modules, downlaod if not there already
 #Logging-Functions for basic logging functionality in all scripts.
-If (!(Test-Path "C:\Program Files\WindowsPowerShell\Modules\Logging-Functions\")){  
+If (!(Test-Path "C:\Program Files\WindowsPowerShell\Modules\Logging-Functions\")){
   Write-Verbose 'Downloading the latest Logging-Functions module and placing in C:\Program Files\WindowsPowerShell\Modules\Logging-Functions\' -Verbose
   Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Logging-Functions/Logging-Functions.psm1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Logging-Functions\Logging-Functions.psm1' -Force) -Verbose
   Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Logging-Functions/Logging-Functions.psd1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Logging-Functions\Logging-Functions.psd1' -Force) -Verbose
 }
-Import-Module -Name Logging-Functions -DisableNameChecking
 
-#Variables 
+If (!(Test-Path "C:\Program Files\WindowsPowerShell\Modules\Invoke-Ping\")){
+  Write-Verbose 'Downloading the latest Logging-Functions module and placing in C:\Program Files\WindowsPowerShell\Modules\Logging-Functions\' -Verbose
+  Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Invoke-Ping/Invoke-Ping/Invoke-Ping.psd1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Invoke-Ping\Invoke-Ping.psd1' -Force) -Verbose
+  Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Invoke-Ping/Invoke-Ping/Invoke-Ping.psm1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Invoke-Ping\Invoke-Ping.psm1' -Force) -Verbose
+  Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Invoke-Ping/Invoke-Ping/Public/Invoke-Ping.ps1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Invoke-Ping\Public\Invoke-Ping.ps1' -Force) -Verbose
+}
+
+Import-Module -Name Invoke-Ping, Logging-Functions -DisableNameChecking
+
+#Variables
 $date = Get-Date -Format "-MM-dd-yyyy-HH-mm"
 
 #Create the Log folder if non-existant
@@ -65,7 +73,7 @@ If (!(Test-Path "C:\Windows\Logs\Keysight")){New-Item -ItemType Directory "C:\Wi
 #-----------------------------------------------------------[Functions]------------------------------------------------------------
 
 Function Keysight-ADS-FixHomePath{
-  <# 
+  <#
   .PARAMETER ComputerName
     Allows for Keysight  to be ran against a remote PC or list of remote PCs.
   #>
@@ -89,7 +97,7 @@ Function Keysight-ADS-FixHomePath{
     Start-Transcript -Path "C:\Windows\Logs\Keysight\ADS-FixHomePath-T$date.log" -Force
     Write-Verbose "Keysight-ADS-FixHomePath is running on: $ComputerName" -Verbose
 
-    #Our heavylifting scriptblock. While @() allows the invoke-command verbose to transcript, it won't actually execute on the remote PC. 
+    #Our heavylifting scriptblock. While @() allows the invoke-command verbose to transcript, it won't actually execute on the remote PC.
     $KeysightScriptblock = {
       #Registry locations that need editing
       $regKeys = @(
@@ -97,14 +105,14 @@ Function Keysight-ADS-FixHomePath{
       )
       #Our registry test-path variable
       $RegistryTestValue = 'Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Keysight\ADS\4.91\eeenv'
-      
+
       #Test if the registry value was already set, and set if not
       $RegistryTest = Get-ItemPropertyValue $RegistryTestValue -Name HOME
       If ('C:\ADS' -eq $RegistryTest){Write-Verbose 'C:\ADS already set as HOME' -Verbose}
       else {
         Write-Verbose "Setting C:\ADS as HOME at $regKeys" -Verbose
 
-        #Apply the changes to registry        
+        #Apply the changes to registry
         $regKeys | ForEach-Object {
           Set-ItemProperty -path $_ HOME -value C:\ADS -Force #-ErrorAction SilentlyContinue
         }
@@ -118,23 +126,23 @@ Function Keysight-ADS-FixHomePath{
           #Create ADS folder (Move-Item does not create folders)
           New-Item -ItemType Directory -Path "C:\ADS" -Force -Verbose
         }
-      
+
         #Move the files from C:\cladmin\hpeesof to C:\ADS if it exists there
         Write-Verbose 'Finding a copy of hpeesof to move to C:\ADS. Might be C:\users\cladmin or Github.' -Verbose
         If (Test-Path "C:\users\cladmin\hpeesof"){Move-Item -Path "C:\users\cladmin\hpeesof" -Destination "C:\ADS\" -Force -Verbose}
-      
+
         #As a backup if not there, grab from Github & unzip
         else{
           Write-Verbose 'C:\users\cladmin\hpeesof was non-existant. Grabbing the latest version from Github.' -Verbose
           # Create a new temporary file
           $Extracthpeesof = ".zip"
-          
+
           #Store the download into the temporary file
           Invoke-WebRequest -Uri https://github.com/FatherDivine/Powershell-Scripts-Public/raw/main/Modules/Keysight/hpeesof.zip  -OutFile $Extracthpeesof
-          
+
           #Extract the temporary file
           $Extracthpeesof | Expand-Archive -DestinationPath "C:\ADS" -Force -Verbose
-          
+
           #Remove temporary file
           $Extracthpeesof | Remove-Item
         }
@@ -149,10 +157,10 @@ Function Keysight-ADS-FixHomePath{
 
           #Set the ACL, write any errors
           try{Set-Acl -Path $ACLPath -AclObject $ACL}catch{Write-Error "An Error occured. Could not set the folder permissions: $_" -Verbose}
-         
+
     }
   }
-  
+
   Process{
     Try{
       Log-Write -LogPath $sLogFile -LineValue "The Process (code) Section."
@@ -160,35 +168,42 @@ Function Keysight-ADS-FixHomePath{
       If ('localhost' -eq $ComputerName){& $KeysightScriptblock}
 
       #Execute Keysight scriptblock on every PC listed in $ComputerName
-      else{foreach ($PC in $ComputerName){Invoke-Command -ScriptBlock $KeysightScriptblock -ComputerName $PC -Verbose}}
-      
+      else{
+
+        #Test what Pcs are online first before sending cmdlets
+        $WorkingPCs = Invoke-Ping -ComputerName $ComputerName -quiet
+        Log-Write -LogPath $sLogFile -LineValue "List of PCs that were found to be online using Invoke-Ping: $WorkingPCs"
+
+        ForEach ($PC in $WorkingPCs){
+          try{
+            Invoke-Command -ScriptBlock $KeysightScriptblock -ComputerName $PC -Verbose
+          }
+          catch{
+            write-verboe "error: $_" -verbose
+          }
+        }
+      }
     }
-    
+
     Catch{
       Log-Error -LogPath $sLogFile -ErrorDesc $_.Exception -ExitGracefully $True
       Break
     }
   }
-  
   End{
     If($?){
       Log-Write -LogPath $sLogFile -LineValue "Keysight-ADS-FixHomePath Function Completed Successfully."
       Log-Write -LogPath $sLogFile -LineValue " "
-      Stop-Transcript 
-      Log-Finish -LogPath $sLogFile
-      
+      Stop-Transcript
+      Log-Finish -LogPath $sLogFile -NoExit $True
     }
   }
 }
 
-Function Keysight-VersionCheck{
-  #Tells what version of Keysight is installed
-  #Outputs on the screen and C:\Windows\Logs\Keysight\KeySight-Version.log~
-  }
-
-  Function KeySight-Uninstall{} 
 #-----------------------------------------------------------[Execution]------------------------------------------------------------
 
 #Script Execution goes here, when not using as a Module.
 #Can execute a function for FOG snap-ins like this:
-& Keysight-ADS-FixHomePath
+#& Keysight-ADS-FixHomePath
+
+export-modulemember -alias * -function *

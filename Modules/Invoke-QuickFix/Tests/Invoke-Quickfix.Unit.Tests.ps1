@@ -1,7 +1,7 @@
 #Global variables
-$script:TemplatePowerShellModule = 'Javier-Proxy'
+$script:TemplatePowerShellModule = 'Invoke-QuickFix'
 $script:here = "$PSScriptRoot\..\$TemplatePowerShellModule"
-$script:pubFunctions = ('Enable-Proxy','Disable-Proxy')
+$script:pubFunctions = ('Invoke-QuickFix')
 $script:privFunctions = ($null)
 $script:Folders = ('Public','Private')
 
@@ -27,9 +27,9 @@ Describe "$TemplatePowerShellModule PowerShell Module Tests" {
     }
 }
 
-    Describe 'Folders Tests' {
+    Describe 'Folders Tests' -Foreach $Folders{
 
-        It "<_> Folder Should exist" -ForEach $Folders {
+        It "$_ Folder Should exist" {
             "$here\$_" | Should -Exist
         }
     }
@@ -99,5 +99,5 @@ Describe 'Function Tests' {
                 $null = [System.Management.Automation.PSParser]::Tokenize($psFile, [ref]$errors)
                 $errors.count | Should be 0
             }
-        } # Context Private Function Tests
+        } # Context Private Function Tests        
 } # end of describe block

@@ -4,7 +4,7 @@
 
 .DESCRIPTION
   Simple script to run a few maintenance commands on the PC,
-  like sfc, DISM, and disk optimization. 
+  like sfc, DISM, and disk optimization.
   Outputs the logging to C:\temp.
 
 .PARAMETER ComputerName
@@ -24,7 +24,7 @@
   Creation Date:  9/27/23 (Updated 11-26-2023)
   For:            CEDC IT Dept.
   Planned Updates: Keep PS window open after module runs
-  
+
 .EXAMPLE
   Run on an array of PCs
   .\QuickFix.ps1 -ComputerName $NC2413
@@ -39,14 +39,14 @@
   Invoke-QuickFix
 
   #FOG Snapin Arguments for calling the function for the local PC
-   powershell.exe -ExecutionPolicy Bypass -Command "& {. .\QuickFix.ps1; & QuickFix}" 
+   powershell.exe -ExecutionPolicy Bypass -Command "& {. .\QuickFix.ps1; & QuickFix}"
 #>
 
 #--------------------------------------------------------------[Privilege Escalation]---------------------------------------------------------------
 
 #When admin rights are needed
-if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))  
-{  
+if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))
+{
   $arguments = "& '" +$myinvocation.mycommand.definition + "'"
   Start-Process powershell -Verb runAs -ArgumentList $arguments
   Break
@@ -57,11 +57,18 @@ if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdenti
 $ErrorActionPreference = "SilentlyContinue"
 
 Write-Verbose "Downloading the latest version of Logging-Functions via Github if non-existant" -Verbose
-If (!(Test-Path "C:\Program Files\WindowsPowerShell\Modules\Logging-Functions")){  
+If (!(Test-Path "C:\Program Files\WindowsPowerShell\Modules\Logging-Functions")){
 Write-Verbose 'Downloading the latest Logging-Functions module and placing in C:\Program Files\WindowsPowerShell\Modules\Logging-Functions\' -Verbose
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Logging-Functions/Logging-Functions.psm1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Logging-Functions\Logging-Functions.psm1' -Force)
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Logging-Functions/Logging-Functions.psd1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Logging-Functions\Logging-Functions.psd1' -Force)
 }
+Write-Verbose "Downloading the latest version of Invoke-Ping, the fastest way to only send cmdlets to a PC that's online. Saves time from sending cmdlets to offline PCs."
+#If (!(Test-Path "C:\Program Files\WindowsPowerShell\Modules\Invoke-Ping\")){
+    Write-Verbose 'Downloading the latest Logging-Functions module and placing in C:\Program Files\WindowsPowerShell\Modules\Logging-Functions\' -Verbose
+    Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Invoke-Ping/Invoke-Ping/Invoke-Ping.psd1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Invoke-Ping\Invoke-Ping.psd1' -Force) -Verbose
+    Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Invoke-Ping/Invoke-Ping/Invoke-Ping.psm1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Invoke-Ping\Invoke-Ping.psm1' -Force) -Verbose
+    Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Invoke-Ping/Invoke-Ping/Public/Invoke-Ping.ps1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Invoke-Ping\Public\Invoke-Ping.ps1' -Force) -Verbose
+#}
 
 #Create Quickfix aliases
 New-Alias -Name QuickFix -value Invoke-QuickFix -Description "Runs routine maintenance comamnds like SFC, disk check, disk optimize, DISM, and clears cookies & cache on a local or remote PC(s)."
@@ -84,13 +91,13 @@ Function Invoke-QuickFix{
     ValueFromPipeline=$true)]
     [string[]]$ComputerName
   )
-  
+
   Begin{
 
     #Import Modules
     Import-Module -Name Logging-Functions -DisableNameChecking
 
-    #Variables 
+    #Variables
     $hostname = hostname
 
     #Log File Info
@@ -110,7 +117,7 @@ Function Invoke-QuickFix{
       Write-Verbose "Applying the fixes as individual jobs." -Verbose
       #Line below is for when a defrag is needed on an older mechanical drive. SSDs are not defragged
       #start-job -Name Defrag -ScriptBlock {defrag C: /B /U /V | defrag C: /D /U /V}
-      
+
       #Disk Optimization
       Try {
       start-job -Name OptimizeVolume -ScriptBlock {Optimize-Volume -DriveLetter C -ReTrim -Verbose} -Verbose
@@ -163,29 +170,37 @@ Function Invoke-QuickFix{
       wait-job -name SFC,OptimizeVolume,DiskCheck,DISM,Cache1,Cache2,Cache3,Cookies1,Cookies2 -Verbose| Receive-Job -WriteEvents -WriteJobInResults -Wait -Verbose| Out-File (New-Item -Path "C:\Windows\Logs\QuickFix\QuickFix-Jobs$date.log" -Force)
     }
   }
-  
+
   Process{
     Try{
       Log-Write -LogPath $sLogFile -LineValue "Process (code) Section"
 
       #Running QuickFix on the local host.
-      If ($null -eq $ComputerName){  
+      If ($null -eq $ComputerName){
         Log-Write -LogPath $sLogFile -LineValue "QuickFix is running on: Localhost ($hostname)."
         & $QuickFixScriptblock
       }
       #Running QuickFix on remote pc(s).
       else{
-          Log-Write -LogPath $sLogFile -LineValue "QuickFix is running on: $ComputerName."         
-        foreach ($PC in $ComputerName){
-          Invoke-Command -ScriptBlock $QuickFixScriptblock -ComputerName $PC -AsJob
-      }    
+        #Test what Pcs are online first before sending cmdlets
+        $WorkingPCs = Invoke-Ping -ComputerName $ComputerName -quiet
+        Log-Write -LogPath $sLogFile -LineValue "List of PCs that were found to be online using Invoke-Ping: $WorkingPCs"
+
+        ForEach ($PC in $WorkingPCs){
+          try{
+            Invoke-Command -ScriptBlock $QuickFixScriptblock -ComputerName $PC -Verbose -AsJob
+          }
+          catch{
+            write-verboe "error: $_" -verbose
+          }
+        }
     }
   }
     Catch{
       Log-Error -LogPath $sLogFile -ErrorDesc $_.Exception -ExitGracefully $True
       Break
     }
-  
+
   }
   End{
     If($?){

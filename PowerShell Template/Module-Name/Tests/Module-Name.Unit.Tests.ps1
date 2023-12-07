@@ -27,12 +27,12 @@ Describe "$TemplatePowerShellModule PowerShell Module Tests" {
     }
 }
 
-    Describe 'Folders Tests' {
+Describe 'Folders Tests' -Foreach $Folders{
 
-        It "$Folders Folder Should exist" {
-            "$here\$Folders" | Should -Exist
-        }
+    It "$_ Folder Should exist" {
+        "$here\$_" | Should -Exist
     }
+}
 
 Describe 'Function Tests' {
 
@@ -71,7 +71,7 @@ Describe 'Function Tests' {
 
             Context 'Private Functions' -ForEach $privFunctions{
                 It "$_.ps1 should exist" {
-                    "$here\Private\$_.ps1" | Should Exist
+                    "$here\Private\$_.ps1" | Should -Exist
                 }
                 It "$_.ps1 should have help block" {
                     "$here\Private\$_.ps1" | Should -FileContentMatch '<#'
