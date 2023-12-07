@@ -46,7 +46,8 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
-Modules/Javier-Proxy/Javier-Proxy/Public/Statena-Proxy.ps1
+Modules/Javier-Proxy/Javier-Proxy/Public/Disable-ASProxy.ps1
+Modules/Javier-Proxy/Javier-Proxy/Public/Enable-ASProxy.ps1
 Modules/DomainTool/DomainTool/Public/Get-Domain.ps1
 Modules/DomainTool/DomainTool/Public/Join-Domain.ps1
 Modules/DomainTool/DomainTool/Public/Unjoin-Domain.ps1
@@ -56,3 +57,4 @@ Modules/DomainTool/DomainTool/Private/Get-Credentials.ps1
 Modules/DomainTool/DomainTool/Private/Enable-PSRemote.ps1
 Modules/DomainTool/DomainTool/Private/Cred.xml
 Modules/DomainTool/DomainTool/Private/Key.xml
+Modules/Get-Updates/Notes.ps1
