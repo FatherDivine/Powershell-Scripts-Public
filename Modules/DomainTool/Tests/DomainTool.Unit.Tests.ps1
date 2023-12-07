@@ -1,8 +1,8 @@
 #Global variables
 $script:TemplatePowerShellModule = 'DomainTool'
 $script:here = "$PSScriptRoot\..\$TemplatePowerShellModule"
-$script:pubFunctions = ('Join-Domain','Unjoin-Domain','Get-Domain')
-#$script:privFunctions = ('Import-FunctionName3','Import-FunctionName4')
+$script:pubFunctions = ('Add-ServiceTag','Get-Domain','Join-Domain','Unjoin-Domain')
+$script:privFunctions = ('Enable-PSRemote','Get-Credentials')#,'PSRemoteStatus','Enable-PSRemote')
 $script:Folders = ('Public','Private')
 
 Describe "$TemplatePowerShellModule PowerShell Module Tests" {
@@ -69,24 +69,24 @@ Describe 'Function Tests' {
             }
         }# Context Public Function Tests
 
-            Context 'Private Functions' -ForEach $privFunctions{
+            Context 'Private Functions' -ForEach $privFunctions {
                 It "$_.ps1 should exist" {
-                    "$here\Private\$_.ps1" | Should Exist
+                    "$here\Private\$_.ps1" | Should -Exist
                 }
                 It "$_.ps1 should have help block" {
                     "$here\Private\$_.ps1" | Should -FileContentMatch '<#'
                     "$here\Private\$_.ps1" | Should -FileContentMatch '#>'
                 }
-                It "$function.ps1 should have a SYNOPSIS section in the help block" {
+                It "$_.ps1 should have a SYNOPSIS section in the help block" {
                     "$here\Private\$_.ps1" | Should -FileContentMatch '.SYNOPSIS'
                 }
-                It "$function.ps1 should have a DESCRIPTION section in the help block" {
+                It "$_.ps1 should have a DESCRIPTION section in the help block" {
                     "$here\Private\$_.ps1" | Should -FileContentMatch '.DESCRIPTION'
                 }
-                It "$function.ps1 should have a EXAMPLE section in the help block" {
+                It "$_.ps1 should have a EXAMPLE section in the help block" {
                     "$here\Private\$_.ps1" | Should -FileContentMatch '.EXAMPLE'
                 }
-                It "$function.ps1 should be an advanced function" {
+                It "$_.ps1 should be an advanced function" {
                     "$here\Private\$_.ps1" | Should -FileContentMatch 'function'
                     "$here\Private\$_.ps1" | Should -FileContentMatch 'CmdLetBinding'
                     "$here\Private\$_.ps1" | Should -FileContentMatch 'param'
@@ -94,7 +94,7 @@ Describe 'Function Tests' {
                 It "$_.ps1 should contain Write-Verbose blocks" {
                     "$here\Private\$_.ps1" | Should -FileContentMatch 'Write-Verbose'
                 }
-                It "$function.ps1 is valid PowerShell code" {
+                It "$_.ps1 is valid PowerShell code" {
                     $psFile = Get-Content -Path "$here\Private\$_.ps1" -ErrorAction Stop
                     $errors = $null
                     $null = [System.Management.Automation.PSParser]::Tokenize($psFile, [ref]$errors)
