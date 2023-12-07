@@ -1,8 +1,8 @@
 #Global variables
-$script:TemplatePowerShellModule = 'Module-Name'
+$script:TemplatePowerShellModule = 'Invoke-Ping'
 $script:here = "$PSScriptRoot\..\$TemplatePowerShellModule"
-$script:pubFunctions = ('Function1','Function2')
-$script:privFunctions = ('Import-FunctionName3','Import-FunctionName4')
+$script:pubFunctions = ('Invoke-Ping')
+$script:privFunctions = ($null)
 $script:Folders = ('Public','Private')
 
 Describe "$TemplatePowerShellModule PowerShell Module Tests" {
@@ -27,10 +27,10 @@ Describe "$TemplatePowerShellModule PowerShell Module Tests" {
     }
 }
 
-    Describe 'Folders Tests' {
+    Describe 'Folders Tests' -ForEach $Folders {
 
-        It "$Folders Folder Should exist" {
-            "$here\$Folders" | Should -Exist
+        It "$_ Folder Should exist" {
+            "$here\$_" | Should -Exist
         }
     }
 
@@ -71,7 +71,7 @@ Describe 'Function Tests' {
 
             Context 'Private Functions' -ForEach $privFunctions{
                 It "$_.ps1 should exist" {
-                    "$here\Private\$_.ps1" | Should Exist
+                    "$here\Private\$_.ps1" | Should -Exist
                 }
                 It "$_.ps1 should have help block" {
                     "$here\Private\$_.ps1" | Should -FileContentMatch '<#'
