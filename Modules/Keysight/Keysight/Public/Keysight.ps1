@@ -54,7 +54,14 @@ If (!(Test-Path "C:\Program Files\WindowsPowerShell\Modules\Logging-Functions\")
   Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Logging-Functions/Logging-Functions.psm1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Logging-Functions\Logging-Functions.psm1' -Force) -Verbose
   Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Logging-Functions/Logging-Functions.psd1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Logging-Functions\Logging-Functions.psd1' -Force) -Verbose
 }
-Import-Module -Name Logging-Functions -DisableNameChecking
+
+If (!(Test-Path "C:\Program Files\WindowsPowerShell\Modules\Invoke-Ping\")){  
+  Write-Verbose 'Downloading the latest Logging-Functions module and placing in C:\Program Files\WindowsPowerShell\Modules\Logging-Functions\' -Verbose
+  Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Logging-Functions/Logging-Functions.psm1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Logging-Functions\Logging-Functions.psm1' -Force) -Verbose
+  Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Logging-Functions/Logging-Functions.psd1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Logging-Functions\Logging-Functions.psd1' -Force) -Verbose
+}
+
+Import-Module -Name Invoke-Ping, Logging-Functions -DisableNameChecking
 
 #Variables 
 $date = Get-Date -Format "-MM-dd-yyyy-HH-mm"
@@ -192,3 +199,5 @@ Function Keysight-VersionCheck{
 #Script Execution goes here, when not using as a Module.
 #Can execute a function for FOG snap-ins like this:
 #& Keysight-ADS-FixHomePath
+
+export-modulemember -alias * -function *

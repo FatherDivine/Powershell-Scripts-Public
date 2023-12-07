@@ -24,7 +24,7 @@ GUID = 'ea2de217-2851-42f0-8fb5-e8cc09648398'
 Author = 'Aaron Staten'
 
 # Company or vendor of this module
-CompanyName = 'Unknown'
+CompanyName = 'CEDC IT Dept.'
 
 # Copyright statement for this module
 Copyright = '(c) Aaron Staten. All rights reserved.'
