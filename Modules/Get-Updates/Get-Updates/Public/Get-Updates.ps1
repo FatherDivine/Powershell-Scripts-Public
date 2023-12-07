@@ -80,8 +80,16 @@ if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdenti
 #Set Error Action to Silently Continue
 $ErrorActionPreference = "SilentlyContinue"
 
+#Download Modules if not on the system
+If (!(Test-Path "C:\Program Files\WindowsPowerShell\Modules\Invoke-Ping\")){
+  Write-Verbose 'Downloading the latest Logging-Functions module and placing in C:\Program Files\WindowsPowerShell\Modules\Logging-Functions\' -Verbose
+  Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Invoke-Ping/Invoke-Ping/Invoke-Ping.psd1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Invoke-Ping\Invoke-Ping.psd1' -Force) -Verbose
+  Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Invoke-Ping/Invoke-Ping/Invoke-Ping.psm1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Invoke-Ping\Invoke-Ping.psm1' -Force) -Verbose
+  Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Invoke-Ping/Invoke-Ping/Public/Invoke-Ping.ps1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Invoke-Ping\Public\Invoke-Ping.ps1' -Force) -Verbose
+}
+
 #Import Modules
-Import-Module -Name Invoke-WUInstall, Logging-Functions -DisableNameChecking
+Import-Module -Name Invoke-Ping, Invoke-WUInstall, Logging-Functions -DisableNameChecking
 
 #----------------------------------------------------------[Declarations]----------------------------------------------------------
 
@@ -186,14 +194,22 @@ Function Get-Updates{
 
         #If running on remote PCs
         Else{
-            foreach ($PC in $ComputerName){
-            Write-Verbose "Running Get-Updates on $PC." -Verbose
-            Invoke-Command -ScriptBlock $DCUScriptBlock -ComputerName $PC -AsJob -JobName 'DCUScript'
-            Invoke-Command -ScriptBlock $WUScriptBlock -ComputerName $PC -AsJob -JobName 'WUScript'
-            #Wait-Job -Name DCUScript,WUScript -Verbose | Receive-Job -WriteEvents -WriteJobInResults -Wait -Verbose | Out-File (New-Item -Path "C:\Windows\Logs\Get-Updates\Get-Updates-RecieveTest.log" -Force)
+          #Test what Pcs are online first before sending cmdlets
+          $WorkingPCs = Invoke-Ping -ComputerName $ComputerName -quiet
+          Log-Write -LogPath $sLogFile -LineValue "List of PCs that were found to be online using Invoke-Ping: $WorkingPCs"
 
-            }           
-        }     
+          ForEach ($PC in $WorkingPCs){
+            try{
+              Write-Verbose "Running Get-Updates on $PC." -Verbose
+              Invoke-Command -ScriptBlock $DCUScriptBlock -ComputerName $PC -AsJob -JobName 'DCUScript'
+              Invoke-Command -ScriptBlock $WUScriptBlock -ComputerName $PC -AsJob -JobName 'WUScript'
+              #Wait-Job -Name DCUScript,WUScript -Verbose | Receive-Job -WriteEvents -WriteJobInResults -Wait -Verbose | Out-File (New-Item -Path "C:\Windows\Logs\Get-Updates\Get-Updates-RecieveTest.log" -Force)
+            }
+            catch{
+              write-verboe "error: $_" -verbose
+            }
+          }
+        }
     }
     Catch{
       Log-Error -LogPath $sLogFile -ErrorDesc $_.Exception -ExitGracefully $True
