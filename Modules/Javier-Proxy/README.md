@@ -43,7 +43,28 @@ https://devblogs.microsoft.com/powershell-community/how-to-change-the-start-page
 
 ## Prerequisites <a name = "prerequisites"></a>
 
-No real prerequisites, other than a laptop, the scripts, and/or FOG snapin deployment knowledge.
+This script must be run as SYSTEM user, so best to use as a FOG snap-in which automatically does this, or by using the Invoke-CommandAs module to run it as SYSTEM locally.
+
+The PC actually executing the script must have RunAsUser which allows the script to run as the currently logged in user. This is necessary to make the proxy changes for whomever is actually logged in. Without this part, the changes will only be done to the user's registry who ran the script (in this case the admin/IT staff, or SYSTEM user if using FOG).
+
+Installing the required modules:
+
+To add directly to code you can use
+
+```powershell
+#Install required modules
+if(! (Get-Module RunAsUser -ListAvailable)){
+  install-module RunAsUser
+}
+
+#Install required modules
+if(! (Get-Module Invoke-CommandAs -ListAvailable)){
+  install-module Invoke-CommandAs
+}
+```
+
+I use a Get-Modules module and FOG snap-in to grab the latest version of modules directly from Github. That is the recommended setup.
+
 
 
 
@@ -81,6 +102,14 @@ And run only ONE of the below cmdlets:<br>
 or
 ```powershell
   Invoke-CommandAs -ComputerName PCNameHere -ScriptBlock {enable-proxy} -Assystem
+```
+or
+```Powershell
+  $PCList|% {Invoke-CommandAs $_ -AsSystem -ScriptBlock {enable-proxy} -AsJob}
+```
+or
+```powershell
+  foreach ($PC in $PCList) {Invoke-CommandAs -ComputerName $PC -AsSystem -ScriptBlock {enable-proxy} -AsJob
 ```
   This runs as SYSTEM user, the only way to do it. FOG automatically picks this up, but for local use,
   install the module "Invoke-CommandAs" and type the above.
