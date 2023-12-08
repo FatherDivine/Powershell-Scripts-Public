@@ -32,7 +32,7 @@ https://github.com/FatherDivine/Powershell-Scripts-Public/blob/main/Javier-Squid
 
   This runs as SYSTEM user, the only way to do it. FOG automatically picks this up, but for local use,
   install the module "Invoke-CommandAs" and type the above.
-  
+
 .EXAMPLE
   & .\Enable-Proxy.ps1
 
