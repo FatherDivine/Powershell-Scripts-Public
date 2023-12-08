@@ -22,6 +22,18 @@
 https://github.com/FatherDivine/Powershell-Scripts-Public/blob/main/Javier-SquidProxy/Enable-Proxy.ps1
 
 .EXAMPLE
+  Invoke-CommandAs -ComputerName PCNameHere -FilePath .\Script.ps1 -AsSystem
+
+  This runs as SYSTEM user, the only way to do it. FOG automatically picks this up, but for local use,
+  install the module "Invoke-CommandAs" and type the above.
+
+.EXAMPLE
+  Invoke-CommandAs -ComputerName PCNameHere -ScriptBlock {enable-proxy} -Assystem
+
+  This runs as SYSTEM user, the only way to do it. FOG automatically picks this up, but for local use,
+  install the module "Invoke-CommandAs" and type the above.
+  
+.EXAMPLE
   & .\Enable-Proxy.ps1
 
   The simplest execution from a PowerShell prompt.
@@ -87,8 +99,9 @@ Function Enable-Proxy{
 
   Process{
     Try{
-      $psexecScriptblock = {Invoke-AsCurrentUser -ScriptBlock $Scriptblock}
-      & ..\Bin\PsExec.exe -s powershell.exe -WindowStyle Hidden -NonInteractive -Command $psexecScriptblock
+      #This runs as SYSTEM user, the only way to do it. FOG automatically picks this up, but for local use,
+      #install the module "Invoke-CommandAs" and type this: Invoke-CommandAs -ComputerName PCNameHere -FilePath .\Script.ps1 -AsSystem
+      Invoke-AsCurrentUser -ScriptBlock $Scriptblock
     }
 
     Catch{

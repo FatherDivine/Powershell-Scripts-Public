@@ -76,6 +76,17 @@ $PCList = @("CSCI-LW840-A1","CSCI-LW840-A2","CSCI-LW840-A3","CSCI-LW840-A4","CSC
 And run only ONE of the below cmdlets:<br>
 
 ```powershell
+  Invoke-CommandAs -ComputerName PCNameHere -FilePath .\Script.ps1 -AsSystem
+```
+or
+```powershell
+  Invoke-CommandAs -ComputerName PCNameHere -ScriptBlock {enable-proxy} -Assystem
+```
+  This runs as SYSTEM user, the only way to do it. FOG automatically picks this up, but for local use,
+  install the module "Invoke-CommandAs" and type the above.
+
+
+```powershell
 Foreach($PC in $PCList){Invoke-Command -ComputerName $PC -FilePath .\Enable-Proxy.ps1 -AsJob}
 ```
 
