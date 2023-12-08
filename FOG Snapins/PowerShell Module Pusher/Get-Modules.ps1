@@ -4,9 +4,9 @@
 
 .DESCRIPTION
   This script downloads the latest modules
-  for use with CEDC IT from Father Divine's 
+  for use with CEDC IT from Father Divine's
   Github.
-    
+
 .INPUTS
   none
 
@@ -18,12 +18,12 @@
   Author:         Aaron Staten
   Creation Date:  11/22/2023
   Purpose:        For CEDC IT Dept. use
-  
+
 .EXAMPLE
   & .\Get-Modules.ps1
-  
+
   Can be used as a FOG snap-in or invoked regularly:
-  Invoke-Command -FilePath .\Get-Modules.ps1 -ComputerName $PCs 
+  Invoke-Command -FilePath .\Get-Modules.ps1 -ComputerName $PCs
 
   Or if you want to be fancy and make each it's own job
   Foreach ($PC in $PCs){Invoke-Command -FilePath .\Get-Modules.ps1 -ComputerName $PC -AsJob }
@@ -78,8 +78,8 @@ Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershel
 Write-Verbose "`r`nInvoke-WUInstall used for remote MS Windows updates (Used by MSWOU.ps1, a FOG snap-in and script)" -Verbose
 If (Test-Path "C:\Program Files\WindowsPowerShell\Modules\Invoke-WUInstall\"){
   Write-Verbose "Removing the old version of Invoke-WUInstall first." -Verbose
-  Try {Remove-Item -Path "C:\Program Files\WindowsPowerShell\Modules\Invoke-WUInstall" -Recurse -Force -Verbose}Catch{Write-Error "Error Occured: $_"}  
-}  
+  Try {Remove-Item -Path "C:\Program Files\WindowsPowerShell\Modules\Invoke-WUInstall" -Recurse -Force -Verbose}Catch{Write-Error "Error Occured: $_"}
+}
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Invoke-WUInstall/Invoke-WUInstall.psm1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Invoke-WUInstall\Invoke-WUInstall.psm1' -Force) -Verbose
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Invoke-WUInstall/Invoke-WUInstall.psd1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Invoke-WUInstall\Invoke-WUInstall.psd1' -Force) -Verbose
 
@@ -143,13 +143,13 @@ Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershel
 Write-Verbose 'Updating AllUsersAllHosts PS Profile.' -Verbose
           # Create a new temporary file
           $Extracthpeesof = ".ps1"
-          
+
           #Store the download into the temporary file
           Invoke-WebRequest -Uri https://github.com/FatherDivine/Powershell-Scripts-Public/raw/main/Modules/Get-PSProfile\  -OutFile $Extracthpeesof
-          
+
           #Extract the temporary file
           $Extracthpeesof | Copy-Item -DestinationPath $PSProfile.AllUsersAllHosts -Force -Verbose
-          
+
           #Remove temporary file
           $Extracthpeesof | Remove-Item
 #>
