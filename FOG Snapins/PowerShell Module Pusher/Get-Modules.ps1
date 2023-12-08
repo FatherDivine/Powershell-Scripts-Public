@@ -134,10 +134,10 @@ Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershel
 -OutFile (New-Item -Path "C:\Program Files\WindowsPowerShell\Modules\Javier-Proxy\Public\Enable-Proxy.ps1" -Force)
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Javier-Proxy/Javier-Proxy/Public/Disable-Proxy.ps1" `
 -OutFile (New-Item -Path "C:\Program Files\WindowsPowerShell\Modules\Javier-Proxy\Public\Disable-Proxy.ps1" -Force)
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Javier-Proxy/Javier-Proxy/Public/Enable-ASProxy.ps1" `
--OutFile (New-Item -Path "C:\Program Files\WindowsPowerShell\Modules\Javier-Proxy\Public\Enable-ASProxy.ps1" -Force)
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Javier-Proxy/Javier-Proxy/Public/Disable-ASProxy.ps1" `
--OutFile (New-Item -Path "C:\Program Files\WindowsPowerShell\Modules\Javier-Proxy\Public\Disable-ASProxy.ps1" -Force)
+#Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Javier-Proxy/Javier-Proxy/Public/Enable-ASProxy.ps1" `
+#-OutFile (New-Item -Path "C:\Program Files\WindowsPowerShell\Modules\Javier-Proxy\Public\Enable-ASProxy.ps1" -Force)
+#Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Javier-Proxy/Javier-Proxy/Public/Disable-ASProxy.ps1" `
+#-OutFile (New-Item -Path "C:\Program Files\WindowsPowerShell\Modules\Javier-Proxy\Public\Disable-ASProxy.ps1" -Force)
 
 <#Set PS profile when our Github license is up:
 Write-Verbose 'Updating AllUsersAllHosts PS Profile.' -Verbose
