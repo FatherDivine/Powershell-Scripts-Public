@@ -6,6 +6,7 @@
 - [Getting Started](#getting_started)
 - [Prerequisites](#prerequisites)
 - [Usage](#usage)
+- [Todo](#todo)
 
 ## About <a name = "about"></a>
 
@@ -153,3 +154,12 @@ and reading the "ProxyStatus.txt" file. This shows if It's enabled or disabled, 
 the date & time it last was. If this is a remote PC, you can do something like the below from File explorer:<br>
 
 \\PCHostname\c$\Windows\Logs\Proxy to open the folder and read the logs.
+
+
+## Todo <a name = "todo"></a>
+<br>
+I'd like to add the ability to do this as a service (new pub function) so it'll set upon first login by students when labs are cleared, then disable upon logoff in an infinite loop. Disable both tasks with a separate script. This is in case students change computers or just log off by accident and back on.
+<br>
+Also if the ability to do this as good as group policy is achieved, use that instead of tasks. 
+<br>
+lastly fix the proxy lockout. works for local user without RunAsUser and via group policy, but not thru the new script.
