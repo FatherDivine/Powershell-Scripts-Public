@@ -100,6 +100,9 @@ Function Keysight-ADS-Uninstall{
 
   Process{
     Try{
+      Start-Process -FilePath "C:\Program Files\Uninstall_ADS2019_Update1\uninstall.exe" -ArgumentList @("-i silent") -Wait -Verbose -NoNewWindow
+      #to reinstlal: ads_2021_update2_win_x64.exe –f installer.properties –i silent
+
     }
 
     Catch{
