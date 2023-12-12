@@ -130,12 +130,15 @@ Function Keysight-ADS-Reinstall2{
         Write-Host "Please input your credentials to be able to copy the ADS installer from \\data to the Pc(s)." -Verbose
         Write-Verbose "Your username will be your PS Session configuration name too." -Verbose
         $Credential = Get-Credential
-        $RunAsName = $credential.getNetworkCredential().username
-        $PSSessionConfigurationName = whoami
+        $PSSessionConfigName = $credential.getNetworkCredential().username
+        #$RunAsName = whoami
         #foreach
-        Add-PSSessionConfiguration -RunAsName $RunAsName   -PSSessionConfigurationName $PSSessionConfigurationName
+        Add-PSSessionConfig -RunAsName $credential -PSSessionConfigName $PSSessionConfigName
         #Foreach ($PC in $ComputerName){
-            Invoke-Command -ComputerName localhost -ScriptBlock $ScriptBlock -ConfigurationName statena -Verbose
+          write-verbose "made it past the function" -Verbose
+          #Get-Service -Name WinRM | Restart-Service
+          #NOT working... access denied against localhost. need invoke for configurationname to work
+           Invoke-Command -ScriptBlock $ScriptBlock -ConfigurationName statena -Verbose
         #}
     }
 

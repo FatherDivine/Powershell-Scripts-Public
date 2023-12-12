@@ -83,12 +83,12 @@ $date = Get-Date -Format "-MM-dd-yyyy-HH-mm"
 
 #Log File Info
 $sLogPath = "C:\Windows\Logs\Keysight"
-$sLogName = "ADD-PSSessionConfiguration.log"
+$sLogName = "ADD-PSSessionConfig.log"
 $sLogFile = Join-Path -Path $sLogPath -ChildPath $sLogName
 
 #-----------------------------------------------------------[Functions]------------------------------------------------------------
 
-Function Add-PSSessionConfiguration{
+Function Add-PSSessionConfig{
  <#
   .PARAMETER ComputerName
     Allows for QuickFix to be ran against a remote PC or list of
@@ -98,13 +98,13 @@ Function Add-PSSessionConfiguration{
 Param(
     [Parameter(Mandatory=$false,
     ValueFromPipeline=$true)]
-    [string[]]$RunAsName = 'localhost',
-    [string]$PSSessionConfigurationName
+    [System.Management.Automation.PSCredential]$RunAsName,
+    [string]$PSSessionConfigName
 
 )
   Begin{
     Log-Start -LogPath $sLogPath -LogName $sLogName -ScriptVersion $sScriptVersion
-    Log-Write -LogPath $sLogFile -LineValue "Add-PSSessionConfiguration is running on: $ComputerName"
+    Log-Write -LogPath $sLogFile -LineValue "Add-PSSessionConfig is running on: $ComputerName"
     Log-Write -LogPath $sLogFile -LineValue "Begin Section"
   }
 
@@ -113,23 +113,23 @@ Param(
 
         #$ConfigurationName = $credential.getNetworkCredential().username
         #send both below variables from reinstall2 to here 
-        Register-PSSessionConfiguration -Name $PSSessionConfigurationName -RunAsCredential $RunAsName -Force -Verbose 
-        
+        Register-PSSessionConfiguration -Name $PSSessionConfigName -RunAsCredential $RunAsName -ConfigurationTypeName "SvcAcct" -verbose -AssemblyName * -NoServiceRestart #ErrorAction SilentlyContinue #-force 
+       
     }
 
     Catch{
-      Log-Error -LogPath $sLogFile -ErrorDesc $_.Exception -ExitGracefully $True
-      Break
+      #Log-Error -LogPath $sLogFile -ErrorDesc $_.Exception -ExitGracefully $True
+      #Break
+      continue
     }
   }
 
   End{
-    If($?){
-      Log-Write -LogPath $sLogFile -LineValue "Add-PSSessionConfiguration Function Completed Successfully."
+    <#If($?){
+      Log-Write -LogPath $sLogFile -LineValue "Add-PSSessionConfig Function Completed Successfully."
       Log-Write -LogPath $sLogFile -LineValue " "
-      Read-Host -Prompt "Press Enter to exit"
       Log-Finish -LogPath $sLogFile
-    }
+    }#>
   }
 }
 
