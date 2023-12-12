@@ -127,7 +127,13 @@ Function Keysight-ADS-Reinstall2{
   Process{
     Try{
         write-verbose "in the try section" -verbose
-        Add-PSSessionConfiguration $ComputerName
+        Write-Host "Please input your credentials to be able to copy the ADS installer from \\data to the Pc(s)." -Verbose
+        Write-Verbose "Your username will be your PS Session configuration name too." -Verbose
+        $Credential = Get-Credential
+        $RunAsName = $credential.getNetworkCredential().username
+        $PSSessionConfigurationName = whoami
+        #foreach
+        Add-PSSessionConfiguration -RunAsName $RunAsName   -PSSessionConfigurationName $PSSessionConfigurationName
         #Foreach ($PC in $ComputerName){
             Invoke-Command -ComputerName localhost -ScriptBlock $ScriptBlock -ConfigurationName statena -Verbose
         #}

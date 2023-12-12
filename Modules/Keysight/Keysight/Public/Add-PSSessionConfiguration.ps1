@@ -98,7 +98,9 @@ Function Add-PSSessionConfiguration{
 Param(
     [Parameter(Mandatory=$false,
     ValueFromPipeline=$true)]
-    [string[]]$ComputerName = 'localhost'
+    [string[]]$RunAsName = 'localhost',
+    [string]$PSSessionConfigurationName
+
 )
   Begin{
     Log-Start -LogPath $sLogPath -LogName $sLogName -ScriptVersion $sScriptVersion
@@ -108,16 +110,11 @@ Param(
 
   Process{
     Try{
-        Write-Host "Please input your credentials to be able to copy the ADS installer from \\data to the Pc(s)." -Verbose
-        Write-Verbose "Your username will be your PS Session configuration name too." -Verbose
-        #$global:Credential = Get-Credential
-       # $ConfigurationName = $credential.getNetworkCredential().username
-        Write-Verbose "in the loop" -verbose
-        #foreach ($PC in $ComputerName){
-            #Invoke-Command -ComputerName $PC -ScriptBlock {
-                Register-PSSessionConfiguration -Name statena -RunAsCredential 'university\statena' -Force -Verbose 
-        #}
-        write-verbose "out of the loop" -Verbose
+
+        #$ConfigurationName = $credential.getNetworkCredential().username
+        #send both below variables from reinstall2 to here 
+        Register-PSSessionConfiguration -Name $PSSessionConfigurationName -RunAsCredential $RunAsName -Force -Verbose 
+        
     }
 
     Catch{
