@@ -19,7 +19,7 @@
   Author:         Aaron Staten
   Creation Date:  12-6-2023
   Purpose/Change: Initial script development
- 
+
 .LINK
 GitHub README or script link
 
@@ -38,8 +38,8 @@ if ( -not $Elevated ) {
 #--------------------------------------------------------------[Privilege Escalation]---------------------------------------------------------------
 
 #When admin rights are needed
-#if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))  
-#{  
+#if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))
+#{
 #  $arguments = "& '" +$myinvocation.mycommand.definition + "'"
 #  Start-Process powershell -Verb runAs -ArgumentList $arguments
 #  Break
@@ -51,11 +51,11 @@ function Get-Credentials{
   function Create-AesManagedObject($key, $IV, $mode) {
     $aesManaged = New-Object "System.Security.Cryptography.AesManaged"
 
-    if ($mode="CBC") { $aesManaged.Mode = [System.Security.Cryptography.CipherMode]::CBC }
-    elseif ($mode="CFB") {$aesManaged.Mode = [System.Security.Cryptography.CipherMode]::CFB}
-    elseif ($mode="CTS") {$aesManaged.Mode = [System.Security.Cryptography.CipherMode]::CTS}
-    elseif ($mode="ECB") {$aesManaged.Mode = [System.Security.Cryptography.CipherMode]::ECB}
-    elseif ($mode="OFB"){$aesManaged.Mode = [System.Security.Cryptography.CipherMode]::OFB}
+    #if ($mode="CBC") { $aesManaged.Mode = [System.Security.Cryptography.CipherMode]::CBC }
+    #elseif ($mode="CFB") {$aesManaged.Mode = [System.Security.Cryptography.CipherMode]::CFB}
+    #elseif ($mode="CTS") {$aesManaged.Mode = [System.Security.Cryptography.CipherMode]::CTS}
+    #elseif ($mode="ECB") {$aesManaged.Mode = [System.Security.Cryptography.CipherMode]::ECB}
+    #elseif ($mode="OFB"){$aesManaged.Mode = [System.Security.Cryptography.CipherMode]::OFB}
 
 
     $aesManaged.Padding = [System.Security.Cryptography.PaddingMode]::PKCS7
@@ -97,22 +97,22 @@ if ((Test-Path ${PSScriptRoot}\Key.xml -ErrorAction SilentlyContinue) -and (Test
  $plain2 = Decrypt-String $key $ImportObject.Password
  $SecureUsername = ConvertTo-SecureString $plain -AsPlainText -Force
  $SecurePassword = ConvertTo-SecureString $plain2 -AsPlainText -Force
- [PSCredential]$global:Credential = New-Object System.Management.Automation.PSCredential ($SecureUsername,$SecurePassword) 
+ [PSCredential]$Credential = New-Object System.Management.Automation.PSCredential ($SecureUsername,$SecurePassword)
  # Custards last stand: use the plain form instead of secure
  # Test Functions
- #"`nEncrypted: "+$encryptedString 
+ #"`nEncrypted: "+$encryptedString
  #"`nEncrypted: "+$encryptedString2
- "Decrypted: "+$plain 
+ "Decrypted: "+$plain
  #"Decrypted: "+$plain2
 
  #Remove-Variable plain -Force;Remove-Variable plain2 -Force;Remove-Variable ImportObject -Force;Remove-Variable Key -Force
 }
 else{
 Write-Warning "`nCredential files (Cred.xml & Key.xml) were NOT detected! Activating manual credentials mode."
-     Write-Host "`nPlease input the credentials you wish to use in this script. They must have Admin & AD privileges."
+     Write-Verbose "`nPlease input the credentials you wish to use in this script. They must have Admin & AD privileges." -Verbose
      $GotCredentials = $false
      [int]$GotCredentialsCounter = 0
-     do{try{$global:Credential = Get-Credential;$GotCredentials = $true}catch{Write-Error "$_"; $GotCredentials = $false;}$GotCredentialsCounter++}
+     do{try{$Credential = Get-Credential;$GotCredentials = $true}catch{Write-Error "$_"; $GotCredentials = $false;}$GotCredentialsCounter++}
      until(($GotCredentialsCounter -gt 3) -or ($GotCredentials -eq $true))
      If ($GotCredentialsCounter -eq 4){Write-Warning "`nYou just don't want to enter credentials! Exiting!`n";pause;exit}}#$global:CredentialFile = '1';$CredentialFile = '1' } #Keeping it 0 to distinguish.
 }

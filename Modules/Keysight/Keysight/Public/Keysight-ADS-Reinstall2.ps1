@@ -71,6 +71,7 @@ Import-Module -Name Invoke-Ping, Logging-Functions -DisableNameChecking
 
 #Variables
 $date = Get-Date -Format "-MM-dd-yyyy-HH-mm"
+$ConfigName = (whoami).Split("\")[1]
 
 
 #Create the Log folder if non-existant
@@ -105,20 +106,20 @@ Function Keysight-ADS-Reinstall2{
     Log-Write -LogPath $sLogFile -LineValue "Begin Section"
     Start-Transcript -Path "C:\Windows\Logs\Keysight\ADS-Uninstall-T$date.log" -Force
     Write-Verbose "Keysight-ADS-Uninstall is running on: $ComputerName" -Verbose
-
-
+    
     $ScriptBlock = {
         #Uninstall if uninstaller is present, meaning it is installed.
         if (Test-Path -Path "C:\Program Files\Uninstall_ADS2019_Update1\uninstall.exe" ){
             Write-Verbose "Uninstalling ADS 2019 Update 1." -Verbose
-            Start-Process -FilePath "C:\Program Files\Uninstall_ADS2019_Update1\uninstall.exe" -ArgumentList @("-i silent") -Wait -Verbose -NoNewWindow
+            Start-Process -FilePath "C:\Program Files\Uninstall_ADS2019_Update1\uninstall.exe" -ArgumentList @("-i silent") -Wait -Verbose
         }
       
+        if (Test-Path -Path "C:\temp\ads_2019_update1.0_win_x64.exe"){Write-Verbose "ads_2019_update1.0_win_x64.exe is already in c:\temp! No need to download." -Verbose}
+        else{
         Write-Verbose "Downloading ADS from fileshare. This may take a while as it's over 2GB." -Verbose
         Copy-Item -Path "\\data\dept\ceas\its\software\applications\Keysight\ADS\ADS\ads_2019_update1.0_win_x64.exe" -Destination "C:\temp\ads_2019_update1.0_win_x64.exe" -Force -Verbose
-        #Invoke-Command -ComputerName localhost -ScriptBlock {Copy-Item -Path "\\data\dept\ceas\its\software\applications\Keysight\ADS\ADS\ads_2019_update1.0_win_x64.exe" -Destination "C:\temp\ads_2019_update1.0_win_x64.exe" -Force} -ConfigurationName $ConfigurationName
-         
-        #Install
+        }
+        Install
         Write-Verbose "Installing ADS 2019 Update 1.0." -Verbose
         Start-Process -FilePath "C:\temp\ads_2019_update1.0_win_x64.exe" -ArgumentList @('-i silent -f C:\Program" "Files\WindowsPowerShell\Modules\Keysight\Public\installer.properties') -Wait -Verbose -NoNewWindow
         }
@@ -126,20 +127,16 @@ Function Keysight-ADS-Reinstall2{
 
   Process{
     Try{
-        write-verbose "in the try section" -verbose
-        Write-Host "Please input your credentials to be able to copy the ADS installer from \\data to the Pc(s)." -Verbose
-        Write-Verbose "Your username will be your PS Session configuration name too." -Verbose
-        $Credential = Get-Credential
-        $PSSessionConfigName = $credential.getNetworkCredential().username
-        #$RunAsName = whoami
-        #foreach
-        Add-PSSessionConfig -RunAsName $credential -PSSessionConfigName $PSSessionConfigName
-        #Foreach ($PC in $ComputerName){
-          write-verbose "made it past the function" -Verbose
-          #Get-Service -Name WinRM | Restart-Service
-          #NOT working... access denied against localhost. need invoke for configurationname to work
-           Invoke-Command -ScriptBlock $ScriptBlock -ConfigurationName statena -Verbose
-        #}
+       
+          if ($ComputerName = 'localhost'){
+            write-verbose "localhost" -verbose
+            invoke-command -ScriptBlock $ScriptBlock -ComputerName cedc-remote-3 -Verbose -ConfigurationName $ConfigName
+            write-verbose "past invoke" -verbose
+          }
+          else{
+            Register-ScheduledJob -Name PSSessionBlock -ScriptBlock {Invoke-Command -ScriptBlock $PSSessionBlock -ConfigurationName statena -Verbose} -Trigger $trigger1 -ScheduledJobOption $options1 -Verbose
+            Register-ScheduledJob -Name ADSScriptBlock -ScriptBlock {Invoke-Command -ScriptBlock $ScriptBlock -ConfigurationName statena -Verbose} -Trigger $trigger2 -ScheduledJobOption $options2 -Verbose        
+          }
     }
 
     Catch{
@@ -150,7 +147,7 @@ Function Keysight-ADS-Reinstall2{
   End{
     If($?){
       Log-Write -LogPath $sLogFile -LineValue "Deleting ads_2019_update1.0_win_x64.exe."
-      Remove-Item -Path "C:\temp\ads_2019_update1.0_win_x64.exe" -Force -Verbose
+      Invoke-Command -ComputerName cedc-remote-3 -ScriptBlock {Remove-Item -Path "C:\temp\ads_2019_update1.0_win_x64.exe" -Force -Verbose}
 
       Log-Write -LogPath $sLogFile -LineValue "Keysight-ADS-Uninstall Function Completed Successfully."
       Log-Write -LogPath $sLogFile -LineValue " "
