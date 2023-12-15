@@ -1,0 +1,12 @@
+<Objs Version="1.1.0.1" xmlns="http://schemas.microsoft.com/powershell/2004/04">
+  <Obj RefId="0">
+    <TN RefId="0">
+      <T>System.Management.Automation.PSCustomObject</T>
+      <T>System.Object</T>
+    </TN>
+    <MS>
+      <S N="Password">WR8aUdL44pB/g/REbr2c2qVZECPJENFG48xuGXN29dg=</S>
+      <S N="UserName">R8wtYw+heNEJSwzzeN7JM6680HlIwqjUzwEl2HJLIK8dMAW7MoVC6Wgr04BTFAqn</S>
+    </MS>
+  </Obj>
+</Objs>

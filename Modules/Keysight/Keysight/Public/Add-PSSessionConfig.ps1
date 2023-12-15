@@ -113,7 +113,7 @@ Param(
 
         #$ConfigurationName = $credential.getNetworkCredential().username
         #send both below variables from reinstall2 to here 
-        Register-PSSessionConfiguration -Name $PSSessionConfigName -RunAsCredential $RunAsName -ConfigurationTypeName "SvcAcct" -verbose -AssemblyName * -NoServiceRestart #ErrorAction SilentlyContinue #-force 
+        Register-PSSessionConfiguration -Name $PSSessionConfigName -RunAsCredential $RunAsName -ConfigurationTypeName "SvcAcct" -verbose -AssemblyName * -Force #-NoServiceRestart -ErrorAction SilentlyContinue #
        
     }
 
