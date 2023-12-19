@@ -1,9 +1,9 @@
 <#
 .SYNOPSIS
-  <Overview of script>
+  Sets Keysight ADS Environmental Variable
 
 .DESCRIPTION
-  <Brief description of script>
+  Sets Keysight ADS System-wide Environmental Variable.
 
 .PARAMETER <Parameter_Name>
     <Brief description of parameter input required. Repeat this attribute if required>
@@ -15,9 +15,9 @@
   <Outputs if any, otherwise state None - example: Log file stored in C:\Windows\Temp\<name>.log>
 
 .NOTES
-  Version:        1.0
-  Author:         <Name>
-  Creation Date:  <Date>
+  Version:        0.1
+  Author:         Aaron Staten
+  Creation Date:  12/19/2023
   Purpose/Change: Initial script development
 
 .LINK
@@ -42,13 +42,14 @@ if ( -not $Elevated ) {
 #--------------------------------------------------------------[Privilege Escalation]---------------------------------------------------------------
 
 #When admin rights are needed
+<#
 if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))
 {
   $arguments = "& '" +$myinvocation.mycommand.definition + "'"
   Start-Process powershell -Verb runAs -ArgumentList $arguments
   Break
 }
-
+#>
 #---------------------------------------------------------[Initialisations & Declarations]--------------------------------------------------------
 
 #Set Error Action to Silently Continue
@@ -82,17 +83,14 @@ If (!(Test-Path "C:\Windows\Logs\KeySight")){New-Item -ItemType Directory "C:\Wi
 #Script Version
 $sScriptVersion = "1.0"
 
-#Variables
-$date = Get-Date -Format "-MM-dd-yyyy-HH-mm"
-
 #Log File Info
 $sLogPath = "C:\Windows\Logs\Keysight"
-$sLogName = "ADD-PSSessionConfig.log"
+$sLogName = "Keysight-Ads-SetEnvVariable.log"
 $sLogFile = Join-Path -Path $sLogPath -ChildPath $sLogName
 
 #-----------------------------------------------------------[Functions]------------------------------------------------------------
 
-Function Add-PSSessionConfig{
+Function Keysight-Ads-SetEnvVariable{
  <#
   .PARAMETER ComputerName
     Allows for QuickFix to be ran against a remote PC or list of
@@ -102,14 +100,11 @@ Function Add-PSSessionConfig{
 Param(
     [Parameter(Mandatory=$false,
     ValueFromPipeline=$true)]
-    [string[]]$ComputerName = 'localhost',
-    [System.Management.Automation.PSCredential]$RunAsName,
-    [string]$PSSessionConfigName
-
+    [string[]]$ComputerName = 'localhost'
 )
   Begin{
     Log-Start -LogPath $sLogPath -LogName $sLogName -ScriptVersion $sScriptVersion
-    Log-Write -LogPath $sLogFile -LineValue "Add-PSSessionConfig is running on: $ComputerName"
+    Log-Write -LogPath $sLogFile -LineValue "Keysight-Ads-SetEnvVariable is running on: $ComputerName"
     Log-Write -LogPath $sLogFile -LineValue "Begin Section"
 
     Write-Verbose "Enable PS-Remoting on local PC if not already enabled." -Verbose
@@ -119,27 +114,25 @@ Param(
   Process{
     Try{
 
-        #$ConfigurationName = $credential.getNetworkCredential().username
-        #send both below variables from reinstall2 to here 
-        $Creds = (get-credential)
-        $PSSessionConfigName = $creds.getNetworkCredential().username
-
         #Test what Pcs are online first before sending cmdlets to speedup execution
         $WorkingPCs = Invoke-Ping -ComputerName $ComputerName -quiet
 
         foreach ($PC in $WorkingPCs){
+
           Invoke-Command -ComputerName $PC -ScriptBlock {
-            if (!(Get-PSSessionConfiguration -name $using:PSSessionConfigName)){
-              Register-PSSessionConfiguration -Name $using:PSSessionConfigName -RunAsCredential ($using:Creds) -force
-              }
+            #Check if exists already, if not create
+            # Set system environmental variable for public Sdk folder, if it doesn't exist already
+            if (-not [Environment]::GetEnvironmentVariable('ADS_LICENSE_FILE','Machine')){
+                try{[Environment]::SetEnvironmentVariable('ADS_LICENSE_FILE','27009@CEAS-NC-LIC-01','Machine')
+                }catch{ Write-Verbose "Error Detected: $Error. $_" -ErrorAction Continue}
+            }
           }
         }
     }
 
     Catch{
-      #Log-Error -LogPath $sLogFile -ErrorDesc $_.Exception -ExitGracefully $True
-      #Break
-      continue
+      Log-Error -LogPath $sLogFile -ErrorDesc $_.Exception -ExitGracefully $True
+      Break
     }
   }
 
@@ -151,10 +144,7 @@ Param(
       Log-Write -LogPath $sLogFile -LineValue "Add-PSSessionConfig Function Completed Successfully."
       Log-Write -LogPath $sLogFile -LineValue " "
       Log-Finish -LogPath $sLogFile -NoExit $True
-
-      return ,$Creds
     }
-    #return ,$Creds
   }
 }
 
