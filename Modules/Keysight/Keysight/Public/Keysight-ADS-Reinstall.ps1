@@ -111,17 +111,18 @@ Function Keysight-ADS-Reinstall{
         Copy-Item -Path "\\data\dept\ceas\its\software\applications\Keysight\ADS\ADS\ads_2019_update1.0_win_x64.exe" -Destination "C:\temp\ads_2019_update1.0_win_x64.exe" -Force -Verbose
         Copy-Item -Path "\\data\dept\ceas\its\software\applications\Keysight\ADS\ADS\installer.properties" -Destination "C:\temp\installer.properties" -Force -Verbose
         }
+        
         #Install
         Write-Verbose "Installing ADS 2019 Update 1.0." -Verbose
-        Start-Process -FilePath "C:\temp\ads_2019_update1.0_win_x64.exe" -ArgumentList @('-i silent -f C:\temp\installer.properties') -Wait -Verbose
-
+        Start-Process -FilePath "C:\temp\ads_2019_update1.0_win_x64.exe" -ArgumentList @("-f C:\temp\installer.properties -i silent") -Wait -Verbose
+        
         #Delete
         Log-Write -LogPath $sLogFile -LineValue "Deleting ads_2019_update1.0_win_x64.exe & installer.properties from c:\temp."
         Remove-Item -Path "C:\temp\ads_2019_update1.0_win_x64.exe" -Force -Verbose
         Remove-Item -Path "C:\temp\installer.properties" -Force -Verbose
         }
   }
-
+  
   Process{
     Try{
           #Test what Pcs are online first before sending cmdlets to speedup execution
