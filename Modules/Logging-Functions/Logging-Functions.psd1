@@ -69,7 +69,7 @@ Description = 'Various logging functions used by the CEDC PS Script Template'
 # NestedModules = @()
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = 'Log-Start', 'Log-Write', 'Log-Error', 'Log-Finish', 'Log-Email'
+FunctionsToExport = @('Log-Start','Log-Write','Log-Error','Log-Finish','Log-Email')
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 CmdletsToExport = @()

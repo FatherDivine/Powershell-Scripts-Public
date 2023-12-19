@@ -24,7 +24,11 @@
 GitHub README or script link
 
 .EXAMPLE
-  <Example goes here. Repeat this attribute for more than one example>
+  Add-PSSessionConfig -ComputerName $Remote2
+
+  This script , for now, is meant to be ran locally and not actually part of KeySight suite.
+  This is because when adding someone to winRM, it causes a restart which kills the connection, 
+  so the rest of the script doesn't run. As such, we run this first, then the Keysight tools.
 #>
 #---------------------------------------------------------[Force Module Elevation]--------------------------------------------------------
 #With this code, the script/module/function won't run unless elevated, thus local users can't use off the bat.
@@ -45,6 +49,8 @@ if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdenti
   Break
 }
 
+Write-Verbose "Enable ps-remoting on local PC if not already enabled." -Verbose
+if (!(Test-WSMan localhost)){Enable-PSRemoting}
 #---------------------------------------------------------[Initialisations & Declarations]--------------------------------------------------------
 
 #Set Error Action to Silently Continue
@@ -68,7 +74,7 @@ Write-Verbose "`r`nInvoke-Ping, the fastest way to only send cmdlets to a PC tha
 #}
 
 #Import Modules
-Import-Module -Name Logging-Functions -DisableNameChecking
+Import-Module -Name Invoke-Ping, Logging-Functions -DisableNameChecking
 
 #Create the Log folder if non-existant
 If (!(Test-Path "C:\Windows\Logs\KeySight")){New-Item -ItemType Directory "C:\Windows\Logs\Keysight" -Force}
@@ -98,6 +104,7 @@ Function Add-PSSessionConfig{
 Param(
     [Parameter(Mandatory=$false,
     ValueFromPipeline=$true)]
+    [string[]]$ComputerName = 'localhost',
     [System.Management.Automation.PSCredential]$RunAsName,
     [string]$PSSessionConfigName
 
@@ -115,11 +122,17 @@ Param(
         #send both below variables from reinstall2 to here 
         $Creds = (get-credential)
         $PSSessionConfigName = $creds.getNetworkCredential().username
+        #Test what Pcs are online first before sending cmdlets
+        $WorkingPCs = Invoke-Ping -ComputerName $ComputerName -quiet
 
-        if (!(Get-PSSessionConfiguration -name $PSSessionConfigName)){
-          Register-PSSessionConfiguration -Name $PSSessionConfigName -RunAsCredential ($Creds) -force
-          return ,$Creds
+        foreach ($PC in $ComputerName){
+          Invoke-Command -ComputerName $PC -ScriptBlock {
+            if (!(Get-PSSessionConfiguration -name $using:PSSessionConfigName)){
+              Register-PSSessionConfiguration -Name $using:PSSessionConfigName -RunAsCredential ($using:Creds) -force
+              }
           }
+        }
+
     }
 
     Catch{
@@ -135,6 +148,8 @@ Param(
       Log-Write -LogPath $sLogFile -LineValue " "
       Log-Finish -LogPath $sLogFile
     }#>
+    return ,$Creds
+    Clear-Variable ComputerName
   }
 }
 

@@ -41,6 +41,19 @@ End with an example of getting some data out of the system or using it for a lit
 
 ## Usage <a name = "usage"></a>
 
+Have to update this entire readme, but the important part so far is:
+
+  This script , for now, is meant to be ran locally and not actually part of KeySight suite.
+  This is because when adding someone to winRM, it causes a restart which kills the connection, 
+  so the rest of the script doesn't run. As such, we run this first, then the Keysight tools.
+
+  As such, run Add-PSSessionConfig first to add the ability to copy files from a network share like such:
+
+  ```powershell
+  Add-PSSessionConfig -ComputerName $PCList
+  ```
+
+
 Though this is meant to be a module/function, you can still use this with FOG by editing the .ps1(or renaming .psm1 to .ps1) and at the bottom of the script adding whatever function you need to execute. For fixing the homepath, for instance add:<br>
 
 ```powershell

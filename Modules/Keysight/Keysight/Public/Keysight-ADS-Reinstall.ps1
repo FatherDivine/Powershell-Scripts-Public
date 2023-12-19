@@ -23,20 +23,11 @@
   https://github.com/FatherDivine/Powershell-Scripts-Public/tree/main/FOG%20Snapins/Keysight
 
 .EXAMPLE
-  Keysight-ADS-FixHomePath
+  Keysight-ADS-Reinstall -Computername $PCList
 
-  When calling the function when installed as a module, will fix the HOME path of an ADS installation.
+  Uninstalls and reinstalls Keysight correctly.  
+  Must run "Add-PssessionConfig" first.
 
-.EXAMPLE
-  Keysight-ADS-FixHomePath -ComputerName "<HostnameHere>"
-
-  When called as a function, will fix the HOME path of an ADS instlalation of a remote PC or array/list of computers.
-
-.EXAMPLE
-  . .\Keysight.ps1 ; & KeySight-ADS-FixHomePath
-
-  Dot-sourced one-liner method of initializing the Keysight.ps1 script, then calling the function within it. This is
-  for non-module (or FOG snap-in) usage.
 #>
 
 #---------------------------------------------------------[Initialisations & Declarations]--------------------------------------------------------
@@ -71,6 +62,7 @@ Import-Module -Name Invoke-Ping, Logging-Functions -DisableNameChecking
 
 #Variables
 $date = Get-Date -Format "-MM-dd-yyyy-HH-mm"
+$ConfigName = (whoami).Split("\")[1]
 
 
 #Create the Log folder if non-existant
@@ -105,32 +97,36 @@ Function Keysight-ADS-Reinstall{
     Log-Write -LogPath $sLogFile -LineValue "Begin Section"
     Start-Transcript -Path "C:\Windows\Logs\Keysight\ADS-Uninstall-T$date.log" -Force
     Write-Verbose "Keysight-ADS-Uninstall is running on: $ComputerName" -Verbose
+    
+    $ScriptBlock = {
+        #Uninstall if uninstaller is present, meaning it is installed.
+        if (Test-Path -Path "C:\Program Files\Uninstall_ADS2019_Update1\uninstall.exe" ){
+            Write-Verbose "Uninstalling ADS 2019 Update 1." -Verbose
+            Start-Process -FilePath "C:\Program Files\Uninstall_ADS2019_Update1\uninstall.exe" -ArgumentList @("-i silent") -Wait -Verbose
+        }
+      
+        if (Test-Path -Path "C:\temp\ads_2019_update1.0_win_x64.exe"){Write-Verbose "ads_2019_update1.0_win_x64.exe is already in c:\temp! No need to download." -Verbose}
+        else{
+        Write-Verbose "Downloading ADS from fileshare. This may take a while as it's over 2GB." -Verbose
+        Copy-Item -Path "\\data\dept\ceas\its\software\applications\Keysight\ADS\ADS\ads_2019_update1.0_win_x64.exe" -Destination "C:\temp\ads_2019_update1.0_win_x64.exe" -Force -Verbose
+        Copy-Item -Path "\\data\dept\ceas\its\software\applications\Keysight\ADS\ADS\installer.properties" -Destination "C:\temp\installer.properties" -Force -Verbose
+        }
+        #Install
+        Write-Verbose "Installing ADS 2019 Update 1.0." -Verbose
+        Start-Process -FilePath "C:\temp\ads_2019_update1.0_win_x64.exe" -ArgumentList @('-i silent -f C:\temp\installer.properties') -Wait -Verbose -NoNewWindow
 
-    Write-Host "Please input your credentials to be able to copy the ADS installer from \\data to the Pc(s)." -Verbose
-    Write-Verbose "Your username will be your PS Session configuration name too." -Verbose
-    $credential = Get-Credential
-    $ConfigurationName = $credential.getNetworkCredential().username
-    foreach ($PC in $ComputerName){
-      Invoke-Command -ComputerName $PC -ScriptBlock `
-        {Register-PSSessionConfiguration -Name $using:ConfigurationName -RunAsCredential $using:credential -Force}   
-    }
+        #Delete
+        Remove-Item -Path "C:\temp\ads_2019_update1.0_win_x64.exe" -Force -Verbose
+        Remove-Item -Path "C:\temp\installer.properties" -Force -Verbose
+        }
   }
 
   Process{
     Try{
-      #Uninstall if uninstaller is present, meaning it is installed.
-      if (Test-Path -Path "C:\Program Files\Uninstall_ADS2019_Update1\uninstall.exe" ){
-      Write-Verbose "Uninstalling ADS 2019 Update 1." -Verbose
-      Start-Process -FilePath "C:\Program Files\Uninstall_ADS2019_Update1\uninstall.exe" -ArgumentList @("-i silent") -Wait -Verbose -NoNewWindow
-      }
-      
-      Write-Verbose "Downloading ADS from fileshare. This may take a while as it's over 2GB." -Verbose
-      #Copy-Item -Path "\\data\dept\ceas\its\software\applications\Keysight\ADS\ADS\ads_2019_update1.0_win_x64.exe" -Destination C:\temp\ads_2019_update1.0_win_x64.exe -Force
-      Invoke-Command -ComputerName localhost -ScriptBlock {Copy-Item -Path "\\data\dept\ceas\its\software\applications\Keysight\ADS\ADS\ads_2019_update1.0_win_x64.exe" -Destination "C:\temp\ads_2019_update1.0_win_x64.exe" -Force} -ConfigurationName $ConfigurationName
-      # try again with just copy-item if we use -configname in the first command. 
-      #write-out full path is necessary
-      Write-Verbose "Installing ADS 2019 Update 1.0." -Verbose
-      Start-Process -FilePath "C:\temp\ads_2019_update1.0_win_x64.exe" -ArgumentList @('-i silent -f C:\Program" "Files\WindowsPowerShell\Modules\Keysight\Public\installer.properties') -Wait -Verbose -NoNewWindow
+          foreach ($PC in $ComputerName){
+            invoke-command -ScriptBlock $ScriptBlock -ComputerName $PC -Verbose -ConfigurationName $ConfigName -AsJob 
+          }
+
     }
 
     Catch{
@@ -141,8 +137,6 @@ Function Keysight-ADS-Reinstall{
   End{
     If($?){
       Log-Write -LogPath $sLogFile -LineValue "Deleting ads_2019_update1.0_win_x64.exe."
-      Remove-Item -Path "C:\temp\ads_2019_update1.0_win_x64.exe" -Force -Verbose
-
       Log-Write -LogPath $sLogFile -LineValue "Keysight-ADS-Uninstall Function Completed Successfully."
       Log-Write -LogPath $sLogFile -LineValue " "
       Stop-Transcript

@@ -298,3 +298,4 @@ Function Log-Email{
     } 
   }
 }
+export-modulemember -alias * -function *
