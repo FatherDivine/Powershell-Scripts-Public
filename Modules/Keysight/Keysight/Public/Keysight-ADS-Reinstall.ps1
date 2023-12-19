@@ -113,9 +113,10 @@ Function Keysight-ADS-Reinstall{
         }
         #Install
         Write-Verbose "Installing ADS 2019 Update 1.0." -Verbose
-        Start-Process -FilePath "C:\temp\ads_2019_update1.0_win_x64.exe" -ArgumentList @('-i silent -f C:\temp\installer.properties') -Wait -Verbose -NoNewWindow
+        Start-Process -FilePath "C:\temp\ads_2019_update1.0_win_x64.exe" -ArgumentList @('-i silent -f C:\temp\installer.properties') -Wait -Verbose
 
         #Delete
+        Log-Write -LogPath $sLogFile -LineValue "Deleting ads_2019_update1.0_win_x64.exe & installer.properties from c:\temp."
         Remove-Item -Path "C:\temp\ads_2019_update1.0_win_x64.exe" -Force -Verbose
         Remove-Item -Path "C:\temp\installer.properties" -Force -Verbose
         }
@@ -123,7 +124,10 @@ Function Keysight-ADS-Reinstall{
 
   Process{
     Try{
-          foreach ($PC in $ComputerName){
+          #Test what Pcs are online first before sending cmdlets to speedup execution
+          $WorkingPCs = Invoke-Ping -ComputerName $ComputerName -quiet      
+          
+          foreach ($PC in $WorkingPCs){
             invoke-command -ScriptBlock $ScriptBlock -ComputerName $PC -Verbose -ConfigurationName $ConfigName -AsJob 
           }
 
@@ -136,7 +140,9 @@ Function Keysight-ADS-Reinstall{
   }
   End{
     If($?){
-      Log-Write -LogPath $sLogFile -LineValue "Deleting ads_2019_update1.0_win_x64.exe."
+      Write-Verbose "Clearing common variables." -Verbose
+      Clear-Variable WorkingPCs, ComputerName
+      
       Log-Write -LogPath $sLogFile -LineValue "Keysight-ADS-Uninstall Function Completed Successfully."
       Log-Write -LogPath $sLogFile -LineValue " "
       Stop-Transcript
