@@ -49,8 +49,6 @@ if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdenti
   Break
 }
 
-Write-Verbose "Enable ps-remoting on local PC if not already enabled." -Verbose
-if (!(Test-WSMan localhost)){Enable-PSRemoting}
 #---------------------------------------------------------[Initialisations & Declarations]--------------------------------------------------------
 
 #Set Error Action to Silently Continue
@@ -113,6 +111,9 @@ Param(
     Log-Start -LogPath $sLogPath -LogName $sLogName -ScriptVersion $sScriptVersion
     Log-Write -LogPath $sLogFile -LineValue "Add-PSSessionConfig is running on: $ComputerName"
     Log-Write -LogPath $sLogFile -LineValue "Begin Section"
+
+    Write-Verbose "Enable ps-remoting on local PC if not already enabled." -Verbose
+    if (!(Test-WSMan localhost)){Enable-PSRemoting}
   }
 
   Process{
@@ -122,17 +123,17 @@ Param(
         #send both below variables from reinstall2 to here 
         $Creds = (get-credential)
         $PSSessionConfigName = $creds.getNetworkCredential().username
-        #Test what Pcs are online first before sending cmdlets
+
+        #Test what Pcs are online first before sending cmdlets to speedup execution
         $WorkingPCs = Invoke-Ping -ComputerName $ComputerName -quiet
 
-        foreach ($PC in $ComputerName){
+        foreach ($PC in $WorkingPCs){
           Invoke-Command -ComputerName $PC -ScriptBlock {
             if (!(Get-PSSessionConfiguration -name $using:PSSessionConfigName)){
               Register-PSSessionConfiguration -Name $using:PSSessionConfigName -RunAsCredential ($using:Creds) -force
               }
           }
         }
-
     }
 
     Catch{
@@ -143,13 +144,17 @@ Param(
   }
 
   End{
-    <#If($?){
+    If($?){
+      Write-Verbose "Clearing common variables." -Verbose
+      Clear-Variable WorkingPCs, ComputerName
+
       Log-Write -LogPath $sLogFile -LineValue "Add-PSSessionConfig Function Completed Successfully."
       Log-Write -LogPath $sLogFile -LineValue " "
       Log-Finish -LogPath $sLogFile
-    }#>
-    return ,$Creds
-    Clear-Variable ComputerName
+
+      return ,$Creds
+    }
+    #return ,$Creds
   }
 }
 
