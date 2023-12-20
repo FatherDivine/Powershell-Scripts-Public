@@ -134,11 +134,11 @@ Param(
         Write-Verbose "Computers detected as being offline: $OfflinePCs" -Verbose
 
         foreach ($PC in $WorkingPCs){
-          Invoke-Command -ComputerName $PC -ScriptBlock {
+          $Results = Invoke-Command -ComputerName $PC -ScriptBlock {
             if (!(Get-PSSessionConfiguration -name $using:PSSessionConfigName)){
               Register-PSSessionConfiguration -Name $using:PSSessionConfigName -RunAsCredential ($using:Creds) -force
               }
-          }
+          }Write-Verbose "$PC`: $Results" -Verbose
         }
     }
 
@@ -152,7 +152,7 @@ Param(
   End{
     If($?){
       Write-Verbose "Clearing common variables." -Verbose
-      Clear-Variable WorkingPCs, ComputerName, OfflinePCs
+      Clear-Variable WorkingPCs, ComputerName, OfflinePCs, Results
 
       Log-Write -LogPath $sLogFile -LineValue "Add-PSSessionConfig Function Completed Successfully."
       Log-Write -LogPath $sLogFile -LineValue " "
@@ -160,7 +160,6 @@ Param(
 
       return $Creds
     }
-    #return ,$Creds
   }
 }
 
