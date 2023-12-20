@@ -105,7 +105,10 @@ Function Keysight-ADS-Uninstall{
 
   Process{
     Try{
-      Start-Process -FilePath "C:\Program Files\Uninstall_ADS2019_Update1\uninstall.exe" -ArgumentList @("-i silent") -Wait -Verbose -NoNewWindow
+      if (Test-Path -Path "C:\Program Files\Uninstall_ADS2019_Update1\uninstall.exe" ){
+        Write-Verbose "Uninstalling ADS 2019 Update 1." -Verbose
+        Start-Process -FilePath "C:\Program Files\Uninstall_ADS2019_Update1\uninstall.exe" -ArgumentList @("-i silent") -Wait -Verbose -NoNewWindow
+      }else{Write-Verbose 'Did not detect the uninstaller.exe at C:\Program Files\Uninstall_ADS2019_Update1\uninstall.exe! Can NOT uninstall!' -Verbose}      
     }
 
     Catch{

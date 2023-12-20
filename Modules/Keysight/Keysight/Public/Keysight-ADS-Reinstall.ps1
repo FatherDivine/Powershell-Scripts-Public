@@ -105,6 +105,7 @@ Function Keysight-ADS-Reinstall{
             Start-Process -FilePath "C:\Program Files\Uninstall_ADS2019_Update1\uninstall.exe" -ArgumentList @("-i silent") -Wait -Verbose
         }
 
+        #Download ADS & it's installer properties file.
         if (Test-Path -Path "C:\temp\ads_2019_update1.0_win_x64.exe"){Write-Verbose "ads_2019_update1.0_win_x64.exe is already in c:\temp! No need to download." -Verbose}
         else{
         Write-Verbose "Downloading ADS from fileshare. This may take a while as it's over 2GB." -Verbose
