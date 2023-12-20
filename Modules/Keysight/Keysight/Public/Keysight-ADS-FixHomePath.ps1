@@ -20,7 +20,7 @@
   Purpose/Change: Initial script development
 
 .LINK
-  https://github.com/FatherDivine/Powershell-Scripts-Public/tree/main/FOG%20Snapins/Keysight
+  https://github.com/FatherDivine/Powershell-Scripts-Public/tree/main/Modules/Keysight
 
 .EXAMPLE
   Keysight-ADS-FixHomePath

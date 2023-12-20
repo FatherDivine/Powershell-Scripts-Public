@@ -1,11 +1,13 @@
 <#
 .SYNOPSIS
-  Various functions related to Keysight software.
+  Reinstalls Keysight ADS
 
 .DESCRIPTION
-    The purpose of this Function/Module is to create functions that support Keysight software.
-    This includes things that may be needed, like license files changes, HOME path/registry edits,
-    or updating (and in some cases, uninstalling) certain softwares.
+    Uninstalls and reinstalls Keysight ADS, using
+    a properly configured installer.properties.
+    The main purpose of this function was to fix
+    workspace errors when creating a new workspace
+    in a LAB environment.
 
 .INPUTS
   none
@@ -20,7 +22,7 @@
   Purpose/Change: Initial script development
 
 .LINK
-  https://github.com/FatherDivine/Powershell-Scripts-Public/tree/main/FOG%20Snapins/Keysight
+  https://github.com/FatherDivine/Powershell-Scripts-Public/tree/main/Modules/Keysight
 
 .EXAMPLE
   Keysight-ADS-Reinstall -Computername $PCList

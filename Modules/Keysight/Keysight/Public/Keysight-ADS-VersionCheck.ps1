@@ -1,11 +1,10 @@
 <#
 .SYNOPSIS
-  Various functions related to Keysight software.
+  Checks the version of Keysight ADS.
 
 .DESCRIPTION
-    The purpose of this Function/Module is to create functions that support Keysight software.
-    This includes things that may be needed, like license files changes, HOME path/registry edits,
-    or updating (and in some cases, uninstalling) certain softwares.
+    Checks the version of Keysight ADS on one or multiple PCS
+    using the registry. Could also use C:\program files\Keysight\ADS*.
 
 .INPUTS
   none

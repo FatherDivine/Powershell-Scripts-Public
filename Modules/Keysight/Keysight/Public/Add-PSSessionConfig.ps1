@@ -21,7 +21,7 @@
   Purpose/Change: Initial script development
 
 .LINK
-GitHub README or script link
+  https://github.com/FatherDivine/Powershell-Scripts-Public/tree/main/Modules/Keysight
 
 .EXAMPLE
   Add-PSSessionConfig -ComputerName $Remote2

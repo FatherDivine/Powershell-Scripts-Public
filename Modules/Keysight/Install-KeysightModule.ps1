@@ -46,7 +46,7 @@ If (Test-Path "C:\Program Files\WindowsPowerShell\Modules\Keysight"){
   Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Keysight/Keysight/Public/Keysight-ADS-Reinstall.ps1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Keysight\Public\Keysight-ADS-Reinstall.ps1' -Force) -Verbose
   Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Keysight/Keysight/Public/Keysight-ADS-SetEnvVariable.ps1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Keysight\Public\Keysight-ADS-SetEnvVariable.ps1' -Force) -Verbose
   Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Keysight/README.md" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Keysight\README.md' -Force) -Verbose
-  #Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Keysight/Keysight/Public/Keysight-ADS-VersionCheck.ps1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Keysight\Public\Keysight-ADS-VersionCheck.ps1' -Force) -Verbose
+  Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Keysight/Keysight/Public/Keysight-ADS-VersionCheck.ps1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Keysight\Public\Keysight-ADS-VersionCheck.ps1' -Force) -Verbose
 
   Import-Module -Name Keysight -DisableNameChecking
   exit

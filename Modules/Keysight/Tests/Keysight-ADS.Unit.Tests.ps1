@@ -1,7 +1,7 @@
 #Global variables
 $script:TemplatePowerShellModule = 'Keysight'
 $script:here = "$PSScriptRoot\..\$TemplatePowerShellModule"
-$script:pubFunctions = ('Keysight-ADS-FixHomePath','Add-PSSessionConfig','Keysight-ADS-Reinstall','Keysight-ADS-SetEnvVariable','Keysight-ADS-Uninstall')
+$script:pubFunctions = ('Keysight-ADS-FixHomePath','Keysight-ADS-VersionCheck','Keysight-ADS-Uninstall','Keysight-ADS-Reinstall','Add-PSSessionConfig','Keysight-Ads-SetEnvVariable')
 $script:privFunctions = ($null)
 $script:Folders = ('Public','Private')
 
