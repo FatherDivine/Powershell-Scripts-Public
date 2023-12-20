@@ -1,24 +1,27 @@
 <#
 .SYNOPSIS
-  <Overview of script>
+  Adds a PS Session config.
 
 .DESCRIPTION
-  <Brief description of script>
+  Creates a PS Session Configuration for overcoming
+  the 2nd hop (ex: Remoting into Server B from A, and copying
+  files from Server C to Server B).
 
-.PARAMETER <Parameter_Name>
-    <Brief description of parameter input required. Repeat this attribute if required>
+.PARAMETER ComputerName
+    Takes a single or array of multiple computers for processing.
 
 .INPUTS
-  <Inputs if any, otherwise state None>
+  None
 
 .OUTPUTS
-  <Outputs if any, otherwise state None - example: Log file stored in C:\Windows\Temp\<name>.log>
+  Log file stored in C:\Windows\Logs\<name>.log
 
 .NOTES
-  Version:        1.0
-  Author:         <Name>
-  Creation Date:  <Date>
-  Purpose/Change: Initial script development
+  Version:        0.1
+  Author:         Aaron Staten
+  Creation Date:  12-20-2023
+  Purpose/Change: Initial script development. Will likely turn this into its
+                  own module soon as it has immense value to other scripts.
 
 .LINK
   https://github.com/FatherDivine/Powershell-Scripts-Public/tree/main/Modules/Keysight
@@ -58,18 +61,18 @@ $ErrorActionPreference = "SilentlyContinue"
 #. "${PSScriptRoot}\Logging_Functions.ps1"
 
 Write-Verbose "`r`nLogging-Functions for basic logging functionality in all scripts." -Verbose
-#If (!(Test-Path "C:\Program Files\WindowsPowerShell\Modules\Logging-Functions\")){
+If (!(Test-Path "C:\Program Files\WindowsPowerShell\Modules\Logging-Functions\")){
   Write-Verbose 'Downloading the latest Logging-Functions module and placing in C:\Program Files\WindowsPowerShell\Modules\Logging-Functions\' -Verbose
   Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Logging-Functions/Logging-Functions.psm1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Logging-Functions\Logging-Functions.psm1' -Force) -Verbose
   Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Logging-Functions/Logging-Functions.psd1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Logging-Functions\Logging-Functions.psd1' -Force) -Verbose
-#}
+}
 Write-Verbose "`r`nInvoke-Ping, the fastest way to only send cmdlets to a PC that's online. Saves time from sending cmdlets to offline PCs."
-#If (!(Test-Path "C:\Program Files\WindowsPowerShell\Modules\Invoke-Ping\")){
+If (!(Test-Path "C:\Program Files\WindowsPowerShell\Modules\Invoke-Ping\")){
     Write-Verbose 'Downloading the latest Logging-Functions module and placing in C:\Program Files\WindowsPowerShell\Modules\Logging-Functions\' -Verbose
     Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Invoke-Ping/Invoke-Ping/Invoke-Ping.psd1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Invoke-Ping\Invoke-Ping.psd1' -Force) -Verbose
     Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Invoke-Ping/Invoke-Ping/Invoke-Ping.psm1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Invoke-Ping\Invoke-Ping.psm1' -Force) -Verbose
     Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Invoke-Ping/Invoke-Ping/Public/Invoke-Ping.ps1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Invoke-Ping\Public\Invoke-Ping.ps1' -Force) -Verbose
-#}
+}
 
 #Import Modules
 Import-Module -Name Invoke-Ping, Logging-Functions -DisableNameChecking
@@ -125,7 +128,7 @@ Param(
 
         #Test what Pcs are online first before sending cmdlets to speedup execution
         $WorkingPCs = Invoke-Ping -ComputerName $ComputerName -quiet
-        
+
         #Get the offline PCs and let the user know
         $OfflinePCs = (Compare-Object $ComputerName $WorkingPCs -IncludeEqual | Where-Object { $_.SideIndicator -eq "<=" }).InputObject
         Write-Verbose "Computers detected as being offline: $OfflinePCs" -Verbose
