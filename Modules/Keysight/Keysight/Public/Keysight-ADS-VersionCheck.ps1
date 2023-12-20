@@ -90,23 +90,28 @@ Function Keysight-ADS-VersionCheck{
     $sLogFile = Join-Path -Path $sLogPath -ChildPath $sLogName
 
     #LogStart
+    Start-Transcript -Path "C:\Windows\Logs\Keysight\ADS-VersionCheck-T$date.log" -Force
     Log-Start -LogPath $sLogPath -LogName $sLogName -ScriptVersion $sScriptVersion
     Log-Write -LogPath $sLogFile -LineValue "Keysight-ADS-VersionCheck is running on: $ComputerName"
     Log-Write -LogPath $sLogFile -LineValue "Begin Section"
-    Start-Transcript -Path "C:\Windows\Logs\Keysight\ADS-VersionCheck-T$date.log" -Force
-    Write-Verbose "Keysight-ADS-FixHomePath is running on: $ComputerName" -Verbose
+    Write-Verbose "Keysight-ADS-VersionCheck is running on: $ComputerName" -Verbose
   }
 
   Process{
     Try{
+      #Detect working PCs so script runs faster
       $WorkingPCs = Invoke-Ping -ComputerName $ComputerName -Quiet
 
+      #Get the offline PCs and let the user know
+      $OfflinePCs = (Compare-Object $ComputerName $WorkingPCs -IncludeEqual | Where-Object { $_.SideIndicator -eq "<=" }).InputObject
+      Write-Verbose "Computers detected as being offline: $OfflinePCs" -Verbose
+      Write-Verbose "ADS versions detected:" -Verbose
       foreach ($PC in $WorkingPCs){
         #Check Version of ADS
-        Invoke-Command -ComputerName $PC -ScriptBlock{
-        $Version = (Get-ItemProperty HKLM:\SOFTWARE\Keysight\ADS\*\eeenv ADS_Folder).ADS_Folder
-        Write-Verbose "$using:PC: $Version" -Verbose
+        $Results = Invoke-Command -ComputerName $PC -ScriptBlock{
+         (Get-ItemProperty HKLM:\SOFTWARE\Keysight\ADS\*\eeenv ADS_Folder).ADS_Folder
         }
+        Write-Verbose "$PC`: $Results" -Verbose
       }
 
     }
