@@ -87,7 +87,7 @@ Function Keysight-ADS-VersionCheck{
   Begin{
     #Log File Info
     $sLogPath = "C:\Windows\Logs\Keysight"
-    $sLogName = "ADS-Uninstall$date.log"
+    $sLogName = "Keysight-ADS-VersionCheck$date.log"
     $sLogFile = Join-Path -Path $sLogPath -ChildPath $sLogName
 
     #LogStart
@@ -100,6 +100,16 @@ Function Keysight-ADS-VersionCheck{
 
   Process{
     Try{
+      $WorkingPCs = Invoke-Ping -ComputerName $ComputerName -Quiet
+
+      foreach ($PC in $WorkingPCs){
+        #Check Version of ADS
+        Invoke-Command -ComputerName $PC -ScriptBlock{
+        $Version = (Get-ItemProperty HKLM:\SOFTWARE\Keysight\ADS\*\eeenv ADS_Folder).ADS_Folder
+        Write-Verbose "$using:PC: $Version" -Verbose
+        }
+      }
+
     }
 
     Catch{
@@ -111,6 +121,7 @@ Function Keysight-ADS-VersionCheck{
     If($?){
       Log-Write -LogPath $sLogFile -LineValue "Keysight-ADS-VersionCheck Function Completed Successfully."
       Log-Write -LogPath $sLogFile -LineValue " "
+      Clear-Variable WorkingPCs, ComputerName
       Stop-Transcript
       Log-Finish -LogPath $sLogFile -NoExit $True
     }
@@ -120,7 +131,5 @@ Function Keysight-ADS-VersionCheck{
 #-----------------------------------------------------------[Execution]------------------------------------------------------------
 
 #Script Execution goes here, when not using as a Module.
-#Can execute a function for FOG snap-ins like this:
-#& Keysight-ADS-Uninstall
 
 export-modulemember -alias * -function *
