@@ -180,6 +180,7 @@ Function Keysight-ADS-FixHomePath{
 
         ForEach ($PC in $WorkingPCs){
           try{
+            Write-Verbose "Running Keysight-ADS-FixHomePath on $PC" -Verbose
             Invoke-Command -ScriptBlock $KeysightScriptblock -ComputerName $PC -Verbose
           }
           catch{
