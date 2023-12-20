@@ -125,6 +125,10 @@ Param(
 
         #Test what Pcs are online first before sending cmdlets to speedup execution
         $WorkingPCs = Invoke-Ping -ComputerName $ComputerName -quiet
+        
+        #Get the offline PCs and let the user know
+        $OfflinePCs = (Compare-Object $ComputerName $WorkingPCs -IncludeEqual | Where-Object { $_.SideIndicator -eq "<=" }).InputObject
+        Write-Verbose "Computers detected as being offline: $OfflinePCs" -Verbose
 
         foreach ($PC in $WorkingPCs){
           Invoke-Command -ComputerName $PC -ScriptBlock {
@@ -145,7 +149,7 @@ Param(
   End{
     If($?){
       Write-Verbose "Clearing common variables." -Verbose
-      Clear-Variable WorkingPCs, ComputerName
+      Clear-Variable WorkingPCs, ComputerName, OfflinePCs
 
       Log-Write -LogPath $sLogFile -LineValue "Add-PSSessionConfig Function Completed Successfully."
       Log-Write -LogPath $sLogFile -LineValue " "

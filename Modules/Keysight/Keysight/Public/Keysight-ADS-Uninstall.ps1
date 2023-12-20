@@ -105,10 +105,22 @@ Function Keysight-ADS-Uninstall{
 
   Process{
     Try{
-      if (Test-Path -Path "C:\Program Files\Uninstall_ADS2019_Update1\uninstall.exe" ){
-        Write-Verbose "Uninstalling ADS 2019 Update 1." -Verbose
-        Start-Process -FilePath "C:\Program Files\Uninstall_ADS2019_Update1\uninstall.exe" -ArgumentList @("-i silent") -Wait -Verbose -NoNewWindow
-      }else{Write-Verbose 'Did not detect the uninstaller.exe at C:\Program Files\Uninstall_ADS2019_Update1\uninstall.exe! Can NOT uninstall!' -Verbose}      
+      #Test what Pcs are online first before sending cmdlets to speedup execution
+      $WorkingPCs = Invoke-Ping -ComputerName $ComputerName -quiet
+
+      #Get the offline PCs and let the user know
+      $OfflinePCs = (Compare-Object $ComputerName $WorkingPCs -IncludeEqual | Where-Object { $_.SideIndicator -eq "<=" }).InputObject
+      Write-Verbose "Computers detected as being offline: $OfflinePCs" -Verbose
+
+      foreach ($PC in $WorkingPCs){
+        Invoke-Command -ComputerName $PC -ScriptBlock {
+          if (Test-Path -Path "C:\Program Files\Uninstall_ADS2019_Update1\uninstall.exe" ){
+            Write-Verbose "Uninstalling ADS 2019 Update 1." -Verbose
+            Start-Process -FilePath "C:\Program Files\Uninstall_ADS2019_Update1\uninstall.exe" -ArgumentList @("-i silent") -Wait -Verbose -NoNewWindow
+          }else{Write-Verbose 'Did not detect the uninstaller.exe at C:\Program Files\Uninstall_ADS2019_Update1\uninstall.exe! Can NOT uninstall!' -Verbose}     
+        } -AsJob
+      }
+ 
     }
 
     Catch{

@@ -107,7 +107,8 @@ Function Keysight-ADS-VersionCheck{
       Write-Verbose "Computers detected as being offline: $OfflinePCs" -Verbose
       Write-Verbose '-==ADS versions detected below==-' -Verbose
       foreach ($PC in $WorkingPCs){
-        #Check Version of ADS
+        #Check Version of ADS. If need to speed up instead of watching each at the terminal,
+        #just make it separate jobs per PC, and use 'get-job | receive-job -keep' to check
         $Results = Invoke-Command -ComputerName $PC -ScriptBlock{
          (Get-ItemProperty HKLM:\SOFTWARE\Keysight\ADS\*\eeenv ADS_Folder).ADS_Folder
         }
@@ -125,7 +126,7 @@ Function Keysight-ADS-VersionCheck{
     If($?){
       Log-Write -LogPath $sLogFile -LineValue "Keysight-ADS-VersionCheck Function Completed Successfully."
       Log-Write -LogPath $sLogFile -LineValue " "
-      Clear-Variable WorkingPCs, ComputerName
+      Clear-Variable WorkingPCs, ComputerName, OfflinePCs
       Stop-Transcript
       Log-Finish -LogPath $sLogFile -NoExit $True
     }

@@ -172,7 +172,11 @@ Function Keysight-ADS-FixHomePath{
 
         #Test what Pcs are online first before sending cmdlets
         $WorkingPCs = Invoke-Ping -ComputerName $ComputerName -quiet
-        Log-Write -LogPath $sLogFile -LineValue "List of PCs that were found to be online using Invoke-Ping: $WorkingPCs"
+
+        #Get the offline PCs and let the user know
+        $OfflinePCs = (Compare-Object $ComputerName $WorkingPCs -IncludeEqual | Where-Object { $_.SideIndicator -eq "<=" }).InputObject
+        Write-Verbose "Computers detected as being offline: $OfflinePCs" -Verbose
+        Log-Write -LogPath $sLogFile -LineValue "List of PCs that were found to be offline using Invoke-Ping: $OfflinePCs"
 
         ForEach ($PC in $WorkingPCs){
           try{
@@ -194,6 +198,7 @@ Function Keysight-ADS-FixHomePath{
     If($?){
       Log-Write -LogPath $sLogFile -LineValue "Keysight-ADS-FixHomePath Function Completed Successfully."
       Log-Write -LogPath $sLogFile -LineValue " "
+      Clear-Variable OfflinePCs, ComputerName, WorkingPCs
       Stop-Transcript
       Log-Finish -LogPath $sLogFile -NoExit $True
     }
