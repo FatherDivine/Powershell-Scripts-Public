@@ -8,8 +8,7 @@
 
 ## About <a name = "about"></a>
 
-Purpose of this Function/Module is to create functions that support Keysight software. This includes things that may be needed, like license files changes, HOME path/registry edits, or updating (and in some cases, uninstalling) certain softwares. 
-
+Purpose of this Function/Module is to create functions that support Keysight software. This includes things that may be needed, like license files changes, HOME path/registry edits, or updating (and in some cases, uninstalling, reinstalling) certain softwares. 
 
 The larger idea is to have all software license (and config) changes in module form, so if a license needs changing one can just type "<SoftwareCompany>-<SoftwareName>-<Function>" to support whatever is needed.
 
@@ -23,7 +22,7 @@ Set-ExecutionPolicy -ExecutionPolicy Unrestricted
 ```
 <br><br>
 
-Another great cmdlet to type is the one that enables psremoting. This is necessary to run invoke commands on remote PCs. In our CEDC environment, this is already enabled on all LAB pcs: <br>
+Another great cmdlet to type is the one that enables psremoting. This is necessary to run invoke commands on remote PCs. In our environment, this is already enabled on all LAB pcs (and usually part of pre-req portion of a function itself): <br>
 
 ```powershell
 Enable-PSRemoting
