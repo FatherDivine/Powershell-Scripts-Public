@@ -105,7 +105,7 @@ Function Keysight-ADS-VersionCheck{
       #Get the offline PCs and let the user know
       $OfflinePCs = (Compare-Object $ComputerName $WorkingPCs -IncludeEqual | Where-Object { $_.SideIndicator -eq "<=" }).InputObject
       Write-Verbose "Computers detected as being offline: $OfflinePCs" -Verbose
-      Write-Verbose "ADS versions detected:" -Verbose
+      Write-Verbose '-==ADS versions detected below==-' -Verbose
       foreach ($PC in $WorkingPCs){
         #Check Version of ADS
         $Results = Invoke-Command -ComputerName $PC -ScriptBlock{
