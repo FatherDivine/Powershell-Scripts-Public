@@ -3,25 +3,28 @@
   Joins host(s) to the domain.
 
 .DESCRIPTION
-  <Brief description of script>
+  Domain joins host(s) to Active Directory.
 
 .PARAMETER <Parameter_Name>
     <Brief description of parameter input required. Repeat this attribute if required>
 
 .INPUTS
-  <Inputs if any, otherwise state None>
+  None
 
 .OUTPUTS
-  <Outputs if any, otherwise state None - example: Log file stored in C:\Windows\Temp\<name>.log>
+  Log file stored in C:\Windows\Temp\<name>.log
 
 .NOTES
   Version:        0.1
   Author:         Aaron Staten
   Creation Date:  12-6-2023
   Purpose/Change: Initial script development
+                  Learned the svc acct can't delete/unjoin from COMPUTERS given limited permissions.
+                  Also Add-Computer adds a PC already on the network to the domain, whereas
+                  New-ADComputer creates a new object that may not already exist.
  
 .LINK
-GitHub README or script link
+  https://github.com/FatherDivine/Powershell-Scripts-Public/tree/main/Modules/Domain-Tool
 
 .EXAMPLE
   <Example goes here. Repeat this attribute for more than one example>
