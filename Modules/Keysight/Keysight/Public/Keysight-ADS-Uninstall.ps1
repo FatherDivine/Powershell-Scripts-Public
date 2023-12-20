@@ -89,7 +89,7 @@ Function Keysight-ADS-Uninstall{
     [string[]]$ComputerName = 'localhost'
   )
 
-  Begin{ 
+  Begin{
     #Log File Info
     $sLogPath = "C:\Windows\Logs\Keysight"
     $sLogName = "ADS-Uninstall$date.log"

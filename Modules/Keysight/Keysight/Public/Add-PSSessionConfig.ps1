@@ -27,7 +27,7 @@ GitHub README or script link
   Add-PSSessionConfig -ComputerName $Remote2
 
   This script , for now, is meant to be ran locally and not actually part of KeySight suite.
-  This is because when adding someone to winRM, it causes a restart which kills the connection, 
+  This is because when adding someone to winRM, it causes a restart which kills the connection,
   so the rest of the script doesn't run. As such, we run this first, then the Keysight tools.
 #>
 #---------------------------------------------------------[Force Module Elevation]--------------------------------------------------------
@@ -87,7 +87,7 @@ $date = Get-Date -Format "-MM-dd-yyyy-HH-mm"
 
 #Log File Info
 $sLogPath = "C:\Windows\Logs\Keysight"
-$sLogName = "ADD-PSSessionConfig.log"
+$sLogName = "ADD-PSSessionConfig$date.log"
 $sLogFile = Join-Path -Path $sLogPath -ChildPath $sLogName
 
 #-----------------------------------------------------------[Functions]------------------------------------------------------------
@@ -103,7 +103,6 @@ Param(
     [Parameter(Mandatory=$false,
     ValueFromPipeline=$true)]
     [string[]]$ComputerName = 'localhost',
-    [System.Management.Automation.PSCredential]$RunAsName,
     [string]$PSSessionConfigName
 
 )
@@ -120,7 +119,7 @@ Param(
     Try{
 
         #$ConfigurationName = $credential.getNetworkCredential().username
-        #send both below variables from reinstall2 to here 
+        #send both below variables from reinstall2 to here
         $Creds = (get-credential)
         $PSSessionConfigName = $creds.getNetworkCredential().username
 
@@ -152,7 +151,7 @@ Param(
       Log-Write -LogPath $sLogFile -LineValue " "
       Log-Finish -LogPath $sLogFile -NoExit $True
 
-      return ,$Creds
+      return $Creds
     }
     #return ,$Creds
   }

@@ -27,7 +27,7 @@ GitHub README or script link
   Add-PSSessionConfig -ComputerName $Remote2
 
   This script , for now, is meant to be ran locally and not actually part of KeySight suite.
-  This is because when adding someone to winRM, it causes a restart which kills the connection, 
+  This is because when adding someone to winRM, it causes a restart which kills the connection,
   so the rest of the script doesn't run. As such, we run this first, then the Keysight tools.
 #>
 #---------------------------------------------------------[Force Module Elevation]--------------------------------------------------------

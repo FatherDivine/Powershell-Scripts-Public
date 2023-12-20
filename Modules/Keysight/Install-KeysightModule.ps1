@@ -16,7 +16,7 @@
   Author:         Aaron Staten
   Creation Date:  11-30-23
   Purpose/Change: Initial script development
- 
+
 .LINK
 https://github.com/FatherDivine/Powershell-Scripts-Public/tree/main/Modules/Keysight
 
@@ -28,9 +28,6 @@ https://github.com/FatherDivine/Powershell-Scripts-Public/tree/main/Modules/Keys
 $ErrorActionPreference = "SilentlyContinue"
 
 #----------------------------------------------------------[Declarations]----------------------------------------------------------
-
-#Script Version
-$sScriptVersion = "0.1"
 
 #-----------------------------------------------------------[Functions]------------------------------------------------------------
 
