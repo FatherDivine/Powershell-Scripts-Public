@@ -1,17 +1,17 @@
 ﻿#region help information
 <#l
   .SYNOPSIS
-    Enable PS-Remoting (WinRM) and Sets PS execution policy to bypass so PS scripts/tools can run. 
+    Enable PS-Remoting (WinRM) and Sets PS execution policy to bypass so PS scripts/tools can run.
 
   .DESCRIPTION
     The PSRE.ps1 script allows the user to enable PS-Remoting & Execution Policy
-    bypass on a list of remote computers. It takes input from a file called 
-    "computers.txt" and runs an enable PS-Remoting command thru PSExec.exe, 
+    bypass on a list of remote computers. It takes input from a file called
+    "computers.txt" and runs an enable PS-Remoting command thru PSExec.exe,
     Both files are in the same folder as the PSRE.ps1 script, and must be to work.
 
   .PARAMETER Server
     Allows to pipe a hostname/IP address to the Enable PS Remoting command
-    via the command prompt/PS. Specifically used by the Dell Service Tag 
+    via the command prompt/PS. Specifically used by the Dell Service Tag
     Puller Tool (DSTP.ps1) to enable PS Remoting before the second attempt
     at pulling the service tag remotely.
   .PAREMETER ServerList
@@ -19,16 +19,16 @@
     run on. Can set  folder by specifying "Folder\File.txt" as the answer.
 
   #.LINK
-    
-  
+
+
   .INPUTS
     A -Server flag can be piped into PSRE.ps1 (or any other script). Here's an example:
-    
+
     .\PSRE.ps1 -Server "$Hostname here"
-    
+
     And in the case of inside another script:
     & ${PSScriptRoot}\PSRE.ps1 -Server Host-Name-Here
-    
+
     Once that input is detected by PSRE.ps1, the Enable-PSRemoting
     command is launched using PsExec.exe and the piped $Server.
 
@@ -62,7 +62,7 @@
     function PowerShellRemoteEnabler()
 {
 [cmdletbinding()]
-Param 
+Param
          (
          [Parameter(Mandatory=$false,
          ValueFromPipeline=$false)]
@@ -71,12 +71,12 @@ Param
          )
   begin{}
   process{
-    try{& ${PSScriptRoot}\PSRE.ps1 -Server $Server 
+    try{& ${PSScriptRoot}\PSRE.ps1 -Server $Server
        }catch{}#Catch if PSRE.ps1 is non-existent.
-         }    
+         }
   end{
-    
-     }  
+
+     }
 }
  #>
 #endregion help information
@@ -96,7 +96,7 @@ Param
        ValueFromPipeline=$false)]
         [string]$Status=$NULL
        )
-#endregion command-line parameters    
+#endregion command-line parameters
 
 #---------------------------------------------------------[Initialisations]--------------------------------------------------------
 
@@ -104,7 +104,7 @@ Param
 $ErrorActionPreference = "SilentlyContinue"
 
 Write-Verbose "Downloading the latest version of Logging-Functions via Github if non-existant" -Verbose
-If (!(Test-Path "C:\Program Files\WindowsPowerShell\Modules\Logging-Functions")){  
+If (!(Test-Path "C:\Program Files\WindowsPowerShell\Modules\Logging-Functions")){
 Write-Verbose 'Downloading the latest Logging-Functions module and placing in C:\Program Files\WindowsPowerShell\Modules\Logging-Functions\' -Verbose
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Logging-Functions/Logging-Functions.psm1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Logging-Functions\Logging-Functions.psm1' -Force)
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/FatherDivine/Powershell-Scripts-Public/main/Modules/Logging-Functions/Logging-Functions.psd1" -OutFile (New-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\Logging-Functions\Logging-Functions.psd1' -Force)
@@ -132,14 +132,14 @@ function PSRemoteStatus{
         ValueFromPipeline=$true)]
         [string]$HN,
         $errorlog
-        
+
     )
 
     begin {
             #setup our return object
             $status = $null
           }
-    process{ #first test if connection is alive with test, then exit? this part isn't right. cant tell if services are enabled, test connection can only see if reachable or not. 
+    process{ #first test if connection is alive with test, then exit? this part isn't right. cant tell if services are enabled, test connection can only see if reachable or not.
             write-host "`nFirst checking if the host can be reached..."
             if (Test-Connection -ComputerName $HN -Quiet) {
                 if([bool](Test-WsMan $HN -ErrorAction SilentlyContinue)){
@@ -197,9 +197,9 @@ function Enable-PSRemote{
 
         SuccessOne = $false
         SuccessTwo = $false
-      }        
+      }
     }
-    process { 
+    process {
       #use a switch statement to take actions based on passed in parameters
       switch ($PSBoundParameters.Keys) {
         'Server' {
@@ -223,10 +223,10 @@ function Enable-PSRemote{
               foreach($ws in $wks){PSRemoteStatus -HN $ws
               if ($global:status -eq "true"){exit}
               elseif ($global:status -eq "false"){
-              & ${PSScriptRoot}\PsExec.exe \\$ws -accepteula  -u $username -p $password -h -s powershell.exe Enable-PSRemoting -Force  
+              & ${PSScriptRoot}\PsExec.exe \\$ws -accepteula  -u $username -p $password -h -s powershell.exe Enable-PSRemoting -Force
               Invoke-command -computername $ws -Credential $Credential -scriptblock {Set-ExecutionPolicy bypass -force}
                                                                  }
-                                        } 
+                                        }
             }catch{Write-Error “`nAn error occurred: $($_.Exception.Message)`n”}}
           else{
             try{
@@ -239,13 +239,13 @@ function Enable-PSRemote{
               }
               }
     }catch{Write-Error “`nAn error occurred: $($_.Exception.Message)`n”}}
-exit         
-                         }   
+exit
+                         }
             Default {
-                
+
                 Write-Warning "Unhandled parameter -> [$($_)]"
                     }
-                                         }        
+                                         }
             }
     end {
 
@@ -269,7 +269,7 @@ $t = @'
  |  ___/ \___ \  |  _  // _ \ '_ ` _ \ / _ \| __/ _ \
  | |     ____) | | | \ \  __/ | | | | | (_) | ||  __/
  |_|    |_____/  |_|  \_\___|_| |_| |_|\___/ \__\___|
-  ______             _     _             _______          _ 
+  ______             _     _             _______          _
  |  ____|           | |   | |           |__   __|        | |
  | |__   _ __   __ _| |__ | | ___ _ __     | | ___   ___ | |
  |  __| | '_ \ / _` | '_ \| |/ _ \ '__|    | |/ _ \ / _ \| |

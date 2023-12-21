@@ -1,5 +1,5 @@
 #Global variables
-$script:TemplatePowerShellModule = 'DomainTool'
+$script:TemplatePowerShellModule = 'Domain-Tool'
 $script:here = "$PSScriptRoot\..\$TemplatePowerShellModule"
 $script:pubFunctions = ('Add-ServiceTag','Get-Domain','Join-Domain','Unjoin-Domain')
 $script:privFunctions = ('Enable-PSRemote','Get-Credentials')#,'PSRemoteStatus','Enable-PSRemote')
@@ -98,7 +98,7 @@ Describe 'Function Tests' {
                     $psFile = Get-Content -Path "$here\Private\$_.ps1" -ErrorAction Stop
                     $errors = $null
                     $null = [System.Management.Automation.PSParser]::Tokenize($psFile, [ref]$errors)
-                    $errors.count | Should be 0
+                    $errors.count | Should -be 0
                 }
             } # Context Private Function Tests
 } # end of describe block

@@ -48,6 +48,13 @@ if ( -not $Elevated ) {
 #---------------------------------------------------------[Initialisations ]--------------------------------------------------------
 #proceses credentials for domain cmdlets
 function Get-Credentials{
+  Param
+       ([cmdletbinding()]
+       
+       [Parameter(Mandatory=$false,
+       ValueFromPipeline=$true)]
+        $errorlog
+)
   function Create-AesManagedObject($key, $IV, $mode) {
     $aesManaged = New-Object "System.Security.Cryptography.AesManaged"
 

@@ -19,7 +19,7 @@
   Author:         Aaron Staten
   Creation Date:  12-6-2023
   Purpose/Change: Initial script development
- 
+
 .LINK
 GitHub README or script link
 
@@ -38,8 +38,8 @@ if ( -not $Elevated ) {
 #--------------------------------------------------------------[Privilege Escalation]---------------------------------------------------------------
 
 #When admin rights are needed
-if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))  
-{  
+if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))
+{
   $arguments = "& '" +$myinvocation.mycommand.definition + "'"
   Start-Process powershell -Verb runAs -ArgumentList $arguments
   Break
@@ -66,52 +66,53 @@ New-Alias -Name "Domain-Unjoin" -value Unjoin-Domain -Description "Joins host(s)
 #Script Version
 $sScriptVersion = "1.0"
 
-#Variables 
+#Variables
 $date = Get-Date -Format "-MM-dd-yyyy-HH-mm"
 
 #Log File Info
-$sLogPath = "C:\Windows\Logs\<FolderName>"
-$sLogName = "<script_name>.log"
+$sLogPath = "C:\Windows\Logs\Domain-Tool"
+$sLogName = "Unjoin-Domain$date.log"
 $sLogFile = Join-Path -Path $sLogPath -ChildPath $sLogName
 
 #-----------------------------------------------------------[Functions]------------------------------------------------------------
 
 Function Remove-Domain{
- # Param()
-  < # 
+  [CmdletBinding()]
+param()
+  <#
   .PARAMETER ComputerName
     Allows for QuickFix to be ran against a remote PC or list of
     remote PCs.
-  
+
   [cmdletbinding()]
   Param(
     [Parameter(Mandatory=$false,
     ValueFromPipeline=$true)]
     [string[]]$ComputerName = 'localhost'
   )
-# >
+#>
   Begin{
     Log-Start -LogPath $sLogPath -LogName $sLogName -ScriptVersion $sScriptVersion
     Log-Write -LogPath $sLogFile -LineValue "<FunctionName> is running on: $ComputerName"
     Log-Write -LogPath $sLogFile -LineValue "Begin Section"
   }
-  
+
   Process{
     Try{
-      <code goes here>
+      Write-Verbose "code goes here" -Verbose
     }
-    
+
     Catch{
       Log-Error -LogPath $sLogFile -ErrorDesc $_.Exception -ExitGracefully $True
       Break
     }
   }
-  
+
   End{
     If($?){
       Log-Write -LogPath $sLogFile -LineValue "<FunctionName> Function Completed Successfully."
       Log-Write -LogPath $sLogFile -LineValue " "
-      Read-Host -Prompt "Press Enter to exit"
+      #Read-Host -Prompt "Press Enter to exit"
       Log-Finish -LogPath $sLogFile
     }
   }

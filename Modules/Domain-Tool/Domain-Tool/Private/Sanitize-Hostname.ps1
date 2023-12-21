@@ -19,7 +19,7 @@
   Author:         Aaron Staten
   Creation Date:  12-6-2023
   Purpose/Change: Initial script development
- 
+
 .LINK
 GitHub README or script link
 
@@ -38,8 +38,8 @@ if ( -not $Elevated ) {
 #--------------------------------------------------------------[Privilege Escalation]---------------------------------------------------------------
 
 #When admin rights are needed
-if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))  
-{  
+if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))
+{
   $arguments = "& '" +$myinvocation.mycommand.definition + "'"
   Start-Process powershell -Verb runAs -ArgumentList $arguments
   Break
@@ -49,19 +49,12 @@ if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdenti
 #Checks the hostname to let the module know what OU the host belongs.
 
 #region function ServiceTagWriter
-function ServiceTagWriter
-{
-Param
-       ([cmdletbinding()]
-       
-       [Parameter(Mandatory=$false,
-       ValueFromPipeline=$true)]
-        [Switch]$PrintOnly,
-        $errorlog
-)
+function ServiceTagWriter{
+  [cmdletbinding()]
+  param()
 <#
 .TODO
-    Eventually add remote support, but if winrm or other issues get-ciminstance won't work so best to not worry. 
+    Eventually add remote support, but if winrm or other issues get-ciminstance won't work so best to not worry.
     Idea is grab remote ST and throw into it's AD object. For now only does that locally.
 
     If switch, return ST only (don't set)
@@ -73,10 +66,10 @@ $hn = $env:COMPUTERNAME
 $ServiceTag = Get-CimInstance -ErrorAction Stop win32_SystemEnclosure | select-object serialnumber
 $ST = $ServiceTag -Replace ('\W','')
 $ST2 = $ST -Replace ('serialnumber','')
-Remove-Variable ServiceTag 
+Remove-Variable ServiceTag
 $global:ServiceTag = $ST2
 
-Switch ($PSBoundParameters.Keys){ 
+Switch ($PSBoundParameters.Keys){
         
     'PrintOnly'{
                 Write-Host "`nService Tag of ${hostname}: $global:ServiceTag`n"

@@ -69,7 +69,7 @@ Description = 'Tool to support various domain-related applications.'
 # NestedModules = @()
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = @('Join-Domain','Unjoin-Domain','Get-Domain','Rename-Host','Move-Host')
+FunctionsToExport = @('Join-Domain','Unjoin-Domain')#,'Get-Domain','Rename-Host','Move-Host','Add-ServiceTag','Create-ADObject')
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 CmdletsToExport = @()

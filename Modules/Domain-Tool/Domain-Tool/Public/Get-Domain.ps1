@@ -19,7 +19,7 @@
   Author:         Aaron Staten
   Creation Date:  12-6-2023
   Purpose/Change: Initial script development
- 
+
 .LINK
 GitHub README or script link
 
@@ -38,8 +38,8 @@ if ( -not $Elevated ) {
 #--------------------------------------------------------------[Privilege Escalation]---------------------------------------------------------------
 
 #When admin rights are needed
-if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))  
-{  
+if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))
+{
   $arguments = "& '" +$myinvocation.mycommand.definition + "'"
   Start-Process powershell -Verb runAs -ArgumentList $arguments
   Break
@@ -64,49 +64,49 @@ If (!(Test-Path "C:\Windows\Logs\<FolderName>")){New-Item -ItemType Directory "C
 #Script Version
 $sScriptVersion = "1.0"
 
-#Variables 
+#Variables
 $date = Get-Date -Format "-MM-dd-yyyy-HH-mm"
 
 #Log File Info
-$sLogPath = "C:\Windows\Logs\<FolderName>"
-$sLogName = "<script_name>.log"
+$sLogPath = "C:\Windows\Logs\Domain-Tool"
+$sLogName = "Get-Domain$date.log"
 $sLogFile = Join-Path -Path $sLogPath -ChildPath $sLogName
 
 #-----------------------------------------------------------[Functions]------------------------------------------------------------
 
-<#
 
-Function <FunctionName>{
- # Param()
-  < # 
+Function Unjoin-Domain{
+  [cmdletbinding()]
+  Param()
+  <#
   .PARAMETER ComputerName
     Allows for QuickFix to be ran against a remote PC or list of
     remote PCs.
-  
+
   [cmdletbinding()]
   Param(
     [Parameter(Mandatory=$false,
     ValueFromPipeline=$true)]
     [string[]]$ComputerName = 'localhost'
   )
-# >
+#>
   Begin{
     Log-Start -LogPath $sLogPath -LogName $sLogName -ScriptVersion $sScriptVersion
     Log-Write -LogPath $sLogFile -LineValue "<FunctionName> is running on: $ComputerName"
     Log-Write -LogPath $sLogFile -LineValue "Begin Section"
   }
-  
+
   Process{
     Try{
-      <code goes here>
+      Write-Verbose "code goes here" -Verbose
     }
-    
+
     Catch{
       Log-Error -LogPath $sLogFile -ErrorDesc $_.Exception -ExitGracefully $True
       Break
     }
   }
-  
+
   End{
     If($?){
       Log-Write -LogPath $sLogFile -LineValue "<FunctionName> Function Completed Successfully."
@@ -117,7 +117,6 @@ Function <FunctionName>{
   }
 }
 
-#>
 
 #-----------------------------------------------------------[Execution]------------------------------------------------------------
 
@@ -133,13 +132,13 @@ $JoinNow = Read-Host "If this is the correct, would you like to join now?(Y or N
 'Y'{
 
     if (@(Get-ADComputer -Identity $JoinDomain -Server "ucdenver.pvt" -Credential $Credential -ErrorAction SilentlyContinue).Count) { #works with pasted domain join svc acct #try with svc cred w/o university for whole script. if don't work make 2 credentials
-        Write-Host "###########################################################"  
+        Write-Host "###########################################################"
         Write-Host "Computer object already exists in Active Directory........." # Best to exit because domain join svc acct can't join if someone else made the object in AD either ways.
         Write-Host "###########################################################" # LOGIC split off to trying anyway (in case object WAS created by domain join svc acct.). catch the error of domain join hardening of using differ accts to create
         #break next
                                                                            }
     else {
-          Write-Host "#######################################"  
+          Write-Host "#######################################"
           Write-Host "Computer object NOT FOUND... Continuing"
           Write-Host "#######################################"
          }

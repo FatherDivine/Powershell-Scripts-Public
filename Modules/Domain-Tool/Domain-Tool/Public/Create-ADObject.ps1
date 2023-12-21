@@ -23,7 +23,7 @@
                   Also Add-Computer adds a PC already on the network to the domain, whereas
                   New-ADComputer creates a new object that may not already exist.
  12-20-2023 This Function is UNTESTED and need to check syntax of New-ADComputer
- 
+
 .LINK
   https://github.com/FatherDivine/Powershell-Scripts-Public/tree/main/Modules/Domain-Tool
 
@@ -42,8 +42,8 @@ if ( -not $Elevated ) {
 #--------------------------------------------------------------[Privilege Escalation]---------------------------------------------------------------
 
 #When admin rights are needed
-#if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))  
-#{  
+#if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))
+#{
 #  $arguments = "& '" +$myinvocation.mycommand.definition + "'"
 #  Start-Process powershell -Verb runAs -ArgumentList $arguments
 #  Break
@@ -70,32 +70,27 @@ New-Alias -Name "Domain-Join" -value Join-Domain -Description "Joins host(s) to 
 #Script Version
 $sScriptVersion = "1.0"
 
-#Variables 
+#Variables
 $date = Get-Date -Format "-MM-dd-yyyy-HH-mm"
 $hn = "cedc-cart-l1" #"$env:COMPUTERNAME"
 $Credential = Get-Credentials
 
 
 #Log File Info
-$sLogPath = "C:\Windows\Logs\<FolderName>"
-$sLogName = "<script_name>.log"
+$sLogPath = "C:\Windows\Logs\Domain-Tool"
+$sLogName = "Create-ADObject$date.log"
 $sLogFile = Join-Path -Path $sLogPath -ChildPath $sLogName
 
 #-----------------------------------------------------------[Functions]------------------------------------------------------------
 
 
 Function Create-ADObject{
-  <# 
+  [cmdletbinding()]
+  param()
+  <#
   .PARAMETER ComputerName
     Allows for QuickFix to be ran against a remote PC or list of
     remote PCs.
-  
-  [cmdletbinding()]
-  Param(
-    [Parameter(Mandatory=$false,
-    ValueFromPipeline=$true)]
-    [string[]]$ComputerName = 'localhost'
-  )
 #>
   Begin{
     Log-Start -LogPath $sLogPath -LogName $sLogName -ScriptVersion $sScriptVersion
@@ -113,7 +108,7 @@ Function Create-ADObject{
     $ST = $ServiceTag -Replace ('\W','')
     $ST2 = $ST -Replace ('serialnumber','')
   }
-  
+
   Process{
     Try{
 # Add PC to AD in correct OU
@@ -132,13 +127,13 @@ switch -WildCard ($HostnameArray[0])
 }
 
     }
-    
+
     Catch{
       Log-Error -LogPath $sLogFile -ErrorDesc $_.Exception -ExitGracefully $True
       Break
     }
   }
-  
+
   End{
     If($?){
       Log-Write -LogPath $sLogFile -LineValue "<FunctionName> Function Completed Successfully."
